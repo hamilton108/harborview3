@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="critter.mybatis.CritterMapper">
+
+    <resultMap id="ruleTypeMap" type="harborview.critter.RuleType">
+        <id column="oid" property="oid" />
+        <result column="description" property="desc" />
+    </resultMap>
+
+    <select id="ruleTypes" resultMap="ruleTypeMap">
+        select * from stockmarket.rule_types order by oid
+    </select>
+</mapper>

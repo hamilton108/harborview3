@@ -1,0 +1,5 @@
+rootProject.name = 'harborview3'
+
+includeFlat 'oahu'
+includeFlat 'vega'
+// includeFlat 'critter-repos'
