@@ -128,7 +128,7 @@ public class ChartFactory {
         List<LocalDate> dx = winSpots.stream().map(StockPrice::getLocalDx).collect(Collectors.toList());
         List<Long> xAxis = dx.stream().map(this::hRuler).collect(Collectors.toList());
 
-        if (RETURN_ALL_ITEMS == true) {
+        if (RETURN_ALL_ITEMS) {
             result.setxAxis(Lists.reverse(xAxis));
         }
         else {

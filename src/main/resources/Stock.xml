@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="harborview.mybatis.StockMapper">
+    <resultMap id="stockPriceMap"
+               type="harborview.domain.stockmarket.StockPrice">
+        <!--
+        <result column="ticker_id" property="tickerId"/>
+        <id column="oid" property="oid" jdbcType="INTEGER" />
+        -->
+        <result column="dx" property="dx"/>
+        <result column="opn" property="opn"/>
+        <result column="hi" property="hi"/>
+        <result column="lo" property="lo"/>
+        <result column="cls" property="cls"/>
+        <result column="vol" property="volume"/>
+    </resultMap>
+
+    <select id="selectStockPrices" parameterType="map" resultMap="stockPriceMap">
+        select oid,dx,opn,hi,lo,cls,vol from stockmarket.stockprice
+        where ticker_id=#{tickerId} and dx &gt; #{fromDx} order by dx
+    </select>
+
+    <resultMap id="stocksMap"
+               type="harborview.domain.stockmarket.Stock">
+        <id column="oid" property="oid" jdbcType="INTEGER" />
+        <result column="ticker" property="ticker"/>
+        <result column="company_name" property="companyName"/>
+        <result column="status" property="status"/>
+        <result column="ticker_category" property="tickerCategory"/>
+    </resultMap>
+
+    <select id="selectStocks" parameterType="map" resultMap="stocksMap">
+        select * from stockmarket.stocktickers where status=1 order by ticker
+    </select>
+</mapper>
