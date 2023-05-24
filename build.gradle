@@ -19,6 +19,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	// implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	//implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'redis.clients:jedis:4.3.2'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -26,6 +27,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
 	implementation 'com.google.guava:guava:31.1-jre'
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.6'
+	implementation 'ch.qos.logback:logback-classic:1.2.10'
 
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
