@@ -9,5 +9,4 @@ import java.util.List;
 public interface StockMarketAdapter {
     List<Stock> getStocks();
     List<StockPrice> getStockPrices(int tickerId, LocalDate fromDx);
-    String oidToTicker(int oid);
 }

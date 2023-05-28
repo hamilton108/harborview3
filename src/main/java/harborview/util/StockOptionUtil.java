@@ -1,6 +1,7 @@
 package harborview.util;
 
 
+import harborview.domain.stockmarket.StockOptionTicker;
 import oahu.dto.Tuple3;
 import oahu.exceptions.FinancialException;
 import vega.financial.StockOption.OptionType;
@@ -26,8 +27,8 @@ public class StockOptionUtil {
         //populate();
     }
 
-    public static Tuple3<Integer, String, OptionType> stockOptionInfoFromTicker(String priceTicker) {
-        Matcher m = pattern.matcher(priceTicker);
+    public static Tuple3<Integer, String, OptionType> stockOptionInfoFromTicker(StockOptionTicker priceTicker) {
+        Matcher m = pattern.matcher(priceTicker.ticker());
         if (m.find()) {
             String ticker = m.group(1);
             String optionType = m.group(2);
@@ -143,6 +144,12 @@ public class StockOptionUtil {
                 break;
             case "4":
                 year = 2024;
+                break;
+            case "5":
+                year = 2025;
+                break;
+            case "6":
+                year = 2026;
                 break;
         }
         switch (ms) {

@@ -28,11 +28,13 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
 	implementation 'com.google.guava:guava:31.1-jre'
 	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.6'
-	implementation 'ch.qos.logback:logback-classic:1.2.10'
+	//implementation 'ch.qos.logback:logback-classic:1.2.10'
 
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.3.1'
+
 }
 
 tasks.named('test') {
