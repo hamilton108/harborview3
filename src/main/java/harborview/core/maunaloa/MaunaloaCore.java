@@ -18,15 +18,12 @@ import harborview.util.StockOptionUtil;
 import oahu.exceptions.BinarySearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-import static vega.financial.StockOption.OptionType.CALL;
 import vega.financial.calculator.OptionCalculator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -50,6 +47,8 @@ public class MaunaloaCore {
             .expireAfterWrite(10, TimeUnit.MINUTES)
             .build();
 
+    private List<SelectItem> stockTickers;
+
     public MaunaloaCore(NordnetAdapter nordnetAdapter,
                         StockMarketAdapter stockMarketAdapter,
                         OptionCalculator optionCalculator) {
@@ -58,11 +57,14 @@ public class MaunaloaCore {
         this.optionCalculator = optionCalculator;
     }
 
-    @Cacheable(value="stockTickers")
+    //@Cacheable(value="stockTickers")
     public List<SelectItem> getStockTickers() {
-        logger.info("(getStockTickers) Empty cache");
-        return stockMarketAdapter.getStocks().stream().map(
+        if (stockTickers == null) {
+            logger.info("(getStockTickers) Empty cache");
+            stockTickers = stockMarketAdapter.getStocks().stream().map(
                 x -> new SelectItem(String.format("%s - %s",x.getTicker(),x.getCompanyName()),String.valueOf(x.getOid()))).collect(Collectors.toList());
+        }
+        return stockTickers;
     }
 
     private List<StockPrice> getPrices(int stockId) {

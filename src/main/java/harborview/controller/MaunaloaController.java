@@ -23,10 +23,23 @@ public class MaunaloaController {
         this.maunaloaCore = maunaloaCore;
     }
 
+    //------------------------ Thymeleaf ------------------------
     @GetMapping(value = "/charts")
     public String charts() {
         return "maunaloa/charts";
     }
+
+    @GetMapping(value = "/stockoption")
+    public String stockOption() {
+        return "maunaloa/options";
+    }
+
+    @GetMapping(value = "/stockoption/purchases")
+    public String optionPurchases() {
+        return "maunaloa/optionpurchases";
+    }
+
+    //------------------------ Json ------------------------
 
     @ResponseBody
     @GetMapping(value = "/stockprice/tickers", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,6 +76,7 @@ public class MaunaloaController {
     public List<RiscResponse> calcRiscStockPrices(@PathVariable("oid") int oid, @RequestBody List<RiscRequest> riscs) {
         return maunaloaCore.calcRiscStockPrices(riscs);
     }
+
 
     @ResponseBody
     @GetMapping(value = "/demo", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
+//@EnableCaching
 @SpringBootApplication
 @ComponentScan({"oahu.properties"
 		, "harborview.controller"
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.ComponentScan;
 		, "harborview.mybatis"
 		, "vega.financial.calculator"
 })
-@EnableCaching
 public class App {
 
 	public static void main(String[] args) {
