@@ -6,6 +6,7 @@ import harborview.domain.nordnet.FindOptionResponse;
 import harborview.domain.nordnet.RiscRequest;
 import harborview.domain.nordnet.RiscResponse;
 import harborview.domain.stockmarket.StockOptionTicker;
+import harborview.domain.stockmarket.StockTicker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -50,11 +51,39 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
         }
     }
 
+    private String putsOrCalls(String uri) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI(uri))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public String calls(StockTicker ticker) {
+        var uri = optionUri(ticker, true);
+        return putsOrCalls(uri);
+    }
+
+    @Override
+    public String puts(StockTicker ticker) {
+        var uri = optionUri(ticker, false);
+        return putsOrCalls(uri);
+    }
+
     @Override
     public String demo(StockOptionTicker ticker) {
+        /*
         //String uri = String.format("%s/option/YAR3A528.02X", nordnetHost);
 
-        var uri = optionUri(ticker);
+        //var uri = optionUri(ticker);
+
+        var uri = String.format("%s/calls/3", nordnetHost);
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -66,16 +95,25 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
             ObjectMapper objectMapper = new ObjectMapper();
             var mapped = objectMapper.readValue(response.body(), FindOptionResponse.class);
             System.out.println(mapped);
+
             return response.body();
 
         } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+             */
+       return  "" ;
+
     }
 
     private String optionUri(StockOptionTicker ticker) {
         return String.format("%s/option/%s", nordnetHost, ticker.ticker());
     }
+    private String optionUri(StockTicker ticker, boolean isCalls) {
+        var ot = isCalls == true ? "calls" : "puts";
+        return String.format("%s/%s/%d", nordnetHost, ot, ticker.oid());
+    }
+
         /*
     {
         "stock-price": {

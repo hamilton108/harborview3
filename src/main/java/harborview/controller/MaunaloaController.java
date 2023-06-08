@@ -4,6 +4,7 @@ import harborview.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.RiscRequest;
 import harborview.domain.nordnet.RiscResponse;
 import harborview.domain.stockmarket.StockPrice;
+import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.html.Charts;
 import harborview.dto.html.SelectItem;
 import org.springframework.http.MediaType;
@@ -77,12 +78,24 @@ public class MaunaloaController {
         return maunaloaCore.calcRiscStockPrices(riscs);
     }
 
+    @ResponseBody
+    @GetMapping(value = "/stockoption/calls/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String calls(@PathVariable("oid") int oid) {
+        return maunaloaCore.calls(new StockTicker(oid));
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/stockoption/puts/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String puts(@PathVariable("oid") int oid) {
+        return maunaloaCore.puts(new StockTicker(oid));
+    }
 
     @ResponseBody
     @GetMapping(value = "/demo", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Demo demo() {
+    public String demo() {
         var result = maunaloaCore.demo();
-        return new Demo(result);
+        return result;
+        //return new Demo(result);
     }
     public static class Demo {
         private String msg;

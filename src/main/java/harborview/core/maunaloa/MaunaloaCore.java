@@ -12,6 +12,7 @@ import harborview.chart.ChartWeekFactory;
 import harborview.domain.nordnet.*;
 import harborview.domain.stockmarket.StockOptionTicker;
 import harborview.domain.stockmarket.StockPrice;
+import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.html.Charts;
 import harborview.dto.html.SelectItem;
 import harborview.util.StockOptionUtil;
@@ -97,7 +98,16 @@ public class MaunaloaCore {
         System.out.println(result);
         return result;
     }
+    //----------------------------- Puts, Calls--------------------------------
+    public String calls(StockTicker stockTicker) {
+        return nordnetAdapter.calls(stockTicker);
+    }
 
+    public String puts(StockTicker stockTicker) {
+        return nordnetAdapter.puts(stockTicker);
+    }
+
+    //----------------------------- Risc Lines --------------------------------
     void saveRiscResult(int oid,
                         String ticker,
                         double bid,
