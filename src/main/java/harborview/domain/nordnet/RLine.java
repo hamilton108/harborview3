@@ -1,5 +1,7 @@
 package harborview.domain.nordnet;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 public class RLine {
     private final int oid;
     private final String ticker;
@@ -44,6 +46,7 @@ public class RLine {
         return ask;
     }
 
+    @JsonGetter("risc")
     public double getRiscValue() {
         return riscValue;
     }
@@ -56,6 +59,7 @@ public class RLine {
         return riscOptionPrice;
     }
 
+    @JsonGetter("be")
     public double getBreakEven() {
         return breakEven;
     }

@@ -67,28 +67,28 @@ public class MaunaloaCore {
         return stockTickers;
     }
 
-    private List<StockPrice> getPrices(int stockId) {
-        var cached = stockPriceCache.getIfPresent(stockId);
+    private List<StockPrice> getPrices(StockTicker ticker) {
+        var cached = stockPriceCache.getIfPresent(ticker.oid());
         if (cached == null) {
-            logger.info(String.format("Populating the stockPrice cache for oid: %d", stockId));
-            cached = stockMarketAdapter.getStockPrices(stockId, null);
-            stockPriceCache.put(stockId, cached);
+            logger.info(String.format("Populating the stockPrice cache for oid: %d", ticker));
+            cached = stockMarketAdapter.getStockPrices(ticker, null);
+            stockPriceCache.put(ticker.oid(), cached);
         }
         return cached;
     }
 
-    private Charts charts(int stockId, ChartFactory factory) {
-        var prices = getPrices(stockId);
-        return factory.elmCharts(StockMarketAdapterUtil.mapOid(stockId), prices);
+    private Charts charts(StockTicker ticker, ChartFactory factory) {
+        var prices = getPrices(ticker);
+        return factory.elmCharts(ticker, prices);
     }
-    public Charts days(int stockId) {
-        return charts(stockId, chartFactory);
+    public Charts days(StockTicker ticker) {
+        return charts(ticker, chartFactory);
     }
-    public Charts weeks(int stockId) {
-        return charts(stockId, chartWeekFactory);
+    public Charts weeks(StockTicker ticker) {
+        return charts(ticker, chartWeekFactory);
     }
-    public Charts months(int stockId) {
-        return charts(stockId, chartMonthFactory);
+    public Charts months(StockTicker ticker) {
+        return charts(ticker, chartMonthFactory);
     }
 
 
@@ -197,19 +197,25 @@ public class MaunaloaCore {
         return result;
     }
 
-    public List<RLine> getRiscLines(int oid) {
-        var lines = rlineCache.getIfPresent(oid);
+    public List<RLine> getRiscLines(StockTicker ticker) {
+        var lines = rlineCache.getIfPresent(ticker.oid());
         if (lines == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         else {
             return lines;
         }
     }
 
-    public void invalidateRiscLines() {
+    public void invalidateRiscLineCache() {
         rlineCache.invalidateAll();
     }
+    public void invalidateStockPriceCache() {
+        stockPriceCache.invalidateAll();
+    }
 
+    public double optionPriceFor(StockOptionTicker ticker, double stockPrice) {
+        return 1.0;
+    }
 
 }

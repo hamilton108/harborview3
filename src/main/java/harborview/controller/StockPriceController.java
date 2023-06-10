@@ -3,6 +3,7 @@ package harborview.controller;
 import harborview.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.RiscRequest;
 import harborview.domain.nordnet.RiscResponse;
+import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.html.Charts;
 import harborview.dto.html.SelectItem;
 import org.springframework.http.MediaType;
@@ -31,19 +32,19 @@ public class StockPriceController {
     @ResponseBody
     @GetMapping(value = "/days/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Charts days(@PathVariable("oid") int oid) {
-        return maunaloaCore.days(oid);
+        return maunaloaCore.days(new StockTicker(oid));
     }
 
     @ResponseBody
     @GetMapping(value = "/weeks/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Charts weeks(@PathVariable("oid") int oid) {
-        return maunaloaCore.weeks(oid);
+        return maunaloaCore.weeks(new StockTicker(oid));
     }
 
     @ResponseBody
     @GetMapping(value = "/months/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Charts months(@PathVariable("oid") int oid) {
-        return maunaloaCore.months(oid);
+        return maunaloaCore.months(new StockTicker(oid));
     }
 
     @ResponseBody

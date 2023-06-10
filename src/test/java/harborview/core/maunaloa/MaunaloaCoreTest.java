@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import harborview.adapter.NordnetAdapter;
 import harborview.domain.nordnet.*;
 import harborview.domain.stockmarket.StockOptionTicker;
+import harborview.domain.stockmarket.StockTicker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,7 @@ public class MaunaloaCoreTest {
     private final StockOptionTicker realTicker = new StockOptionTicker("YAR3A528.02X");
     private final StockOptionTicker fakeTicker = new StockOptionTicker("YAR1A400");
 
+    private final StockTicker ticker = new StockTicker(3);
     private final OptionCalculator calculaotor = new BlackScholes();
 
     @MockBean
@@ -89,7 +91,7 @@ public class MaunaloaCoreTest {
     @Test
     void test_calc_risc_stock_prices_option_found() {
         when(nordnetAdapter.findOption(realTicker)).thenReturn(createResponse());
-        assertThat(maunaloaCore.getRiscLines(3).size()).isEqualTo(0);
+        assertThat(maunaloaCore.getRiscLines(ticker).size()).isEqualTo(0);
         var risc = new RiscRequest(realTicker, 2.25);
         var riscs = Collections.singletonList(risc);
         var actual = maunaloaCore.calcRiscStockPrices(riscs);
@@ -97,7 +99,7 @@ public class MaunaloaCoreTest {
         var response = actual.get(0);
         assertThat(response.status()).isEqualTo(RiscResponseStatus.OK);
 
-        var riscLines = maunaloaCore.getRiscLines(3);
+        var riscLines = maunaloaCore.getRiscLines(ticker);
         assertThat(riscLines.size()).isEqualTo(1);
 
 

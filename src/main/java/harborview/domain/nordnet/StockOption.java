@@ -1,10 +1,12 @@
 package harborview.domain.nordnet;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import static vega.financial.StockOption.OptionType.CALL;
 import static vega.financial.StockOption.OptionType.PUT;
 import vega.financial.StockOption.OptionType;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StockOption {
     private double ask;
     private double ivAsk;

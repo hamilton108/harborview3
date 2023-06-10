@@ -1,6 +1,7 @@
 package harborview.chart;
 
 import harborview.domain.stockmarket.StockPrice;
+import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.html.Charts;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public class ChartMonthFactory extends ChartFactory {
         return 0;
     }
     @Override
-    public Charts elmCharts(String ticker, Collection<StockPrice> prices) {
+    public Charts elmCharts(StockTicker ticker, Collection<StockPrice> prices) {
         Map<Integer, Map<Integer, List<StockPrice>>> tmx = treeMap(prices);
         List<StockPrice> byMonths = pricesByMonth(tmx);
         return super.elmCharts(ticker, byMonths);

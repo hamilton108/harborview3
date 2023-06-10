@@ -2,6 +2,7 @@ package harborview.chart;
 
 import com.google.common.collect.Lists;
 import harborview.domain.stockmarket.StockPrice;
+import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.html.Candlestick;
 import harborview.dto.html.Chart;
 import harborview.dto.html.Charts;
@@ -111,10 +112,10 @@ public class ChartFactory {
         });
         return chart;
     }
-    public Charts elmCharts(String ticker, Collection<StockPrice> prices) {
+    public Charts elmCharts(StockTicker ticker, Collection<StockPrice> prices) {
         Charts result = new Charts();
 
-        result.setTicker(ticker);
+        result.setTicker(ticker.ticker());
 
         int totalNum = prices.size();
         //int 

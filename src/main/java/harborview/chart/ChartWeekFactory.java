@@ -1,6 +1,7 @@
 package harborview.chart;
 
 import harborview.domain.stockmarket.StockPrice;
+import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.html.Charts;
 
 import java.time.DayOfWeek;
@@ -12,7 +13,7 @@ import java.util.stream.IntStream;
 
 public class ChartWeekFactory extends ChartFactory {
     @Override
-    public Charts elmCharts(String ticker, Collection<StockPrice> prices) {
+    public Charts elmCharts(StockTicker ticker, Collection<StockPrice> prices) {
         Map<Integer, Map<Integer, List<StockPrice>>> mx =
                 prices.stream()
                         .collect(Collectors.groupingBy(s -> s.getLocalDx().getYear(),

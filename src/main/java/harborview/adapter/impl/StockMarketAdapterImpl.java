@@ -3,6 +3,7 @@ package harborview.adapter.impl;
 import harborview.adapter.StockMarketAdapter;
 import harborview.domain.stockmarket.Stock;
 import harborview.domain.stockmarket.StockOptionPurchase;
+import harborview.domain.stockmarket.StockTicker;
 import harborview.mybatis.CritterMapper;
 import harborview.mybatis.MyBatisUtil;
 import harborview.mybatis.StockMapper;
@@ -42,14 +43,14 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
     }
 
     @Override
-    public List getStockPrices(int tickerId, LocalDate fromDx) {
+    public List getStockPrices(StockTicker ticker, LocalDate fromDx) {
         return (myBatisUtil.withSession(session -> {
             var mapper = session.getMapper(StockMapper.class);
             if (fromDx == null) {
-                return mapper.selectStockPrices(tickerId, fromDate);
+                return mapper.selectStockPrices(ticker.oid(), fromDate);
             }
             else {
-                return mapper.selectStockPrices(tickerId, fromDate);
+                return mapper.selectStockPrices(ticker.oid(), fromDate);
             }
         }));
     }
