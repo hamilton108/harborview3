@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import harborview.adapter.NordnetAdapter;
 import harborview.adapter.StockMarketAdapter;
 import harborview.adapter.StockMarketAdapterUtil;
-import harborview.adapter.impl.StockMarketAdapterImpl;
 import harborview.chart.ChartFactory;
 import harborview.chart.ChartMonthFactory;
 import harborview.chart.ChartWeekFactory;
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
 @Component
 public class MaunaloaCore {
 
-    private Logger logger = LoggerFactory.getLogger(StockMarketAdapterImpl.class);
+    private Logger logger = LoggerFactory.getLogger(MaunaloaCore.class);
     private final NordnetAdapter nordnetAdapter;
     private final StockMarketAdapter stockMarketAdapter;
 
@@ -211,4 +210,6 @@ public class MaunaloaCore {
     public void invalidateRiscLines() {
         rlineCache.invalidateAll();
     }
+
+
 }

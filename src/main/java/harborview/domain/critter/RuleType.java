@@ -1,4 +1,4 @@
-package harborview.critter;
+package harborview.domain.critter;
 
 public class RuleType {
     private int oid;

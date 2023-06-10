@@ -1,14 +1,82 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="harborview.critter.mybatis.CritterMapper">
+<mapper namespace="harborview.mybatis.CritterMapper">
 
-    <resultMap id="ruleTypeMap" type="harborview.critter.RuleType">
+    <update id="toggleAcceptRule">
+        update stockmarket.accept_rules set active=#{isActive} where oid=#{oid}
+    </update>
+    <update id="toggleDenyRule">
+        update stockmarket.deny_rules set active=#{isActive} where oid=#{oid}
+    </update>
+
+    <resultMap id="ruleTypeMap" type="harborview.domain.critter.RuleType">
         <id column="oid" property="oid" />
         <result column="description" property="desc" />
     </resultMap>
 
     <select id="ruleTypes" resultMap="ruleTypeMap">
         select * from stockmarket.rule_types order by oid
+    </select>
+
+    <resultMap id="purchaseResultMap" type="harborview.domain.stockmarket.StockOptionPurchase">
+        <id column="oid" property="oid"/>
+        <result column="dx" property="dx"/>
+        <result column="price" property="price"/>
+        <result column="buy" property="buyAtPurchase"/>
+        <result column="spot" property="spotAtPurchase"/>
+        <result column="volume" property="volume"/>
+        <result column="status" property="status"/>
+        <result column="ticker" property="ticker"/>
+        <result column="opid" property="optionId"/>
+        <result column="opname" property="optionName"/>
+        <result column="optype" property="optionType"/>
+        <collection property="critters"
+                    column="oid"
+                    ofType="harborview.domain.critter.Critter"
+                    javaType="java.util.ArrayList">
+            <id column="c_oid" property="oid"/>
+            <result column="c_sell_vol" property="sellVolume" />
+            <result column="c_purchase_id" property="purchaseId" />
+            <result column="c_status" property="status" />
+            <collection column="c_oid"
+                        property="acceptRules"
+                        ofType="harborview.domain.critter.AcceptRule"
+                        javaType="java.util.ArrayList">
+                <id column="a_oid" property="oid"/>
+                <result column="a_value" property="accValue" />
+                <result column="a_rtyp" property="rtyp" />
+                <result column="a_active" property="active" />
+                <result column="a_rtyp_desc" property="rtypDesc" />
+                <collection column="a_oid"
+                            property="denyRules"
+                            ofType="harborview.domain.critter.DenyRule"
+                            javaType="java.util.ArrayList">
+                    <id column="d_oid" property="oid"/>
+                    <result column="d_value" property="denyValue" />
+                    <result column="d_rtyp" property="rtyp" />
+                    <result column="d_rtyp_desc" property="rtypDesc" />
+                    <result column="d_active" property="active" />
+                    <result column="d_has_memory" property="memory" />
+                </collection>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="activePurchasesWithCritters" resultMap="purchaseResultMap">
+        select o.*,s.ticker,d.opname,d.optype,
+        cr.oid as c_oid,cr.status as c_status,cr.sell_vol as c_sell_vol,cr.purchase_id as c_purchase_id,
+        acc.oid as a_oid,acc.value as a_value,acc.rtyp as a_rtyp,acc.value as a_value,ar.description as a_rtyp_desc,acc.active as a_active,
+        dny.oid as d_oid,dny.value as d_value,dny.rtyp as d_rtyp,dny.active as d_active,dny.has_memory as d_has_memory,dr.description as d_rtyp_desc
+        from stockmarket.optionpurchase o
+        join stockmarket.optionx d on d.oid=o.opid
+        join stockmarket.stocktickers s on s.oid=d.stock_id
+        left outer join stockmarket.critter cr on cr.purchase_id=o.oid and cr.status=7
+        left outer join stockmarket.accept_rules acc on acc.cid=cr.oid
+        left outer join stockmarket.rule_types ar on ar.oid=acc.rtyp
+        left outer join stockmarket.deny_rules dny on dny.group_id=acc.oid
+        left outer join stockmarket.rule_types dr on dr.oid=dny.rtyp
+        where o.status=1 and o.purchase_type=#{purchaseType}
+        order by s.oid,o.dx
     </select>
 </mapper>

@@ -2,6 +2,8 @@ package harborview.adapter.impl;
 
 import harborview.adapter.StockMarketAdapter;
 import harborview.domain.stockmarket.Stock;
+import harborview.domain.stockmarket.StockOptionPurchase;
+import harborview.mybatis.CritterMapper;
 import harborview.mybatis.MyBatisUtil;
 import harborview.mybatis.StockMapper;
 import org.slf4j.Logger;
@@ -32,7 +34,7 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
 
     @Override
     public List<Stock> getStocks() {
-        return (myBatisUtil.withSession((session) -> {
+        return (myBatisUtil.withSession(session -> {
             var mapper = session.getMapper(StockMapper.class);
             return mapper.selectStocks();
         }));
@@ -41,7 +43,7 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
 
     @Override
     public List getStockPrices(int tickerId, LocalDate fromDx) {
-        return (myBatisUtil.withSession((session) -> {
+        return (myBatisUtil.withSession(session -> {
             var mapper = session.getMapper(StockMapper.class);
             if (fromDx == null) {
                 return mapper.selectStockPrices(tickerId, fromDate);
@@ -50,5 +52,27 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
                 return mapper.selectStockPrices(tickerId, fromDate);
             }
         }));
+    }
+
+    @Override
+    public List<StockOptionPurchase> activePurchasesWithCritters(int purchaseType) {
+        return (myBatisUtil.withSession(session -> {
+            var mapper = session.getMapper(CritterMapper.class);
+            return mapper.activePurchasesWithCritters(purchaseType);
+        }));
+    }
+
+    @Override
+    public void toggleRule(int ruleId, boolean active, boolean isAccRule) {
+       myBatisUtil.withSessionConsumer(session -> {
+           var mapper = session.getMapper(CritterMapper.class);
+           var isActive = active ? "y" : "n";
+           if (isAccRule) {
+               mapper.toggleAcceptRule(ruleId, isActive);
+           }
+           else {
+               mapper.toggleDenyRule(ruleId, isActive);
+           }
+       });
     }
 }
