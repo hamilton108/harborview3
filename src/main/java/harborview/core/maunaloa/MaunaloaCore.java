@@ -19,6 +19,7 @@ import oahu.exceptions.BinarySearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import vega.financial.StockOption;
 import vega.financial.calculator.OptionCalculator;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static vega.financial.StockOption.OptionType.CALL;
 
 @Component
 public class MaunaloaCore {
@@ -215,7 +218,20 @@ public class MaunaloaCore {
     }
 
     public double optionPriceFor(StockOptionTicker ticker, double stockPrice) {
-        return 1.0;
+        var info = StockOptionUtil.stockOptionInfoFromTicker(ticker);
+        try {
+            var option = nordnetAdapter.findOption(ticker).getStockOption();
+
+            if (info.third() == CALL) {
+                return optionCalculator.callPrice2(stockPrice, option.getX(), option.getDays(), option.getIvBid());
+            } else {
+                return optionCalculator.putPrice2(stockPrice, option.getX(), option.getDays(), option.getIvBid());
+            }
+        }
+        catch (RuntimeException ex) {
+            logger.error(ex.getMessage());
+            return -1.0;
+        }
     }
 
 }

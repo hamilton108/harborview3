@@ -1,4 +1,4 @@
-package harborview.controller;
+package harborview.controller.critter;
 
 import harborview.core.critter.CritterCore;
 import harborview.dto.StatusDTO;

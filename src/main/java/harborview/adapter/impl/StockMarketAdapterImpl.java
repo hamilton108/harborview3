@@ -3,6 +3,7 @@ package harborview.adapter.impl;
 import harborview.adapter.StockMarketAdapter;
 import harborview.domain.stockmarket.Stock;
 import harborview.domain.stockmarket.StockOptionPurchase;
+import harborview.domain.stockmarket.StockPrice;
 import harborview.domain.stockmarket.StockTicker;
 import harborview.mybatis.CritterMapper;
 import harborview.mybatis.MyBatisUtil;
@@ -22,7 +23,8 @@ import java.util.Map;
 @Profile("prod")
 public class StockMarketAdapterImpl implements StockMarketAdapter {
 
-    private Logger logger = LoggerFactory.getLogger(StockMarketAdapterImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(StockMarketAdapterImpl.class);
+
     private final MyBatisUtil myBatisUtil;
     private final Date fromDate;
 
@@ -43,14 +45,14 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
     }
 
     @Override
-    public List getStockPrices(StockTicker ticker, LocalDate fromDx) {
+    public List<StockPrice> getStockPrices(StockTicker ticker, LocalDate fromDx) {
         return (myBatisUtil.withSession(session -> {
             var mapper = session.getMapper(StockMapper.class);
             if (fromDx == null) {
                 return mapper.selectStockPrices(ticker.oid(), fromDate);
             }
             else {
-                return mapper.selectStockPrices(ticker.oid(), fromDate);
+                return mapper.selectStockPrices(ticker.oid(), Date.valueOf(fromDx));
             }
         }));
     }

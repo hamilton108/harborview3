@@ -15,7 +15,7 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="Critter.xml"/>
-        <mapper resource="Stock.xml"/>
+        <mapper resource="mybatis/Critter.xml"/>
+        <mapper resource="mybatis/Stock.xml"/>
     </mappers>
 </configuration>

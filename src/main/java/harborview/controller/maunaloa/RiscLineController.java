@@ -1,4 +1,4 @@
-package harborview.controller;
+package harborview.controller.maunaloa;
 
 import harborview.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.RLine;

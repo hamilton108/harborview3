@@ -3,11 +3,12 @@ package harborview.adapter.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import harborview.adapter.NordnetAdapter;
 import harborview.domain.nordnet.FindOptionResponse;
-import harborview.domain.nordnet.RiscRequest;
-import harborview.domain.nordnet.RiscResponse;
 import harborview.domain.stockmarket.StockOptionTicker;
 import harborview.domain.stockmarket.StockTicker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,14 +17,15 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 //@Component("comp2")
 
 @Component()
+@Profile("prod")
 public class NordnetAdapterImpl implements NordnetAdapter  {
+    private final Logger logger = LoggerFactory.getLogger(NordnetAdapterImpl.class);
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final HttpClient client = HttpClient.newHttpClient();
 
@@ -43,7 +45,8 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            ObjectMapper objectMapper = new ObjectMapper();
+            logger.info(String.format("Found option for: %s with uri: %s", ticker.ticker(), uri));
+
             return objectMapper.readValue(response.body(), FindOptionResponse.class);
 
         } catch (URISyntaxException | IOException | InterruptedException e) {
@@ -59,6 +62,7 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info(String.format("Found puts or calls for %s", uri));
             return response.body();
         } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -110,7 +114,7 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
         return String.format("%s/option/%s", nordnetHost, ticker.ticker());
     }
     private String optionUri(StockTicker ticker, boolean isCalls) {
-        var ot = isCalls == true ? "calls" : "puts";
+        var ot = isCalls ? "calls" : "puts";
         return String.format("%s/%s/%d", nordnetHost, ot, ticker.oid());
     }
 

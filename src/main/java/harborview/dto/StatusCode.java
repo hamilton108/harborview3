@@ -1,8 +1,9 @@
 package harborview.dto;
 
 public enum StatusCode {
-    Ok(1),
-    Error(2);
+    Retry(1),
+    Ok(2),
+    Error(3);
 
     private final int status;
 

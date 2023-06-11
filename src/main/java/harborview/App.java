@@ -7,8 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 //@EnableCaching
 @SpringBootApplication
-@ComponentScan({"oahu.properties"
-		, "harborview.controller"
+@ComponentScan({
+		  "harborview.controller"
 		, "harborview.core"
 		, "harborview.adapter"
 		, "harborview.mybatis"
