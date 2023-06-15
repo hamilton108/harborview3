@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import harborview.util.StockOptionUtil;
+import vega.financial.StockOptionType;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -31,7 +32,7 @@ public class StockOption implements vega.financial.StockOption {
 
 
     public StockOption(String ticker,
-                       OptionType opType,
+                       StockOptionType opType,
                        double x,
                        Stock stock,
                    LocalDate currentDate) {
@@ -114,25 +115,25 @@ public class StockOption implements vega.financial.StockOption {
     //--------------------------------------------------
     //------------- OpType
     //--------------------------------------------------
-    private OptionType opType;
-    public OptionType getOpType() {
+    private StockOptionType opType;
+    public StockOptionType getOpType() {
         return opType;
     }
 
 
-    public void setOpType(OptionType value) {
+    public void setOpType(StockOptionType value) {
             opType = value;
     }
 
     public String getOpTypeStr() {
-        return getOpType() == OptionType.CALL ? "c" : "p";
+        return getOpType() == StockOptionType.CALL ? "c" : "p";
     }
     public void setOpTypeStr(String value) {
         if (value.equals("c")) {
-            setOpType(OptionType.CALL);
+            setOpType(StockOptionType.CALL);
         }
         else {
-            setOpType(OptionType.PUT);
+            setOpType(StockOptionType.PUT);
         }
     }
 

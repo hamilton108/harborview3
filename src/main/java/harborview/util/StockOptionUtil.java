@@ -4,12 +4,14 @@ package harborview.util;
 import harborview.domain.stockmarket.StockOptionTicker;
 import oahu.dto.Tuple3;
 import oahu.exceptions.FinancialException;
-import vega.financial.StockOption.OptionType;
+import org.springframework.validation.ObjectError;
+import vega.financial.StockOptionType;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,19 +29,19 @@ public class StockOptionUtil {
         //populate();
     }
 
-    public static Tuple3<Integer, String, OptionType> stockOptionInfoFromTicker(StockOptionTicker priceTicker) {
+    public static Tuple3<Integer, String, StockOptionType> stockOptionInfoFromTicker(StockOptionTicker priceTicker) {
         Matcher m = pattern.matcher(priceTicker.ticker());
         if (m.find()) {
             String ticker = m.group(1);
             String optionType = m.group(2);
             int oid = stockTickerToOid(ticker);
-            OptionType opt = asOptionType(optionType);
+            StockOptionType opt = asOptionType(optionType);
             return new Tuple3<>(oid,ticker,opt);
         }
         throw new FinancialException(String.format("No stock option info for %s", priceTicker));
     }
 
-    private static OptionType asOptionType(String optionTypeStr) {
+    private static StockOptionType asOptionType(String optionTypeStr) {
         switch (optionTypeStr) {
             case "A":
             case "B":
@@ -53,7 +55,7 @@ public class StockOptionUtil {
             case "J":
             case "K":
             case "L":
-                return OptionType.CALL;
+                return StockOptionType.CALL;
             case "M":
             case "N":
             case "O":
@@ -66,7 +68,7 @@ public class StockOptionUtil {
             case "V":
             case "W":
             case "X":
-                return OptionType.PUT;
+                return StockOptionType.PUT;
         }
         throw new FinancialException(String.format("No option type for %s", optionTypeStr));
     }
@@ -218,5 +220,13 @@ public class StockOptionUtil {
 
     public LocalDate getCurrentDate() {
         return currentDate;
+    }
+
+    public static String validationErrorsToString(List<ObjectError> errors) {
+       var result = new StringBuilder();
+       for (var err : errors) {
+           result.append(err.getDefaultMessage());
+       }
+       return result.toString();
     }
 }

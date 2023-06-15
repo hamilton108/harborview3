@@ -1,6 +1,7 @@
 package harborview.domain.stockmarket;
 
 import oahu.exceptions.BinarySearchException;
+import vega.financial.StockOptionType;
 import vega.financial.calculator.OptionCalculator;
 
 import java.util.Optional;
@@ -116,7 +117,7 @@ public class StockOptionPrice implements vega.financial.StockOptionPrice {
         double strike = stockOption.getX();
         double expiry = getDays()/365.0;
         Optional<Double> ivBuy = getIvBuy();
-        return ivBuy.map(aDouble -> stockOption.getOpType() == StockOption.OptionType.CALL ?
+        return ivBuy.map(aDouble -> stockOption.getOpType() == StockOptionType.CALL ?
                 calculator.callPrice(curStockPrice, strike, expiry, aDouble) :
                 calculator.putPrice(curStockPrice, strike, expiry, aDouble)).orElse(-1.0);
     }

@@ -4,14 +4,17 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Component;
 
+//import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class MyBatisUtil {
 
+    private final Logger logger = LoggerFactory.getLogger(MyBatisUtil.class);
     private final SqlSessionFactory sqlSessionFactory;
 
     public MyBatisUtil(SqlSessionFactory sqlSessionFactory) {
@@ -33,7 +36,8 @@ public class MyBatisUtil {
         }
         catch (Exception ex) {
             if (errorHandler == null){
-                Logger.getLogger(MyBatisUtil.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage());
+                throw ex;
             }
             else {
                 errorHandler.accept(ex);
@@ -48,6 +52,25 @@ public class MyBatisUtil {
         }
     }
 
+    /*
+    public <T> T withSession2(Function<SqlSession,T> fn, Function<Exception,T> errHandler) {
+        SqlSession session = null;
+        try {
+            session = getSession();
+            return fn.apply(session);
+        }
+        catch (Exception ex) {
+            return errHandler.apply(ex);
+        }
+        finally {
+            if (session != null) {
+                session.commit();
+                session.close();
+            }
+        }
+    }
+     */
+
     public void withSessionConsumer(Consumer<SqlSession> consumer) {
         withSessionConsumer(consumer, null);
     }
@@ -59,7 +82,8 @@ public class MyBatisUtil {
         }
         catch (Exception ex) {
             if (errorHandler == null){
-                Logger.getLogger(MyBatisUtil.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage());
+                throw ex;
             }
             else {
                 errorHandler.accept(ex);
@@ -72,5 +96,6 @@ public class MyBatisUtil {
             }
         }
     }
+
 
 }

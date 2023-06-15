@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import vega.financial.calculator.BlackScholes;
 import vega.financial.calculator.OptionCalculator;
-import static vega.financial.StockOption.OptionType.CALL;
+import static vega.financial.StockOptionType.CALL;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.matches;

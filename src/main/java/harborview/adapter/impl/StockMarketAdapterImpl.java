@@ -1,13 +1,11 @@
 package harborview.adapter.impl;
 
 import harborview.adapter.StockMarketAdapter;
-import harborview.domain.stockmarket.Stock;
-import harborview.domain.stockmarket.StockOptionPurchase;
-import harborview.domain.stockmarket.StockPrice;
-import harborview.domain.stockmarket.StockTicker;
+import harborview.domain.stockmarket.*;
 import harborview.mybatis.CritterMapper;
 import harborview.mybatis.MyBatisUtil;
 import harborview.mybatis.StockMapper;
+import harborview.mybatis.StockOptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
 @Component()
 @Profile("prod")
@@ -28,6 +26,8 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
     private final MyBatisUtil myBatisUtil;
     private final Date fromDate;
 
+    private List<Stock> stocks;
+
     public StockMarketAdapterImpl(MyBatisUtil myBatisUtil,
                                   @Value("${adapter.stockmarket.from-date}") String fromDate) {
         this.myBatisUtil = myBatisUtil;
@@ -35,13 +35,30 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
         logger.info(String.format("From date: %s", this.fromDate.toString()));
     }
 
+    private void populateStocksIfEmtpy() {
+        if (stocks == null) {
+            myBatisUtil.withSessionConsumer(session -> {
+                var mapper = session.getMapper(StockMapper.class);
+                stocks = mapper.selectStocks();
+            });
+        }
+    }
+
     @Override
     public List<Stock> getStocks() {
-        return (myBatisUtil.withSession(session -> {
-            var mapper = session.getMapper(StockMapper.class);
-            return mapper.selectStocks();
-        }));
+        populateStocksIfEmtpy();
+        return stocks;
+    }
 
+    @Override
+    public Stock findStock(int oid) {
+        populateStocksIfEmtpy();
+        for (var s : stocks) {
+            if (s.getOid() == oid) {
+                return s;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -77,5 +94,37 @@ public class StockMarketAdapterImpl implements StockMarketAdapter {
                mapper.toggleDenyRule(ruleId, isActive);
            }
        });
+    }
+
+    @Override
+    public StockOption findStockOption(StockOptionTicker stockOptionTicker) {
+        return (myBatisUtil.withSession(session -> {
+                                            var mapper = session.getMapper(StockOptionMapper.class);
+                                            return mapper.findStockOption(stockOptionTicker.ticker());
+                                            }));
+    }
+
+    @Override
+    public void insertPurchase(StockOptionPurchase purchase, Consumer<Exception> errorHandler) {
+        myBatisUtil.withSessionConsumer(session -> {
+                var mapper = session.getMapper(StockOptionMapper.class);
+                mapper.insertPurchase(purchase);
+            }, errorHandler);
+    }
+
+    @Override
+    public void insertSale(StockOptionSale sale, Consumer<Exception> errorHandler) {
+        myBatisUtil.withSessionConsumer(session -> {
+            var mapper = session.getMapper(StockOptionMapper.class);
+            mapper.insertSale(sale);
+        }, errorHandler);
+    }
+
+    @Override
+    public void insertStockOption(StockOption option, Consumer<Exception> errorHandler) {
+        myBatisUtil.withSessionConsumer(session -> {
+                var mapper = session.getMapper(StockOptionMapper.class);
+                mapper.insertStockOption(option);
+            }, errorHandler);
     }
 }

@@ -18,7 +18,7 @@
       <!-- rollover daily -->
       <fileNamePattern>logs/harborview3-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
       <!-- or whenever the file size reaches 64 MB -->
-      <maxFileSize>12 MB</maxFileSize>
+      <maxFileSize>3 MB</maxFileSize>
     </rollingPolicy>
 
     <!-- Safely log to the same file from multiple JVMs. Degrades performance! -->

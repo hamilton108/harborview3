@@ -21,7 +21,7 @@ import java.net.http.HttpResponse;
 //@Component("comp2")
 
 @Component()
-@Profile("prod")
+@Profile({"prod","demo"})
 public class NordnetAdapterImpl implements NordnetAdapter  {
     private final Logger logger = LoggerFactory.getLogger(NordnetAdapterImpl.class);
 

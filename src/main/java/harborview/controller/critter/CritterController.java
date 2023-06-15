@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static harborview.dto.StatusCode.Ok;
-import static harborview.dto.StatusCode.Error;
+import static harborview.dto.StatusCode.OK;
+import static harborview.dto.StatusCode.ERROR;
 
 @Controller
 @RequestMapping("/critter")
@@ -50,10 +50,10 @@ public class CritterController {
                             isAccRule ? "accRule" : "denyRule",
                             ruleId,
                             isActive ? "active" : "inactive"),
-                    Ok.getStatus());
+                    OK.getStatus());
         }
         catch (Exception ex) {
-            return new StatusDTO(false, String.format("Error: %s", ex.getMessage()), Error.getStatus());
+            return new StatusDTO(false, String.format("Error: %s", ex.getMessage()), ERROR.getStatus());
         }
     }
 }

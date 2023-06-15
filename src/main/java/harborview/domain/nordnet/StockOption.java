@@ -2,9 +2,10 @@ package harborview.domain.nordnet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import static vega.financial.StockOption.OptionType.CALL;
-import static vega.financial.StockOption.OptionType.PUT;
-import vega.financial.StockOption.OptionType;
+import vega.financial.StockOptionType;
+
+import static vega.financial.StockOptionType.CALL;
+import static vega.financial.StockOptionType.PUT;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StockOption {
@@ -86,7 +87,7 @@ public class StockOption {
         this.x = x;
     }
 
-    public OptionType getOptionType() {
+    public StockOptionType getOptionType() {
         return optionType == 1 ?
                 CALL :
                 PUT;

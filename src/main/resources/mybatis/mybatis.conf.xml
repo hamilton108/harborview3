@@ -17,5 +17,6 @@
     <mappers>
         <mapper resource="mybatis/Critter.xml"/>
         <mapper resource="mybatis/Stock.xml"/>
+        <mapper resource="mybatis/StockOption.xml"/>
     </mappers>
 </configuration>

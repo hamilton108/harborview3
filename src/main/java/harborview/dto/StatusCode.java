@@ -1,9 +1,14 @@
 package harborview.dto;
 
 public enum StatusCode {
-    Retry(1),
-    Ok(2),
-    Error(3);
+    RETRY(1),
+    OK(2),
+    ERROR(3),
+    REQUEST_VALIDATION_ERROR(4),
+    INSERT_DB_ERROR(5),
+    INSERT_STOCK_OPTION_ERROR(6),
+    PURCHASE_STOCK_OPTION_ERROR(7),
+    SELL_STOCK_OPTION_ERROR(8);
 
     private final int status;
 

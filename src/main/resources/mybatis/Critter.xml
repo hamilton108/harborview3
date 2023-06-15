@@ -79,4 +79,5 @@
         where o.status=1 and o.purchase_type=#{purchaseType}
         order by s.oid,o.dx
     </select>
+
 </mapper>

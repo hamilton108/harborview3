@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="harborview.mybatis.StockOptionMapper">
+    <resultMap id="stockOptionMap" type="harborview.domain.stockmarket.StockOption">
+        <result column="oid" property="oid"/>
+        <result column="opname" property="ticker"/>
+        <result column="strike" property="x"/>
+        <result column="exp_date" property="expirySql"/>
+        <result column="optype" property="opTypeStr"/>
+        <result column="stock_id" property="stockId"/>
+    </resultMap>
+
+    <select id="findStockOption" resultMap="stockOptionMap" parameterType="string">
+        select oid,opname,strike,exp_date,optype,stock_id,series
+        from stockmarket.optionx where opname=#{value}
+    </select>
+
+    <insert id="insertPurchase"
+            parameterType="harborview.domain.stockmarket.StockOptionPurchase"
+            useGeneratedKeys="true"
+            keyProperty="oid" >
+        insert into stockmarket.optionpurchase (opid, dx, price, volume, status, purchase_type, spot, buy)
+        values (#{optionId}, #{dx}, #{price}, #{volume}, #{status}, #{purchaseType}, #{spotAtPurchase}, #{buyAtPurchase})
+    </insert>
+
+    <insert id="insertStockOption"
+            parameterType="harborview.domain.stockmarket.StockOption"
+            useGeneratedKeys="true"
+            keyProperty="oid" >
+        insert into stockmarket.optionx (opname, strike, exp_date, optype, stock_id, series)
+        values (#{ticker}, #{x}, #{expirySql}, #{opTypeStr}, #{stockId}, #{series})
+    </insert>
+    <!--
+    oid              | integer |           | not null | nextval('optionsale_oid_seq'::regclass)
+    purchase_id      | integer |           | not null |
+    dx               | date    |           |          | now()
+    price            | price   |           | not null |
+    volume           | volume  |           | not null |
+    status           | status  |           |          | 0
+    transaction_cost | price   |           | not null | 0
+    -->
+
+    <insert id="insertSale"
+            parameterType="harborview.domain.stockmarket.StockOptionSale"
+            useGeneratedKeys="true"
+            keyProperty="oid" >
+        insert into stockmarket.optionsale (purchase_id, price, volume)
+        values (#{purchaseOid}, #{price}, #{volume})
+    </insert>
+</mapper>
