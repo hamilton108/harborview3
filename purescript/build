@@ -1,0 +1,45 @@
+#!/bin/bash
+
+usage()
+{
+cat << EOF
+usage: $0 options
+
+OPTIONS:
+   -h      Show this message
+   -m      Module (1: Maunaloa, 2: OptionPurchase)
+EOF
+}
+
+MODULE=
+
+while getopts “hm:” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         m)
+             MODULE=$OPTARG
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+# sed -i '$ d' $TARGET 
+
+case $MODULE in
+
+    1)  spago bundle-app --main Main --to  dist/ps-charts.js
+        ;;
+
+    2)  spago bundle-app --main OptionPurchaseMain --to dist/ps-optionpurchase.js
+        ;;
+
+esac
+
+exit 0

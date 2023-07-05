@@ -97,7 +97,7 @@ public class ChartFactory {
 
     private Chart volumeChart(List<StockPrice> spots) {
         Chart chart = new Chart();
-        List<Double> vol = spots.stream().map(x -> (double)x.getVolume()).collect(Collectors.toList());
+        List<Double> vol = spots.stream().map(x -> (double)x.getVolume()).toList();
         OptionalDouble maxVol = vol.stream().mapToDouble(v -> v).max();
         maxVol.ifPresent(v -> {
             List<Double> normalized = vol.stream().map(x -> x/v).collect(Collectors.toList());
