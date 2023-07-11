@@ -157,7 +157,15 @@ document.addEventListener("DOMContentLoaded", function () {
             fetchLevelId: "",
             delLevelId: ""
         };
-        return [mainChart, osc];
+        const volume = {
+            chartId: "chart3", canvasId: c.VOLUME,
+            chartHeight: 110.0,
+            levelCanvasId: "",
+            addLevelId: "",
+            fetchLevelId: "",
+            delLevelId: ""
+        };
+        return [mainChart, osc, volume];
     };
 
     const fetchTickers = (nodeId, eventHandler) => {

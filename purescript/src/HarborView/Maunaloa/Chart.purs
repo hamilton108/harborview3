@@ -8,14 +8,14 @@ import Effect (Effect)
 import Effect.Console (logShow)
 
 import HarborView.Maunaloa.Common 
-    ( ValueRange(..)
-    , Padding(..)
-    , ChartWidth(..)
-    , ChartHeight(..)
-    , HtmlId(..)
-    , Pix(..)
-    , ChartId
-    )
+  ( ValueRange(..)
+  , Padding(..)
+  , ChartWidth(..)
+  , ChartHeight(..)
+  , HtmlId(..)
+  , Pix(..)
+  , ChartId
+  )
 import HarborView.Maunaloa.HRuler as H
 import HarborView.Maunaloa.VRuler as V
 import HarborView.Maunaloa.Line as L
@@ -23,84 +23,84 @@ import HarborView.Maunaloa.Bar as Bar
 import HarborView.Maunaloa.Candlestick as CNDL
 
 type ChartLevel = 
-    { levelCanvasId :: HtmlId
-    , addLevelId :: HtmlId
-    , fetchLevelId :: HtmlId
-    }
+  { levelCanvasId :: HtmlId
+  , addLevelId :: HtmlId
+  , fetchLevelId :: HtmlId
+  }
 
 type ChartContent = 
-    { lines :: L.Lines
-    , candlesticks :: CNDL.Candlesticks
-    , bars :: Bar.Bars
-    , canvasId :: HtmlId 
-    , vruler :: V.VRuler
-    , w :: ChartWidth
-    , h :: ChartHeight
-    , chartLevel :: Maybe ChartLevel
-    }
+  { lines :: L.Lines
+  , candlesticks :: CNDL.Candlesticks
+  , bars :: Bar.Bars
+  , canvasId :: HtmlId 
+  , vruler :: V.VRuler
+  , w :: ChartWidth
+  , h :: ChartHeight
+  , chartLevel :: Maybe ChartLevel
+  }
 
 type ChartContent2 = 
-    { canvasId :: HtmlId 
-    , w :: ChartWidth
-    , h :: ChartHeight
-    }
+  { canvasId :: HtmlId 
+  , w :: ChartWidth
+  , h :: ChartHeight
+  }
 
 data Chart 
-    = Chart ChartContent
-    | ChartWithoutTicker ChartContent2 
-    | EmptyChart
+  = Chart ChartContent
+  | ChartWithoutTicker ChartContent2 
+  | EmptyChart
 
 emptyChart :: ChartContent
 emptyChart = 
-    { lines: []
-    , candlesticks: []
-    , bars: []
-    , canvasId: HtmlId ""
-    , vruler: V.VRuler 
-                { ppy: Pix 0.0
-                , maxVal: 0.0
-                , w: ChartWidth 0.0
-                , h: ChartHeight 0.0
-                , padding: 
-                    Padding 
-                    { left: 0.0
-                    , top: 0.0
-                    , right: 0.0
-                    , bottom: 0.0
-                    }
-                }
-    , w: ChartWidth 0.0
-    , h: ChartHeight 0.0
-    , chartLevel: Nothing
-    }
+  { lines: []
+  , candlesticks: []
+  , bars: []
+  , canvasId: HtmlId ""
+  , vruler: V.VRuler 
+              { ppy: Pix 0.0
+              , maxVal: 0.0
+              , w: ChartWidth 0.0
+              , h: ChartHeight 0.0
+              , padding: 
+                  Padding 
+                  { left: 0.0
+                  , top: 0.0
+                  , right: 0.0
+                  , bottom: 0.0
+                  }
+              }
+  , w: ChartWidth 0.0
+  , h: ChartHeight 0.0
+  , chartLevel: Nothing
+  }
 
 newtype ChartConfig =
-    ChartConfig
-    { chartId :: ChartId
-    , htmlId :: HtmlId
-    , w :: ChartWidth
-    , h :: ChartHeight
-    , chartLevel :: Maybe ChartLevel
-    }
+  ChartConfig
+  { chartId :: ChartId
+  , htmlId :: HtmlId
+  , w :: ChartWidth
+  , h :: ChartHeight
+  , chartLevel :: Maybe ChartLevel
+  }
 
 derive instance eqChart :: Eq Chart
 
 instance showChart :: Show Chart where
-    show (Chart cx) = 
-        "(Chart lines: " <> show cx.lines <> 
-        ", candlesticks: " <> show cx.candlesticks <> 
-        ", canvasId: " <> show cx.canvasId <> 
-        ", vruler: " <> show cx.vruler <> 
-        ", w: " <> show cx.w <> 
-        ", h: " <> show cx.h <> 
-        ", chartLevel: " <> show cx.chartLevel <> ")"
-    show (ChartWithoutTicker cx) = 
-        "(ChartWithoutTicker : " <> 
-        ", canvasId: " <> show cx.canvasId <> 
-        ", w: " <> show cx.w <> 
-        ", h: " <> show cx.h <> ")"
-    show (EmptyChart) = 
-        "(EmptyChart)" 
+  show (Chart cx) = 
+    "(Chart lines: " <> show cx.lines <> 
+    ", candlesticks: " <> show cx.candlesticks <> 
+    ", canvasId: " <> show cx.canvasId <> 
+    ", vruler: " <> show cx.vruler <> 
+    ", w: " <> show cx.w <> 
+    ", h: " <> show cx.h <> 
+    ", chartLevel: " <> show cx.chartLevel <> ")"
+  show (ChartWithoutTicker cx) = 
+    "(ChartWithoutTicker : " <> 
+    ", canvasId: " <> show cx.canvasId <> 
+    ", w: " <> show cx.w <> 
+    ", h: " <> show cx.h <> ")"
+  show (EmptyChart) = 
+    "(EmptyChart)" 
 
 
 {-

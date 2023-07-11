@@ -79,10 +79,10 @@ var PS =
     return dict.map;
   };
   var mapFlipped = function(dictFunctor) {
-    var map16 = map(dictFunctor);
+    var map17 = map(dictFunctor);
     return function(fa) {
       return function(f) {
-        return map16(f)(fa);
+        return map17(f)(fa);
       };
     };
   };
@@ -100,10 +100,10 @@ var PS =
   };
   var applySecond = function(dictApply) {
     var apply1 = apply(dictApply);
-    var map16 = map(dictApply.Functor0());
+    var map17 = map(dictApply.Functor0());
     return function(a) {
       return function(b) {
-        return apply1(map16($$const(identity2))(a))(b);
+        return apply1(map17($$const(identity2))(a))(b);
       };
     };
   };
@@ -603,19 +603,6 @@ var PS =
   var showInt = {
     show: showIntImpl
   };
-  var showBoolean = {
-    show: function(v) {
-      if (v) {
-        return "true";
-      }
-      ;
-      if (!v) {
-        return "false";
-      }
-      ;
-      throw new Error("Failed pattern match at Data.Show (line 29, column 1 - line 31, column 23): " + [v.constructor.name]);
-    }
-  };
   var show = function(dict) {
     return dict.show;
   };
@@ -629,14 +616,14 @@ var PS =
     return function(dictShowRecordFields) {
       var showRecordFields1 = showRecordFields(dictShowRecordFields);
       return function(dictShow) {
-        var show16 = show(dictShow);
+        var show15 = show(dictShow);
         return {
           showRecordFields: function(v) {
             return function(record) {
               var tail2 = showRecordFields1($$Proxy.value)(record);
               var key = reflectSymbol2($$Proxy.value);
               var focus2 = unsafeGet(key)(record);
-              return " " + (key + (": " + (show16(focus2) + ("," + tail2))));
+              return " " + (key + (": " + (show15(focus2) + ("," + tail2))));
             };
           }
         };
@@ -646,13 +633,13 @@ var PS =
   var showRecordFieldsConsNil = function(dictIsSymbol) {
     var reflectSymbol2 = reflectSymbol(dictIsSymbol);
     return function(dictShow) {
-      var show16 = show(dictShow);
+      var show15 = show(dictShow);
       return {
         showRecordFields: function(v) {
           return function(record) {
             var key = reflectSymbol2($$Proxy.value);
             var focus2 = unsafeGet(key)(record);
-            return " " + (key + (": " + (show16(focus2) + " ")));
+            return " " + (key + (": " + (show15(focus2) + " ")));
           };
         }
       };
@@ -679,11 +666,11 @@ var PS =
     return Just2;
   }();
   var showMaybe = function(dictShow) {
-    var show11 = show(dictShow);
+    var show10 = show(dictShow);
     return {
       show: function(v) {
         if (v instanceof Just) {
-          return "(Just " + (show11(v.value0) + ")");
+          return "(Just " + (show10(v.value0) + ")");
         }
         ;
         if (v instanceof Nothing) {
@@ -978,10 +965,10 @@ var PS =
   var $$try = function(dictMonadError) {
     var catchError1 = catchError(dictMonadError);
     var Monad0 = dictMonadError.MonadThrow0().Monad0();
-    var map16 = map(Monad0.Bind1().Apply0().Functor0());
+    var map17 = map(Monad0.Bind1().Apply0().Functor0());
     var pure10 = pure(Monad0.Applicative0());
     return function(a) {
-      return catchError1(map16(Right.create)(a))(function($52) {
+      return catchError1(map17(Right.create)(a))(function($52) {
         return pure10(Left.create($52));
       });
     };
@@ -2211,10 +2198,10 @@ var PS =
     };
   };
   var functorExceptT = function(dictFunctor) {
-    var map16 = map(dictFunctor);
+    var map17 = map(dictFunctor);
     return {
       map: function(f) {
-        return mapExceptT(map16(map4(f)));
+        return mapExceptT(map17(map4(f)));
       }
     };
   };
@@ -2541,7 +2528,7 @@ var PS =
       };
     }
     return function(apply3) {
-      return function(map16) {
+      return function(map17) {
         return function(pure10) {
           return function(f) {
             return function(array) {
@@ -2550,14 +2537,14 @@ var PS =
                   case 0:
                     return pure10([]);
                   case 1:
-                    return map16(array1)(f(array[bot]));
+                    return map17(array1)(f(array[bot]));
                   case 2:
-                    return apply3(map16(array2)(f(array[bot])))(f(array[bot + 1]));
+                    return apply3(map17(array2)(f(array[bot])))(f(array[bot + 1]));
                   case 3:
-                    return apply3(apply3(map16(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
+                    return apply3(apply3(map17(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
                   default:
                     var pivot = bot + Math.floor((top2 - bot) / 4) * 2;
-                    return apply3(map16(concat2)(go2(bot, pivot)))(go2(pivot, top2));
+                    return apply3(map17(concat2)(go2(bot, pivot)))(go2(pivot, top2));
                 }
               }
               return go2(0, array.length);
@@ -2755,9 +2742,9 @@ var PS =
 
   // output/Effect.Console/index.js
   var logShow = function(dictShow) {
-    var show11 = show(dictShow);
+    var show10 = show(dictShow);
     return function(a) {
-      return log2(show11(a));
+      return log2(show10(a));
     };
   };
 
@@ -2790,74 +2777,28 @@ var PS =
     return getCanvasElementByIdImpl(elId, Just.create, Nothing.value);
   };
 
-  // output/HarborView.Maunaloa.Candlestick/foreign.js
-  var fi_paint = function(xaxis) {
-    return function(candlestix) {
-      return function(ctx) {
-        return function() {
-          ctx.strokeStyle = "#000000";
-          ctx.fillStyle = "#ffaa00";
-          ctx.lineWidth = 0.5;
-          const numCandlestix = candlestix.length;
-          for (var i = 0; i < numCandlestix; ++i) {
-            paintCandlestick(xaxis[i], candlestix[i], ctx);
-          }
-        };
+  // output/HarborView.Maunaloa.Bar/foreign.js
+  var fi_paint_bars = function(bars) {
+    return function(ctx) {
+      return function() {
+        for (var i = 0; i < bars.length; ++i) {
+          paintBar(ctx, bars[i]);
+        }
       };
     };
   };
-  var paintCandlestick = function(x, cndl, ctx) {
-    const x0 = x - 4;
-    ctx.beginPath();
-    if (cndl.c > cndl.o) {
-      ctx.moveTo(x, cndl.h);
-      ctx.lineTo(x, cndl.o);
-      ctx.moveTo(x, cndl.c);
-      ctx.lineTo(x, cndl.l);
-      const cndlHeight2 = cndl.c - cndl.o;
-      ctx.rect(x0, cndl.o, 8, cndlHeight2);
-      ctx.fillRect(x0, cndl.o, 8, cndlHeight2);
-    } else {
-      var cndlHeight = cndl.o - cndl.c;
-      if (cndlHeight === 0) {
-        cndlHeight = 1;
-        const x12 = x + 4;
-        ctx.moveTo(x, cndl.h);
-        ctx.lineTo(x, cndl.l);
-        ctx.moveTo(x0, cndl.c);
-        ctx.lineTo(x12, cndl.c);
-      } else {
-        ctx.moveTo(x, cndl.h);
-        ctx.lineTo(x, cndl.c);
-        ctx.moveTo(x, cndl.o);
-        ctx.lineTo(x, cndl.l);
-        ctx.rect(x0, cndl.c, 8, cndlHeight);
-      }
+  var paintBar = function(ctx, bar) {
+    const yZero = 110;
+    ctx.strokeStyle = bar.strokeStyle;
+    ctx.lineWidth = 0.5;
+    const y = bar.yaxis;
+    const x = bar.xaxis;
+    for (var i = 0; i < x.length; ++i) {
+      ctx.beginPath();
+      ctx.moveTo(x[i], yZero);
+      ctx.lineTo(x[i], y[i]);
+      ctx.stroke();
     }
-    ctx.stroke();
-  };
-
-  // output/HarborView.Maunaloa.VRuler/foreign.js
-  var fi_lines = function(ctx) {
-    return function(boundary) {
-      return function(lines3) {
-        return function() {
-          const x12 = boundary.p1;
-          const x2 = boundary.p2;
-          ctx.strokeStyle = "#000000";
-          ctx.fillStyle = "#000000";
-          ctx.lineWidth = 0.25;
-          ctx.beginPath();
-          for (var i = 0; i < lines3.length; ++i) {
-            const y = lines3[i].p0;
-            ctx.moveTo(x12, y);
-            ctx.lineTo(x2, y);
-            ctx.fillText(lines3[i].tx, x12 + 5, y + 15);
-          }
-          ctx.stroke();
-        };
-      };
-    };
   };
 
   // output/Data.Array/foreign.js
@@ -3242,6 +3183,29 @@ var PS =
     };
   };
 
+  // output/HarborView.Maunaloa.VRuler/foreign.js
+  var fi_lines = function(ctx) {
+    return function(boundary) {
+      return function(lines3) {
+        return function() {
+          const x12 = boundary.p1;
+          const x2 = boundary.p2;
+          ctx.strokeStyle = "#000000";
+          ctx.fillStyle = "#000000";
+          ctx.lineWidth = 0.25;
+          ctx.beginPath();
+          for (var i = 0; i < lines3.length; ++i) {
+            const y = lines3[i].p0;
+            ctx.moveTo(x12, y);
+            ctx.lineTo(x2, y);
+            ctx.fillText(lines3[i].tx, x12 + 5, y + 15);
+          }
+          ctx.stroke();
+        };
+      };
+    };
+  };
+
   // output/HarborView.Maunaloa.Common/foreign.js
   var alert = function(msg) {
     return function() {
@@ -3307,11 +3271,6 @@ var PS =
   var showPadding = {
     show: function(v) {
       return "(Padding " + (show3(v) + ")");
-    }
-  };
-  var showOptionTicker = {
-    show: function(v) {
-      return "(OptionTicker : " + (v + ")");
     }
   };
   var showHtmlId = {
@@ -3496,6 +3455,83 @@ var PS =
     };
   };
 
+  // output/HarborView.Maunaloa.Bar/index.js
+  var map6 = /* @__PURE__ */ map(functorArray);
+  var strokes = ["#ff0000"];
+  var createJSBar = function(xaxis) {
+    return function(bar) {
+      return function(strokeStyle) {
+        return {
+          xaxis,
+          yaxis: bar,
+          strokeStyle
+        };
+      };
+    };
+  };
+  var paint2 = function(v) {
+    return function(bars) {
+      return function(ctx) {
+        var fn = createJSBar(v.xaxis);
+        var jsBars = zipWith(fn)(bars)(strokes);
+        return fi_paint_bars(jsBars)(ctx);
+      };
+    };
+  };
+  var barToPix = function(vr) {
+    return function(bar) {
+      var vfun = valueToPix(vr);
+      return map6(vfun)(bar);
+    };
+  };
+
+  // output/HarborView.Maunaloa.Candlestick/foreign.js
+  var fi_paint_candlestix = function(xaxis) {
+    return function(candlestix) {
+      return function(ctx) {
+        return function() {
+          ctx.strokeStyle = "#000000";
+          ctx.fillStyle = "#ffaa00";
+          ctx.lineWidth = 0.5;
+          const numCandlestix = candlestix.length;
+          for (var i = 0; i < numCandlestix; ++i) {
+            paintCandlestick(xaxis[i], candlestix[i], ctx);
+          }
+        };
+      };
+    };
+  };
+  var paintCandlestick = function(x, cndl, ctx) {
+    const x0 = x - 4;
+    ctx.beginPath();
+    if (cndl.c > cndl.o) {
+      ctx.moveTo(x, cndl.h);
+      ctx.lineTo(x, cndl.o);
+      ctx.moveTo(x, cndl.c);
+      ctx.lineTo(x, cndl.l);
+      const cndlHeight2 = cndl.c - cndl.o;
+      ctx.rect(x0, cndl.o, 8, cndlHeight2);
+      ctx.fillRect(x0, cndl.o, 8, cndlHeight2);
+    } else {
+      var cndlHeight = cndl.o - cndl.c;
+      if (cndlHeight === 0) {
+        cndlHeight = 1;
+        const x12 = x + 4;
+        ctx.moveTo(x, cndl.h);
+        ctx.lineTo(x, cndl.l);
+        ctx.moveTo(x0, cndl.c);
+        ctx.lineTo(x12, cndl.c);
+      } else {
+        ctx.moveTo(x, cndl.h);
+        ctx.lineTo(x, cndl.c);
+        ctx.moveTo(x, cndl.o);
+        ctx.lineTo(x, cndl.l);
+        ctx.rect(x0, cndl.c, 8, cndlHeight);
+      }
+    }
+    ctx.stroke();
+  };
+
   // output/HarborView.Maunaloa.Candlestick/index.js
   var show4 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord()()(/* @__PURE__ */ showRecordFieldsCons({
     reflectSymbol: function() {
@@ -3519,10 +3555,10 @@ var PS =
       return "(Candlestick " + (show4(v) + ")");
     }
   };
-  var paint2 = function(v) {
+  var paint3 = function(v) {
     return function(cndls) {
       return function(ctx) {
-        return fi_paint(v.xaxis)(cndls)(ctx);
+        return fi_paint_candlestix(v.xaxis)(cndls)(ctx);
       };
     };
   };
@@ -3593,7 +3629,7 @@ var PS =
   };
 
   // output/HarborView.Maunaloa.HRuler/index.js
-  var map6 = /* @__PURE__ */ map(functorArray);
+  var map7 = /* @__PURE__ */ map(functorArray);
   var greaterThanOrEq2 = /* @__PURE__ */ greaterThanOrEq(ordUnixTime);
   var bind2 = /* @__PURE__ */ bind(bindMaybe);
   var timeStampToPix = function(v) {
@@ -3609,7 +3645,7 @@ var PS =
     return function(offsets) {
       return function(v) {
         return function(padLeft) {
-          return map6(function(x) {
+          return map7(function(x) {
             return padLeft + toNumber(x - startOffset | 0) * v;
           })(offsets);
         };
@@ -3673,7 +3709,7 @@ var PS =
     var snm = startOfNextMonth(v.startTime);
     return lines_(timestampFn)(v.endTime)(v.myIncMonths)([])(snm);
   };
-  var paint3 = function(hruler) {
+  var paint4 = function(hruler) {
     return function(v) {
       return function(ctx) {
         var curLines = lines2(hruler);
@@ -3715,7 +3751,7 @@ var PS =
   };
 
   // output/HarborView.Maunaloa.Line/foreign.js
-  var fi_paint2 = function(lines3) {
+  var fi_paint_lines = function(lines3) {
     return function(ctx) {
       return function() {
         for (var i = 0; i < lines3.length; ++i) {
@@ -3738,12 +3774,12 @@ var PS =
   };
 
   // output/HarborView.Maunaloa.Line/index.js
-  var map7 = /* @__PURE__ */ map(functorArray);
-  var strokes = ["#ff0000", "#aa00ff"];
+  var map8 = /* @__PURE__ */ map(functorArray);
+  var strokes2 = ["#ff0000", "#aa00ff"];
   var lineToPix = function(vr) {
     return function(line) {
       var vfun = valueToPix(vr);
-      return map7(vfun)(line);
+      return map8(vfun)(line);
     };
   };
   var createJsLine = function(xaxis) {
@@ -3757,12 +3793,12 @@ var PS =
       };
     };
   };
-  var paint4 = function(v) {
+  var paint5 = function(v) {
     return function(lx) {
       return function(ctx) {
         var fn = createJsLine(v.xaxis);
-        var jsLines = zipWith(fn)(lx)(strokes);
-        return fi_paint2(jsLines)(ctx);
+        var jsLines = zipWith(fn)(lx)(strokes2);
+        return fi_paint_lines(jsLines)(ctx);
       };
     };
   };
@@ -3848,7 +3884,7 @@ var PS =
       };
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 119, column 1 - line 119, column 41): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 122, column 1 - line 122, column 41): " + [v.constructor.name]);
   };
   var showChart = {
     show: function(v) {
@@ -3864,7 +3900,7 @@ var PS =
         return "(EmptyChart)";
       }
       ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 85, column 1 - line 100, column 23): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 88, column 1 - line 103, column 23): " + [v.constructor.name]);
     }
   };
   var paintEmpty = function(v) {
@@ -3881,13 +3917,13 @@ var PS =
           return clearRect(ctx)(r)();
         }
         ;
-        throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 150, column 9 - line 159, column 43): " + [canvas.constructor.name]);
+        throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 154, column 9 - line 163, column 43): " + [canvas.constructor.name]);
       };
     }
     ;
     return pure3(unit);
   };
-  var paint5 = function(v) {
+  var paint6 = function(v) {
     return function(v1) {
       if (v1 instanceof Chart) {
         return function __do2() {
@@ -3899,10 +3935,10 @@ var PS =
           if (canvas instanceof Just) {
             var ctx = applySecond2(logShow2("Drawing canvas: " + v1.value0.canvasId))(getContext2D(canvas.value0))();
             var r = toRectangle(v1);
-            return applySecond2(applySecond2(applySecond2(applySecond2(clearRect(ctx)(r))(paint(v1.value0.vruler)(ctx)))(paint3(v)(v1.value0.vruler.h)(ctx)))(paint4(v)(v1.value0.lines)(ctx)))(paint2(v)(v1.value0.candlesticks)(ctx))();
+            return applySecond2(applySecond2(applySecond2(applySecond2(applySecond2(clearRect(ctx)(r))(paint(v1.value0.vruler)(ctx)))(paint4(v)(v1.value0.vruler.h)(ctx)))(paint5(v)(v1.value0.lines)(ctx)))(paint2(v)(v1.value0.bars)(ctx)))(paint3(v)(v1.value0.candlesticks)(ctx))();
           }
           ;
-          throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 130, column 9 - line 143, column 55): " + [canvas.constructor.name]);
+          throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 133, column 9 - line 147, column 55): " + [canvas.constructor.name]);
         };
       }
       ;
@@ -4028,7 +4064,7 @@ var PS =
 
   // output/Data.String.CodePoints/index.js
   var fromEnum2 = /* @__PURE__ */ fromEnum(boundedEnumChar);
-  var map8 = /* @__PURE__ */ map(functorMaybe);
+  var map9 = /* @__PURE__ */ map(functorMaybe);
   var unfoldr2 = /* @__PURE__ */ unfoldr(unfoldableArray);
   var unsurrogate = function(lead) {
     return function(trail) {
@@ -4070,7 +4106,7 @@ var PS =
     });
   };
   var unconsButWithTuple = function(s) {
-    return map8(function(v) {
+    return map9(function(v) {
       return new Tuple(v.head, v.tail);
     })(uncons(s));
   };
@@ -5001,7 +5037,7 @@ var PS =
 
   // output/Data.FormURLEncoded/index.js
   var apply2 = /* @__PURE__ */ apply(applyMaybe);
-  var map9 = /* @__PURE__ */ map(functorMaybe);
+  var map10 = /* @__PURE__ */ map(functorMaybe);
   var traverse2 = /* @__PURE__ */ traverse(traversableArray)(applicativeMaybe);
   var toArray2 = function(v) {
     return v;
@@ -5013,7 +5049,7 @@ var PS =
       }
       ;
       if (v.value1 instanceof Just) {
-        return apply2(map9(function(key) {
+        return apply2(map10(function(key) {
           return function(val) {
             return key + ("=" + val);
           };
@@ -5022,7 +5058,7 @@ var PS =
       ;
       throw new Error("Failed pattern match at Data.FormURLEncoded (line 37, column 16 - line 39, column 114): " + [v.constructor.name]);
     };
-    var $37 = map9(joinWith("&"));
+    var $37 = map10(joinWith("&"));
     var $38 = traverse2(encodePart);
     return function($39) {
       return $37($38(toArray2($39)));
@@ -5602,7 +5638,7 @@ var PS =
   var unsafeReadTagged2 = /* @__PURE__ */ unsafeReadTagged(monadIdentity);
   var alt2 = /* @__PURE__ */ alt(/* @__PURE__ */ altExceptT(semigroupNonEmptyList)(monadIdentity));
   var composeKleisliFlipped2 = /* @__PURE__ */ composeKleisliFlipped(/* @__PURE__ */ bindExceptT(monadIdentity));
-  var map10 = /* @__PURE__ */ map(functorMaybe);
+  var map11 = /* @__PURE__ */ map(functorMaybe);
   var any3 = /* @__PURE__ */ any(foldableArray)(heytingAlgebraBoolean);
   var eq3 = /* @__PURE__ */ eq(eqString);
   var bindFlipped2 = /* @__PURE__ */ bindFlipped(bindMaybe);
@@ -5721,7 +5757,7 @@ var PS =
         }
         ;
         if (v2 instanceof FormURLEncoded) {
-          return note("Body contains values that cannot be encoded as application/x-www-form-urlencoded")(map10(unsafeToForeign)(encode(v2.value0)));
+          return note("Body contains values that cannot be encoded as application/x-www-form-urlencoded")(map11(unsafeToForeign)(encode(v2.value0)));
         }
         ;
         if (v2 instanceof Json) {
@@ -5740,7 +5776,7 @@ var PS =
         };
       };
       var headers = function(reqContent) {
-        return addHeader(map10(ContentType.create)(bindFlipped2(toMediaType)(reqContent)))(addHeader(map10(Accept.create)(toMediaType2(req.responseFormat)))(req.headers));
+        return addHeader(map11(ContentType.create)(bindFlipped2(toMediaType)(reqContent)))(addHeader(map11(Accept.create)(toMediaType2(req.responseFormat)))(req.headers));
       };
       var ajaxRequest = function(v2) {
         return {
@@ -5757,7 +5793,7 @@ var PS =
           username: toNullable(req.username),
           password: toNullable(req.password),
           withCredentials: req.withCredentials,
-          timeout: fromMaybe(0)(map10(function(v1) {
+          timeout: fromMaybe(0)(map11(function(v1) {
             return v1;
           })(req.timeout))
         };
@@ -6016,10 +6052,10 @@ var PS =
       return arr;
     }
     return function(apply3) {
-      return function(map16) {
+      return function(map17) {
         return function(f) {
           var buildFrom = function(x, ys) {
-            return apply3(map16(consList)(f(x)))(ys);
+            return apply3(map17(consList)(f(x)))(ys);
           };
           var go2 = function(acc, currentLen, xs) {
             if (currentLen === 0) {
@@ -6033,12 +6069,12 @@ var PS =
             }
           };
           return function(array) {
-            var acc = map16(finalCell)(f(array[array.length - 1]));
+            var acc = map17(finalCell)(f(array[array.length - 1]));
             var result = go2(acc, array.length - 1, array);
             while (result instanceof Cont) {
               result = result.fn();
             }
-            return map16(listToArray)(result);
+            return map17(listToArray)(result);
           };
         };
       };
@@ -6047,7 +6083,7 @@ var PS =
 
   // output/Data.Argonaut.Decode.Decoders/index.js
   var pure5 = /* @__PURE__ */ pure(applicativeEither);
-  var map11 = /* @__PURE__ */ map(functorEither);
+  var map13 = /* @__PURE__ */ map(functorEither);
   var lmap2 = /* @__PURE__ */ lmap(bifunctorEither);
   var composeKleisliFlipped3 = /* @__PURE__ */ composeKleisliFlipped(bindEither);
   var traverseWithIndex2 = /* @__PURE__ */ traverseWithIndex(traversableWithIndexArray)(applicativeEither);
@@ -6064,7 +6100,7 @@ var PS =
       }
       ;
       if (otherwise) {
-        return map11(Just.create)(decoder(json2));
+        return map13(Just.create)(decoder(json2));
       }
       ;
       throw new Error("Failed pattern match at Data.Argonaut.Decode.Decoders (line 37, column 1 - line 41, column 38): " + [decoder.constructor.name, json2.constructor.name]);
@@ -6116,7 +6152,7 @@ var PS =
   // output/Data.Argonaut.Decode.Class/index.js
   var bind3 = /* @__PURE__ */ bind(bindEither);
   var lmap3 = /* @__PURE__ */ lmap(bifunctorEither);
-  var map13 = /* @__PURE__ */ map(functorMaybe);
+  var map14 = /* @__PURE__ */ map(functorMaybe);
   var gDecodeJsonNil = {
     gDecodeJson: function(v) {
       return function(v1) {
@@ -6222,7 +6258,7 @@ var PS =
     var decodeJson1 = decodeJson(dictDecodeJson);
     return {
       decodeJsonField: function(j) {
-        return map13(decodeJson1)(j);
+        return map14(decodeJson1)(j);
       }
     };
   };
@@ -6304,9 +6340,9 @@ var PS =
   }
 
   // output/Web.DOM.NonElementParentNode/index.js
-  var map14 = /* @__PURE__ */ map(functorEffect);
+  var map15 = /* @__PURE__ */ map(functorEffect);
   var getElementById = function(eid) {
-    var $2 = map14(toMaybe);
+    var $2 = map15(toMaybe);
     var $3 = _getElementById(eid);
     return function($4) {
       return $2($3($4));
@@ -6376,85 +6412,31 @@ var PS =
   var gDecodeJsonCons2 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
   var applySecond3 = /* @__PURE__ */ applySecond(applyEffect);
   var traverse_2 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableArray);
-  var showRecord3 = /* @__PURE__ */ showRecord()();
-  var showRecordFieldsCons2 = /* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "lt";
-    }
-  });
-  var showRecordFieldsCons1 = /* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "selected";
-    }
-  });
-  var showRecordFieldsConsNil2 = /* @__PURE__ */ showRecordFieldsConsNil({
-    reflectSymbol: function() {
-      return "y";
-    }
-  })(showNumber);
-  var show9 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord3(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "color";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons2(/* @__PURE__ */ showRecordFieldsCons1(showRecordFieldsConsNil2)(showBoolean))(showInt))(showString)));
   var askIsSymbol = {
     reflectSymbol: function() {
       return "ask";
     }
   };
-  var showRecordFieldsCons22 = /* @__PURE__ */ showRecordFieldsCons(askIsSymbol);
   var bidIsSymbol = {
     reflectSymbol: function() {
       return "bid";
     }
   };
-  var showRecordFieldsCons3 = /* @__PURE__ */ showRecordFieldsCons(bidIsSymbol);
   var riscIsSymbol = {
     reflectSymbol: function() {
       return "risc";
     }
   };
-  var showRecordFieldsCons4 = /* @__PURE__ */ showRecordFieldsCons(riscIsSymbol);
   var tickerIsSymbol = {
     reflectSymbol: function() {
       return "ticker";
-    }
-  };
-  var showRecordFieldsCons5 = /* @__PURE__ */ showRecordFieldsCons(tickerIsSymbol)(showRecordFieldsConsNil2)(showOptionTicker);
-  var show15 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord3(/* @__PURE__ */ showRecordFieldsCons22(/* @__PURE__ */ showRecordFieldsCons3(/* @__PURE__ */ showRecordFieldsCons2(/* @__PURE__ */ showRecordFieldsCons4(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "riscPrice";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons1(showRecordFieldsCons5)(showBoolean))(showNumber))(showNumber))(showInt))(showNumber))(showNumber)));
-  var show23 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord3(/* @__PURE__ */ showRecordFieldsCons22(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "breakEven";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons2(showRecordFieldsCons5)(showInt))(showNumber))(showNumber)));
-  var riscStockPriceIsSymbol = {
-    reflectSymbol: function() {
-      return "riscStockPrice";
-    }
-  };
-  var riscOptionPriceIsSymbol = {
-    reflectSymbol: function() {
-      return "riscOptionPrice";
-    }
-  };
-  var beIsSymbol = {
-    reflectSymbol: function() {
-      return "be";
     }
   };
   var bind1 = /* @__PURE__ */ bind(bindMaybe);
   var bind22 = /* @__PURE__ */ bind(bindAff);
   var show33 = /* @__PURE__ */ show(showJsonDecodeError);
   var pure12 = /* @__PURE__ */ pure(applicativeAff);
-  var applySecond1 = /* @__PURE__ */ applySecond(applyAff);
   var liftEffect3 = /* @__PURE__ */ liftEffect(monadEffectAff);
-  var logShow4 = /* @__PURE__ */ logShow(showString);
-  var show43 = /* @__PURE__ */ show(showInt);
-  var logShow1 = /* @__PURE__ */ logShow(/* @__PURE__ */ showArray(/* @__PURE__ */ showRecord3(/* @__PURE__ */ showRecordFieldsCons22(/* @__PURE__ */ showRecordFieldsCons(beIsSymbol)(/* @__PURE__ */ showRecordFieldsCons3(/* @__PURE__ */ showRecordFieldsCons4(/* @__PURE__ */ showRecordFieldsCons(riscOptionPriceIsSymbol)(/* @__PURE__ */ showRecordFieldsCons(riscStockPriceIsSymbol)(/* @__PURE__ */ showRecordFieldsConsNil(tickerIsSymbol)(showString))(showNumber))(showNumber))(showNumber))(showNumber))(showNumber))(showNumber))));
   var StdLine = /* @__PURE__ */ function() {
     function StdLine2(value0) {
       this.value0 = value0;
@@ -6495,7 +6477,7 @@ var PS =
         return pure6(unit);
       }
       ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 443, column 3 - line 445, column 24): " + [el.constructor.name]);
+      throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 441, column 3 - line 443, column 24): " + [el.constructor.name]);
     };
   };
   var updOptionPriceFromJson = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons2(gDecodeJsonNil)({
@@ -6513,25 +6495,19 @@ var PS =
       return applySecond3(traverse_2(unlisten)(listeners))(resetListeners(cti))();
     };
   };
-  var showLine = {
-    show: function(v) {
-      if (v instanceof StdLine) {
-        return "StdLine: " + show9(v.value0);
-      }
-      ;
-      if (v instanceof RiscLine) {
-        return "RiscLine: " + show15(v.value0);
-      }
-      ;
-      if (v instanceof BreakEvenLine) {
-        return "BreakEvenLine: " + show23(v.value0);
-      }
-      ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 132, column 1 - line 135, column 55): " + [v.constructor.name]);
+  var riscLinesFromJson = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeArray2(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonString))(gDecodeJsonNil)(tickerIsSymbol)()())({
+    reflectSymbol: function() {
+      return "riscStockPrice";
     }
-  };
-  var logShow22 = /* @__PURE__ */ logShow(showLine);
-  var riscLinesFromJson = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeArray2(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonString))(gDecodeJsonNil)(tickerIsSymbol)()())(riscStockPriceIsSymbol)()())(riscOptionPriceIsSymbol)()())(riscIsSymbol)()())(bidIsSymbol)()())(beIsSymbol)()())(askIsSymbol)()())()));
+  })()())({
+    reflectSymbol: function() {
+      return "riscOptionPrice";
+    }
+  })()())(riscIsSymbol)()())(bidIsSymbol)()())({
+    reflectSymbol: function() {
+      return "be";
+    }
+  })()())(askIsSymbol)()())()));
   var optionPriceURL = function(v) {
     return function(curStockPrice) {
       return mainURL + ("/stockoption/price/" + (v + ("/" + toStringWith(fixed(2))(curStockPrice))));
@@ -6617,10 +6593,10 @@ var PS =
               return new Right(json2.value0.value);
             }
             ;
-            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 372, column 13 - line 376, column 34): " + [json2.constructor.name]);
+            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 370, column 13 - line 374, column 34): " + [json2.constructor.name]);
           }
           ;
-          throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 365, column 9 - line 376, column 34): " + [res.constructor.name]);
+          throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 363, column 9 - line 374, column 34): " + [res.constructor.name]);
         }();
         return pure12(result);
       });
@@ -6633,7 +6609,7 @@ var PS =
           return launchAff_(function() {
             var sp = pixToValue(v1)(v2.value0.y);
             var cti = chartTypeAsInt(v);
-            return bind22(applySecond1(liftEffect3(logShow22(v2)))(fetchUpdatedOptionPrice(v2.value0.ticker)(sp)))(function(n) {
+            return bind22(fetchUpdatedOptionPrice(v2.value0.ticker)(sp))(function(n) {
               if (n instanceof Left) {
                 return handleErrorAff(n.value0);
               }
@@ -6642,7 +6618,7 @@ var PS =
                 return liftEffect3(updateRiscLine(cti)(v2)(n.value0));
               }
               ;
-              throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 389, column 7 - line 393, column 55): " + [n.constructor.name]);
+              throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 387, column 7 - line 391, column 55): " + [n.constructor.name]);
             });
           }());
         }
@@ -6662,7 +6638,7 @@ var PS =
           return handleUpdateOptionPrice(ct)(vr)(line.value0);
         }
         ;
-        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 399, column 3 - line 403, column 42): " + [line.constructor.name]);
+        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 397, column 3 - line 401, column 42): " + [line.constructor.name]);
       };
     };
   };
@@ -6759,14 +6735,14 @@ var PS =
         return function(evt) {
           return applySecond3(defaultEventHandling(evt))(launchAff_(bind22(fetchLevelLines(ticker))(function(lines3) {
             if (lines3 instanceof Left) {
-              return applySecond1(liftEffect3(logShow4("ERROR")))(handleErrorAff(lines3.value0));
+              return handleErrorAff(lines3.value0);
             }
             ;
             if (lines3 instanceof Right) {
-              return liftEffect3(applySecond3(applySecond3(applySecond3(logShow4("Number of lines: " + show43(length(lines3.value0))))(logShow1(lines3.value0)))(clearLines(chartTypeAsInt(ct))))(addRiscLines(ct)(vruler2)(lines3.value0)));
+              return liftEffect3(applySecond3(clearLines(chartTypeAsInt(ct)))(addRiscLines(ct)(vruler2)(lines3.value0)));
             }
             ;
-            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 334, column 7 - line 345, column 12): " + [lines3.constructor.name]);
+            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 334, column 7 - line 343, column 12): " + [lines3.constructor.name]);
           })));
         };
       };
@@ -6801,7 +6777,7 @@ var PS =
               return applySecond3(applySecond3(applySecond3(applySecond3(applySecond3(redraw(chartTypeAsInt(ct))(ctx)(vruler2))(initEvent(ct)(addLevelLineButtonClick(ct))(context.value0.addLevelLineBtn)("click")))(initEvent(ct)(fetchLevelLineButtonClick(ct)(ticker)(vruler2))(context.value0.fetchLevelLinesBtn)("click")))(initEvent(ct)(mouseEventDown(ct))(context.value0.canvasElement)("mousedown")))(initEvent(ct)(mouseEventDrag(ct))(context.value0.canvasElement)("mousemove")))(initEvent(ct)(mouseEventUp(ct)(vruler2))(context.value0.canvasElement)("mouseup"))();
             }
             ;
-            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 483, column 5 - line 497, column 95): " + [context.constructor.name]);
+            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 481, column 5 - line 495, column 95): " + [context.constructor.name]);
           };
         };
       };
@@ -6811,7 +6787,7 @@ var PS =
   // output/HarborView.Maunaloa.ChartCollection/index.js
   var showArray2 = /* @__PURE__ */ showArray(showChart);
   var applySecond4 = /* @__PURE__ */ applySecond(applyEffect);
-  var logShow5 = /* @__PURE__ */ logShow(showArray2);
+  var logShow4 = /* @__PURE__ */ logShow(showArray2);
   var traverse_3 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableArray);
   var notEq2 = /* @__PURE__ */ notEq(/* @__PURE__ */ eqMaybe(/* @__PURE__ */ eqRec()(/* @__PURE__ */ eqRowCons(/* @__PURE__ */ eqRowCons(/* @__PURE__ */ eqRowCons(eqRowNil)()({
     reflectSymbol: function() {
@@ -6826,12 +6802,12 @@ var PS =
       return "addLevelId";
     }
   })(eqHtmlId))));
-  var logShow12 = /* @__PURE__ */ logShow(showString);
+  var logShow1 = /* @__PURE__ */ logShow(showString);
   var pure7 = /* @__PURE__ */ pure(applicativeEffect);
   var fromJust4 = /* @__PURE__ */ fromJust();
   var liftEffect4 = /* @__PURE__ */ liftEffect(monadEffectAff);
   var paintEmpty2 = function(v) {
-    return applySecond4(logShow5(v))(traverse_3(paintEmpty)(v));
+    return applySecond4(logShow4(v))(traverse_3(paintEmpty)(v));
   };
   var mappingToChartLevel = function(v) {
     var $54 = length3(v.levelCanvasId) === 0;
@@ -6865,7 +6841,7 @@ var PS =
       return function(charts) {
         var levelLine = find2(findChartPredicate)(charts);
         if (levelLine instanceof Nothing) {
-          return applySecond4(logShow12("ERROR! (levelLines) No levelLine!"))(pure7(unit));
+          return applySecond4(logShow1("ERROR! (levelLines) No levelLine!"))(pure7(unit));
         }
         ;
         if (levelLine instanceof Just && levelLine.value0 instanceof Chart) {
@@ -6877,20 +6853,20 @@ var PS =
       };
     };
   };
-  var paint6 = function(ct) {
+  var paint7 = function(ct) {
     return function(v) {
-      var paint_ = paint5(v.hruler);
+      var paint_ = paint6(v.hruler);
       return applySecond4(traverse_3(paint_)(v.charts))(levelLines(ct)(v.ticker)(v.charts));
     };
   };
   var paintAff = function(ct) {
     return function(coll) {
-      return liftEffect4(paint6(ct)(coll));
+      return liftEffect4(paint7(ct)(coll));
     };
   };
 
   // output/HarborView.Maunaloa.ChartTransform/index.js
-  var map15 = /* @__PURE__ */ map(functorArray);
+  var map16 = /* @__PURE__ */ map(functorArray);
   var bind4 = /* @__PURE__ */ bind(/* @__PURE__ */ bindReaderT(bindIdentity));
   var ask2 = /* @__PURE__ */ ask(/* @__PURE__ */ monadAskReaderT(monadIdentity));
   var pure8 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeReaderT(applicativeIdentity));
@@ -6916,12 +6892,14 @@ var PS =
     return function(v) {
       return function(ec) {
         var vr = vruler(ec.valueRange)(chartWidth)(v.chartHeight);
-        var linesToPix = map15(lineToPix(vr))(ec.lines);
-        var cndlToPix = map15(candleToPix(vr))(ec.candlesticks);
+        var linesToPix = map16(lineToPix(vr))(ec.lines);
+        var cndlToPix = map16(candleToPix(vr))(ec.candlesticks);
         var clevel = mappingToChartLevel(v);
+        var barsToPix = map16(barToPix(vr))(ec.bars);
         return new Chart({
           lines: linesToPix,
           candlesticks: cndlToPix,
+          bars: barsToPix,
           canvasId: v.canvasId,
           vruler: vr,
           w: chartWidth,
@@ -6932,7 +6910,7 @@ var PS =
     };
   };
   var transformEmpty = /* @__PURE__ */ bind4(ask2)(function(v) {
-    var charts = map15(transformMappingEmpty(v.globalChartWidth))(v.mappings);
+    var charts = map16(transformMappingEmpty(v.globalChartWidth))(v.mappings);
     return pure8(charts);
   });
   var slice3 = function(v) {
@@ -6953,7 +6931,7 @@ var PS =
   };
   var minMaxRanges = function(v) {
     return function(vals) {
-      var mmas = map15(function(y) {
+      var mmas = map16(function(y) {
         return fromMaybe(nullValueRange)(y);
       })(filter(function(x) {
         return notEq3(x)(Nothing.value);
@@ -7031,7 +7009,7 @@ var PS =
     var scalingFn = function(x) {
       return x / scalingFactor;
     };
-    return map15(scalingFn)(line);
+    return map16(scalingFn)(line);
   };
   var incMonths2 = function(v) {
     if (v instanceof DayChart) {
@@ -7046,15 +7024,15 @@ var PS =
       return 6;
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 253, column 1 - line 253, column 30): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 258, column 1 - line 258, column 30): " + [v.constructor.name]);
   };
   var chartValueRange = function(lx) {
     return function(bars) {
       return function(cx) {
         return function(scaling) {
-          var minMaxLines = map15(minMaxArray)(lx);
+          var minMaxLines = map16(minMaxArray)(lx);
           var minMaxCandlesticks = minMaxCndl(cx);
-          var minMaxBars = map15(minMaxArray)(bars);
+          var minMaxBars = map16(minMaxArray)(bars);
           var allVr = cons(minMaxCandlesticks)(concat([minMaxLines, minMaxBars]));
           return minMaxRanges(scaling)(allVr);
         };
@@ -7068,16 +7046,16 @@ var PS =
           return function(doNormalizeLines) {
             return function(numVlines) {
               var lines_2 = function() {
-                var tmp = map15(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.lines));
+                var tmp = map16(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.lines));
                 var $66 = doNormalizeLines === true;
                 if ($66) {
-                  return map15(normalizeLine)(tmp);
+                  return map16(normalizeLine)(tmp);
                 }
                 ;
                 return tmp;
               }();
               var cndl_ = slice3(dropAmt)(takeAmt)(fromMaybe([])(c.candlesticks));
-              var bars_ = map15(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.bars));
+              var bars_ = map16(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.bars));
               var valueRange2 = chartValueRange(lines_2)(bars_)(cndl_)(scaling);
               return {
                 lines: lines_2,
@@ -7119,7 +7097,7 @@ var PS =
       var xaxis = slice3(v.dropAmt)(v.takeAmt)(response.xAxis);
       var ruler = create2(v.globalChartWidth)(response.minDx)(xaxis)(padding)(incMonths2(v.chartType));
       var ruler1 = fromJust5(ruler);
-      var charts1 = map15(transformMapping(v)(response))(v.mappings);
+      var charts1 = map16(transformMapping(v)(response))(v.mappings);
       return pure8({
         ticker: response.ticker,
         charts: charts1,
@@ -7161,7 +7139,7 @@ var PS =
     }
   })()())()));
   var bind5 = /* @__PURE__ */ bind(bindAff);
-  var show10 = /* @__PURE__ */ show(showJsonDecodeError);
+  var show9 = /* @__PURE__ */ show(showJsonDecodeError);
   var pure9 = /* @__PURE__ */ pure(applicativeAff);
   var chartsFromJson = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonString))(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeArray2(decodeJsonInt)))(gDecodeJsonNil)({
     reflectSymbol: function() {
@@ -7216,7 +7194,7 @@ var PS =
           if (res instanceof Right) {
             var charts = chartsFromJson(res.value0.body);
             if (charts instanceof Left) {
-              return new Left(new JsonError(show10(charts.value0)));
+              return new Left(new JsonError(show9(charts.value0)));
             }
             ;
             if (charts instanceof Right) {
@@ -7256,10 +7234,10 @@ var PS =
 
   // output/Main/index.js
   var applySecond5 = /* @__PURE__ */ applySecond(applyEffect);
-  var logShow6 = /* @__PURE__ */ logShow(showString);
-  var logShow13 = /* @__PURE__ */ logShow(/* @__PURE__ */ showArray(showChart));
+  var logShow5 = /* @__PURE__ */ logShow(showString);
+  var logShow12 = /* @__PURE__ */ logShow(/* @__PURE__ */ showArray(showChart));
   var bind6 = /* @__PURE__ */ bind(bindAff);
-  var applySecond12 = /* @__PURE__ */ applySecond(applyAff);
+  var applySecond1 = /* @__PURE__ */ applySecond(applyAff);
   var liftEffect5 = /* @__PURE__ */ liftEffect(monadEffectAff);
   var resetCharts2 = resetCharts;
   var reposIdFor = function(chartTypeId) {
@@ -7281,7 +7259,7 @@ var PS =
   var paintEmpty3 = function(mappings) {
     var curEnv = createEnvEmpty(mappings);
     var collection = runReader(transformEmpty)(curEnv);
-    return applySecond5(applySecond5(logShow6("__paintEmpty__"))(logShow13(collection)))(paintEmpty2(collection));
+    return applySecond5(applySecond5(logShow5("__paintEmpty__"))(logShow12(collection)))(paintEmpty2(collection));
   };
   var createEnv = function(ctype) {
     return function(tik) {
@@ -7302,7 +7280,7 @@ var PS =
       };
     };
   };
-  var paint7 = function(chartTypeId) {
+  var paint8 = function(chartTypeId) {
     return function(mappings) {
       return function(ticker) {
         return function(dropAmt) {
@@ -7311,10 +7289,10 @@ var PS =
             var curChartType = asChartType(chartTypeId);
             var curEnv = createEnv(curChartType)(ticker)(dropAmt)(takeAmt)(mappings);
             var cachedResponse = getJsonResponse(reposId);
-            return applySecond5(logShow6("StockTicker: " + ticker))(function() {
+            return applySecond5(logShow5("StockTicker: " + ticker))(function() {
               if (cachedResponse instanceof Just) {
                 var collection = runReader(transform2(cachedResponse.value0))(curEnv);
-                return applySecond5(logShow6("Fetched response from repository"))(paint6(curChartType)(collection));
+                return applySecond5(logShow5("Fetched response from repository"))(paint7(curChartType)(collection));
               }
               ;
               if (cachedResponse instanceof Nothing) {
@@ -7325,7 +7303,7 @@ var PS =
                   ;
                   if (charts instanceof Right) {
                     var collection2 = runReader(transform2(charts.value0))(curEnv);
-                    return applySecond12(liftEffect5(setJsonResponse(reposId)(charts.value0)))(paintAff(curChartType)(collection2));
+                    return applySecond1(liftEffect5(setJsonResponse(reposId)(charts.value0)))(paintAff(curChartType)(collection2));
                   }
                   ;
                   throw new Error("Failed pattern match at Main (line 102, column 21 - line 110, column 77): " + [charts.constructor.name]);
@@ -7340,13 +7318,13 @@ var PS =
     };
   };
   var clearLevelLines = function(cti) {
-    return applySecond5(logShow6("clearLevelLines"))(clear2(cti));
+    return applySecond5(logShow5("clearLevelLines"))(clear2(cti));
   };
-  var main = /* @__PURE__ */ applySecond5(/* @__PURE__ */ applySecond5(/* @__PURE__ */ applySecond5(/* @__PURE__ */ paint7(4)([])("-")(0)(0))(/* @__PURE__ */ paintEmpty3([])))(/* @__PURE__ */ clearLevelLines(1)))(resetCharts2);
+  var main = /* @__PURE__ */ applySecond5(/* @__PURE__ */ applySecond5(/* @__PURE__ */ applySecond5(/* @__PURE__ */ paint8(4)([])("-")(0)(0))(/* @__PURE__ */ paintEmpty3([])))(/* @__PURE__ */ clearLevelLines(1)))(resetCharts2);
 
   // <stdin>
   return {
-           paint: paint7,
+           paint: paint8,
            paintEmpty: paintEmpty3,
            resetCharts: resetCharts2,
            clearLevelLines:  clearLevelLines }

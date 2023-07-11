@@ -8,37 +8,15 @@ body {
 .logo {
   background: url("/img/02.png") center no-repeat;
   position: absolute;
-  top: 10px;
-  left: 88%;
+  top: 0px;
+  left: 90%;
   width: 163px;
   height: 159px;
   z-index: 9999;
 }
 
-
-
-.fa-solid {
-  transition: all 0.1s linear;
-}
-
-.fa-solid:hover {
-  transform: scale(1.5);
-}
-
 .draggable {
   cursor: move;
-}
-
-.grid-menu-bar {
-  display: flex;
-  margin-top: 1rem;
-  margin-left: 3rem;
-  margin-right: 3rem;
-}
-
-.form-group--menu-bar {
-  align-self: flex-end;
-  margin-left: 1rem;
 }
 
 .form-check {
@@ -136,7 +114,7 @@ a.href-td {
 /* _grid_main.scss */
 .grid-main {
   display: grid;
-  grid-gap: 20px;
+  grid-gap: 10px;
   grid-template-columns: 1fr 1750px 1fr;
   grid-template-rows: 600px 110px 200px;
 }
@@ -156,86 +134,32 @@ a.href-td {
   grid-column: 2;
 }
 
-.grid-table {
-  display: grid;
-  grid-gap: 20px;
-  grid-template-columns: 1fr 1750px 1fr;
-}
-
-.main-table {
-  grid-row: 1;
-  grid-column: 2;
-}
-
-/* _grid_scrapbook.scss */
-.grid-scrapbook {
-  grid-column: 3;
-  display: grid;
-  grid-gap: 2px;
-  grid-template-rows: 100px 50px 100px 50px 50px 100px 50px 50px;
-}
-
-.scrap-1 {
-  grid-row: 1;
-  border: 1px solid black;
-  padding: 1em;
-}
-
-.scrap-2 {
-  grid-row: 2;
+.grid-menu-bar {
+  display: flex;
   margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
 }
 
-.scrap-3 {
-  grid-row: 3;
-  border: 1px solid black;
-  padding: 1rem;
-}
-
-.scrap-4 {
-  grid-row: 4;
-}
-
-.scrap-5 {
-  grid-row: 5;
-}
-
-.scrap-6 {
-  grid-row: 6;
-}
-
-.scrap-7 {
-  grid-row: 7;
-}
-
-.scrap-8 {
-  grid-row: 8;
-}
-
-.scrap-btn {
-  font-size: 2rem;
-  margin-right: 1rem;
-  float: left;
+.form-group--menu-bar {
+  align-self: flex-end;
+  margin-left: 1rem;
 }
 
 .scrap-span {
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   margin-right: 0.5rem;
   border: 1px solid silver;
   border-radius: 0.25em;
   padding: 0.5em;
 }
 
-.scrap-div {
-  font-size: 2rem;
-  margin-right: 1rem;
-  float: left;
+.fa-solid {
+  transition: all 0.1s linear;
 }
 
-.scrap-cb {
-  float: left;
-  margin-right: 1rem;
+.fa-solid:hover {
+  transform: scale(1.5);
 }
 
 /*# sourceMappingURL=harborview.css.map */

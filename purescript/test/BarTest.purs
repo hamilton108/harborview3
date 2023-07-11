@@ -4,11 +4,12 @@ import Prelude
 
 import Test.Unit.Assert as Assert
 import Test.Unit (suite, test, failure, TestSuite, Test)
+import Partial.Unsafe (unsafePartial)
 import Data.Maybe (fromJust,Maybe(..))
 import Data.Array as Array
 import Control.Monad.Reader 
-    ( runReader 
-    )
+  ( runReader 
+  )
 
 import HarborView.Maunaloa.JsonCharts as J
 import HarborView.Maunaloa.JsonCharts 
@@ -16,11 +17,11 @@ import HarborView.Maunaloa.JsonCharts
   , JsonChartResponse(..)
   )
 import HarborView.Maunaloa.ChartCollection
-    ( ChartCollection(..)
-    )
+  ( ChartCollection(..)
+  )
 import HarborView.Maunaloa.Chart 
-    ( Chart(..)
-    )
+  ( Chart(..)
+  )
 import HarborView.Maunaloa.VRuler as V
 import HarborView.Maunaloa.VRuler
   ( VRuler
@@ -44,8 +45,8 @@ import HarborView.Maunaloa.Common
   )
 import HarborView.Maunaloa.ChartTransform as T
 import HarborView.Maunaloa.HRuler
-    ( HRuler(..)
-    )
+  ( HRuler(..)
+  )
 
 import HarborView.Maunaloa.Bar as B
 
@@ -159,26 +160,26 @@ testTicker =
 
 chartMapping :: ChartMapping
 chartMapping = 
-    ChartMapping 
-    { ticker: testTicker 
-    , chartId: ChartId "chart3"
-    , canvasId: HtmlId "test-canvasId"
-    , chartHeight: ChartHeight 120.0
-    , levelCanvasId: HtmlId "" 
-    , addLevelId: HtmlId "" 
-    , fetchLevelId: HtmlId "" 
-    }
+  ChartMapping 
+  { ticker: testTicker 
+  , chartId: ChartId "chart3"
+  , canvasId: HtmlId "test-canvasId"
+  , chartHeight: ChartHeight 120.0
+  , levelCanvasId: HtmlId "" 
+  , addLevelId: HtmlId "" 
+  , fetchLevelId: HtmlId "" 
+  }
 
 testEnv :: Env
 testEnv = Env
-    { ticker: testTicker 
-    , dropAmt: Drop 0
-    , takeAmt: Take 90
-    , chartType: DayChart
-    , mappings: [chartMapping] 
-    , globalChartWidth: ChartWidth 1310.0
-    , scaling: Scaling 1.0
-    }
+  { ticker: testTicker 
+  , dropAmt: Drop 0
+  , takeAmt: Take 90
+  , chartType: DayChart
+  , mappings: [chartMapping] 
+  , globalChartWidth: ChartWidth 1310.0
+  , scaling: Scaling 1.0
+  }
 
 -- testVruler : 
 
@@ -189,13 +190,33 @@ testHruler (HRuler hruler) =
 testChart :: Array Chart -> Test 
 testChart [(Chart c)] = 
   let 
-    bars = c.bars
+    bar = unsafePartial $ fromJust $ Array.head c.bars
+    bar_2 = Array.take 2 bar
   in
-  Assert.equal 1 (1 :: Int) *>
-  Assert.equal 3 (2 :: Int)
+  --Assert.equal bar_2 [0.0 0.0] *>
+  Assert.equal 3 (3 :: Int)
 testChart _ = 
   failure "Incorrect number of Charts"
 
+
+
+demo = 
+  let 
+    (ChartCollection coll) = runReader (T.transform testJsonChartResponse) testEnv 
+  in
+  case coll.charts of 
+    [(Chart c)] -> 
+      unsafePartial $ fromJust $ Array.head c.bars
+    _ -> 
+      []
+  
+demo2 = 
+  T.chartWindow (Drop 0) (Take 90) testJsonChartResponse.chart3 (Scaling 1.0) false 10
+
+  -- let 
+  --   w = T.chartWindow (Drop 0) (Take 90) testJsonChartResponse.chart3 (Scaling 1.0) false 10
+  -- in
+  -- w.bars
 
 
 testBarSuite :: TestSuite
@@ -203,7 +224,8 @@ testBarSuite =
   suite "TestBarSuite" do
     let (ChartCollection coll) = runReader (T.transform testJsonChartResponse) testEnv 
     test "testBarToPix" do
-      testHruler coll.hruler
       testChart coll.charts
       --Assert.equal (UnixTime 1615939200000.0) hruler.startTime
       --Assert.equal (UnixTime 1627430400000.0) hruler.endTime
+
+

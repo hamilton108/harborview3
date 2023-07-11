@@ -19,79 +19,77 @@ import Affjax.ResponseFormat as ResponseFormat
 
 --import Data.Either (Either(..))
 import Data.Array 
-    ( take
-    , drop
-    , filter
-    , concat
-    , (:)
-    )
+  ( take
+  , drop
+  , filter
+  , concat
+  , (:)
+  )
 
 --import Data.Tuple (fst,snd)
 --import Data.Nullable 
 --    ( Nullable
 --    )
 import Control.Monad.Reader 
-    ( Reader 
-    , ask 
-    )
+  ( Reader 
+  , ask 
+  )
 import Data.Foldable 
-    ( minimum
-    , maximum
-    , minimumBy
-    , maximumBy
-    )
+  ( minimum
+  , maximum
+  , minimumBy
+  , maximumBy
+  )
 import Data.Ord
-    ( abs
-    )
+  ( abs
+  )
 import Partial.Unsafe 
-    ( unsafePartial
-    )
+  ( unsafePartial
+  )
 import Data.Maybe 
-    ( Maybe(..)
-    , fromJust 
-    , fromMaybe
-    )
+  ( Maybe(..)
+  , fromJust 
+  , fromMaybe
+  )
 
+import HarborView.Maunaloa.Common as Common
 import HarborView.Maunaloa.Common 
-    ( mainURL
-    , Scaling(..)
-    , UnixTime(..)
-    , ValueRange(..)
-    , Drop(..)
-    , Take(..)
-    , Env(..)
-    , ChartType(..)
-    , ChartId(..)
-    , ChartMapping(..)
-    , ChartWidth
-    , StockTicker(..)
-    , valueRange
-    )
+  ( ChartId(..)
+  , ChartMapping(..)
+  , ChartType(..)
+  , ChartWidth
+  , Drop(..)
+  , Env(..)
+  , Scaling(..)
+  , StockTicker(..)
+  , Take(..)
+  , UnixTime(..)
+  , ValueRange(..)
+  )
 import HarborView.Maunaloa.JsonCharts 
-    ( JsonChartResponse 
-    , JsonChart
-    , JsonChartWindow
-    , JsonCandlestick
-    )
+  ( JsonChartResponse 
+  , JsonChart
+  , JsonChartWindow
+  , JsonCandlestick
+  )
+import HarborView.Maunaloa.Chart as Chart
 import HarborView.Maunaloa.Chart
-    ( padding
-    , vruler
-    , Chart(..)
-    )
+  ( Chart(..)
+  )
 import HarborView.Maunaloa.ChartCollection
-    ( ChartCollection(..)
-    , EmptyChartCollection(..)
-    , mappingToChartLevel
-    )
+  ( ChartCollection(..)
+  , EmptyChartCollection(..)
+  , mappingToChartLevel
+  )
 import HarborView.Maunaloa.Line
-    ( lineToPix
-    )
+  ( lineToPix
+  )
 import HarborView.Maunaloa.Candlestick
-    ( candleToPix
-    )
+  ( candleToPix
+  )
 import HarborView.Maunaloa.Bar
-    ( barToPix
-    )
+  ( barToPix
+  )
 import HarborView.Maunaloa.HRuler as H
 
 nullValueRange :: ValueRange
@@ -99,160 +97,160 @@ nullValueRange = ValueRange { minVal: 0.0, maxVal: 0.0 }
 
 days :: String -> String
 days ticker =
-    mainURL <> "/days/" <> ticker
+  Common.mainURL <> "/days/" <> ticker
 
 slice :: forall a. Drop -> Take -> Array a -> Array a
 slice (Drop dropAmount) (Take takeAmount) vals =
-    if dropAmount == 0 then
-        take takeAmount vals
-    else
-        take takeAmount $ drop dropAmount vals
+  if dropAmount == 0 then
+    take takeAmount vals
+  else
+    take takeAmount $ drop dropAmount vals
 
 
 minMaxCndl :: Array JsonCandlestick -> Maybe ValueRange
 minMaxCndl cndl = 
-    minimumBy (\x y -> if x.l < y.l then LT else GT) cndl >>= \mib ->
-    maximumBy (\x y -> if x.h > y.h then GT else LT) cndl >>= \mab ->
-    Just $ ValueRange { minVal: mib.l, maxVal: mab.h }
+  minimumBy (\x y -> if x.l < y.l then LT else GT) cndl >>= \mib ->
+  maximumBy (\x y -> if x.h > y.h then GT else LT) cndl >>= \mab ->
+  Just $ ValueRange { minVal: mib.l, maxVal: mab.h }
 
 minMaxArray :: Array Number -> Maybe ValueRange
 minMaxArray ar = 
-    minimum ar >>= \mib ->
-    maximum ar >>= \mab ->
-    Just $ ValueRange { minVal: mib, maxVal: mab }
+  minimum ar >>= \mib ->
+  maximum ar >>= \mab ->
+  Just $ ValueRange { minVal: mib, maxVal: mab }
 
 minMaxRanges :: Scaling -> Array (Maybe ValueRange) -> ValueRange
 minMaxRanges (Scaling scale) vals = 
-    let 
-        mmas = map (\y -> fromMaybe nullValueRange y) $ filter (\x -> x /= Nothing) vals
-        result = 
-            fromMaybe nullValueRange $
-                minimumBy (\(ValueRange x) (ValueRange y) -> if x.minVal < y.minVal then LT else GT) mmas >>= \mib ->
-                maximumBy (\(ValueRange x) (ValueRange y) -> if x.maxVal > y.maxVal then GT else LT) mmas >>= \mab ->
-                    let 
-                        (ValueRange mibx) = mib
-                        (ValueRange mabx) = mab
-                    in
-                    Just $ ValueRange { minVal: mibx.minVal / scale, maxVal: mabx.maxVal * scale}
-    in
-    result 
+  let 
+    mmas = map (\y -> fromMaybe nullValueRange y) $ filter (\x -> x /= Nothing) vals
+    result = 
+      fromMaybe nullValueRange $
+        minimumBy (\(ValueRange x) (ValueRange y) -> if x.minVal < y.minVal then LT else GT) mmas >>= \mib ->
+        maximumBy (\(ValueRange x) (ValueRange y) -> if x.maxVal > y.maxVal then GT else LT) mmas >>= \mab ->
+          let 
+            (ValueRange mibx) = mib
+            (ValueRange mabx) = mab
+          in
+          Just $ ValueRange { minVal: mibx.minVal / scale, maxVal: mabx.maxVal * scale}
+  in
+  result 
 
 normalizeLine :: Array Number -> Array Number
 normalizeLine line = 
-    let 
-        (ValueRange vr) = fromMaybe (valueRange (-1.0) 1.0) $ minMaxArray line
-        scalingFactor = max (abs vr.minVal) vr.maxVal
-        scalingFn x = x / scalingFactor
-    in
-    map scalingFn line
+  let 
+    (ValueRange vr) = fromMaybe (Common.valueRange (-1.0) 1.0) $ minMaxArray line
+    scalingFactor = max (abs vr.minVal) vr.maxVal
+    scalingFn x = x / scalingFactor
+  in
+  map scalingFn line
 
 
 chartValueRange ::
-    Array (Array Number)
-    -> Array (Array Number)
-    -> Array JsonCandlestick
-    -> Scaling
-    -> ValueRange 
+  Array (Array Number)
+  -> Array (Array Number)
+  -> Array JsonCandlestick
+  -> Scaling
+  -> ValueRange 
 chartValueRange lx bars cx scaling =
-    let 
-        minMaxLines = 
-            map minMaxArray lx 
+  let 
+    minMaxLines = 
+      map minMaxArray lx 
 
-        minMaxBars = 
-            map minMaxArray bars
+    minMaxBars = 
+      map minMaxArray bars
 
-        minMaxCandlesticks = 
-            minMaxCndl cx
+    minMaxCandlesticks = 
+      minMaxCndl cx
 
-        allVr = minMaxCandlesticks : (concat [minMaxLines,minMaxBars]) 
-    in
-    minMaxRanges scaling allVr
+    allVr = minMaxCandlesticks : (concat [minMaxLines,minMaxBars]) 
+  in
+  minMaxRanges scaling allVr
 
 chartWindow :: Drop -> Take -> JsonChart -> Scaling -> Boolean -> Int -> JsonChartWindow
 chartWindow dropAmt takeAmt c scaling doNormalizeLines numVlines =
-    let
-        lines_ = 
-            let 
-                tmp = map (slice dropAmt takeAmt) $ fromMaybe [] c.lines
-            in
-            if doNormalizeLines == true then
-                map normalizeLine tmp
-            else
-                tmp
+  let
+    lines_ = 
+      let 
+        tmp = map (slice dropAmt takeAmt) $ fromMaybe [] c.lines
+      in
+      if doNormalizeLines == true then
+        map normalizeLine tmp
+      else
+        tmp
 
-        bars_ =
-            map (slice dropAmt takeAmt) $ fromMaybe [] c.bars
+    bars_ =
+      map (slice dropAmt takeAmt) $ fromMaybe [] c.bars
 
-        cndl_ =
-            slice dropAmt takeAmt $ fromMaybe [] c.candlesticks
+    cndl_ =
+      slice dropAmt takeAmt $ fromMaybe [] c.candlesticks
 
-        valueRange =
-            chartValueRange lines_ bars_ cndl_ scaling 
+    valueRange =
+      chartValueRange lines_ bars_ cndl_ scaling 
 
-    in
-    { lines: lines_
-    , bars: bars_
-    , candlesticks: cndl_
-    , valueRange: valueRange
-    , numVlines: numVlines 
-    }
+  in
+  { lines: lines_
+  , bars: bars_
+  , candlesticks: cndl_
+  , valueRange: valueRange
+  , numVlines: numVlines 
+  }
 
 
 transformMapping1 :: ChartWidth -> ChartMapping -> JsonChartWindow -> Chart 
 transformMapping1 chartWidth cm@(ChartMapping mapping) ec = 
-    let 
-        h = mapping.chartHeight
-        vr = vruler ec.valueRange chartWidth h
-        linesToPix = map (lineToPix vr) ec.lines
-        cndlToPix = map (candleToPix vr) ec.candlesticks
-        barsToPix = map (barToPix vr) ec.bars
-        clevel = mappingToChartLevel cm
-    in
-    Chart 
-        { lines: linesToPix
-        , candlesticks: cndlToPix
-        , bars: barsToPix 
-        , canvasId: mapping.canvasId
-        , vruler: vr 
-        , w: chartWidth 
-        , h: h
-        , chartLevel: clevel 
-        }
+  let 
+    h = mapping.chartHeight
+    vr = Chart.vruler ec.valueRange chartWidth h
+    linesToPix = map (lineToPix vr) ec.lines
+    cndlToPix = map (candleToPix vr) ec.candlesticks
+    barsToPix = map (barToPix vr) ec.bars
+    clevel = mappingToChartLevel cm
+  in
+  Chart 
+    { lines: linesToPix
+    , candlesticks: cndlToPix
+    , bars: barsToPix 
+    , canvasId: mapping.canvasId
+    , vruler: vr 
+    , w: chartWidth 
+    , h: h
+    , chartLevel: clevel 
+    }
 
 
 transformMapping :: forall r. 
-    { globalChartWidth :: ChartWidth
-    , dropAmt :: Drop 
-    , takeAmt :: Take  
-    , scaling :: Scaling | r } 
-    -> JsonChartResponse 
-    -> ChartMapping 
-    -> Chart 
+  { globalChartWidth :: ChartWidth
+  , dropAmt :: Drop 
+  , takeAmt :: Take  
+  , scaling :: Scaling | r } 
+  -> JsonChartResponse 
+  -> ChartMapping 
+  -> Chart 
 transformMapping env response cm@(ChartMapping mapping) =
-    let 
-        chartWidth = env.globalChartWidth 
-        dropAmt = env.dropAmt 
-        takeAmt = env.takeAmt 
-        scaling = env.scaling
-    in
-    case mapping.chartId of
-        ChartId "chart" -> 
-            let 
-                cw = chartWindow dropAmt takeAmt response.chart scaling false 10
-            in
-            transformMapping1 chartWidth cm cw
-        ChartId "chart2" -> 
-            let 
-                cw = chartWindow dropAmt takeAmt response.chart2 (Scaling 1.00) true 10
-            in
-            transformMapping1 chartWidth cm cw
-        ChartId "chart3" -> 
-            let 
-                cw = chartWindow dropAmt takeAmt response.chart3 (Scaling 1.00) false 10
-            in
-            transformMapping1 chartWidth cm cw
-        _ -> 
-            EmptyChart
+  let 
+    chartWidth = env.globalChartWidth 
+    dropAmt = env.dropAmt 
+    takeAmt = env.takeAmt 
+    scaling = env.scaling
+  in
+  case mapping.chartId of
+    ChartId "chart" -> 
+      let 
+        cw = chartWindow dropAmt takeAmt response.chart scaling false 10
+      in
+      transformMapping1 chartWidth cm cw
+    ChartId "chart2" -> 
+      let 
+        cw = chartWindow dropAmt takeAmt response.chart2 (Scaling 1.00) true 10
+      in
+      transformMapping1 chartWidth cm cw
+    ChartId "chart3" -> 
+      let 
+        cw = chartWindow dropAmt takeAmt response.chart3 (Scaling 1.00) false 10
+      in
+      transformMapping1 chartWidth cm cw
+    _ -> 
+        EmptyChart
 
 
 incMonths :: ChartType -> Int
@@ -262,37 +260,36 @@ incMonths MonthChart = 6
 
 transform :: JsonChartResponse -> Reader Env ChartCollection
 transform response = 
-    ask >>= \(Env env) ->
-    let 
-        xaxis = slice env.dropAmt env.takeAmt response.xAxis
-        tm = UnixTime response.minDx 
-        ruler = H.create env.globalChartWidth tm xaxis padding (incMonths env.chartType)
-        ruler1 = unsafePartial (fromJust ruler)
-        charts1 = map (transformMapping env response) env.mappings
-    in
-    pure $ 
-    ChartCollection 
-        { ticker: (StockTicker response.ticker)
-        , charts: charts1
-        , hruler: ruler1 
-        }
+  ask >>= \(Env env) ->
+  let 
+    xaxis = slice env.dropAmt env.takeAmt response.xAxis
+    tm = UnixTime response.minDx 
+    ruler = H.create env.globalChartWidth tm xaxis Chart.padding (incMonths env.chartType)
+    ruler1 = unsafePartial (fromJust ruler)
+    charts1 = map (transformMapping env response) env.mappings
+  in
+  pure $ 
+  ChartCollection 
+    { ticker: (StockTicker response.ticker)
+    , charts: charts1
+    , hruler: ruler1 
+    }
 
 transformMappingEmpty :: ChartWidth -> ChartMapping -> Chart 
 transformMappingEmpty chartWidth (ChartMapping mapping) =
-    ChartWithoutTicker 
-        { canvasId: mapping.canvasId 
-        , w: chartWidth 
-        , h: mapping.chartHeight 
-        }
+  ChartWithoutTicker 
+    { canvasId: mapping.canvasId 
+    , w: chartWidth 
+    , h: mapping.chartHeight 
+    }
 
 transformEmpty :: Reader Env EmptyChartCollection
 transformEmpty = 
-    ask >>= \(Env env) ->
-    let 
-        charts = map (transformMappingEmpty env.globalChartWidth) env.mappings
-    in
-    pure $
-    EmptyChartCollection charts
+  ask >>= \(Env env) ->
+  let 
+    charts = map (transformMappingEmpty env.globalChartWidth) env.mappings
+  in
+  pure $ EmptyChartCollection charts
 
 
 {-

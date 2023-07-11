@@ -115,6 +115,10 @@ valueRange :: Number -> Number -> ValueRange
 valueRange minv maxv = 
   ValueRange { minVal: minv, maxVal: maxv }
 
+valueRangeZeroBased :: ValueRange -> ValueRange
+valueRangeZeroBased (ValueRange {maxVal}) = 
+  ValueRange { minVal: 0.0, maxVal: maxVal }
+
 ------------------------- Padding ------------------------- 
 newtype Padding = Padding 
   { left :: Number
