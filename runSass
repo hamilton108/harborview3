@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SRC=/harborview/sass-src/harborview.scss 
+
+TARGET=/harborview/src/main/resources/static/css/harborview.css
+
+# sass --style compressed sass-src/harborview.scss src/resources/public/css/harborview.css
+
+docker run --user $(id -u):$(id -g) --rm -v /home/rcs/opt/java/harborview3:/harborview rcs/sass sass $SRC $TARGET
+
+# sass --watch sass-src/harborview.scss:src/resources/public/css/harborview.css
+
+exit 0
