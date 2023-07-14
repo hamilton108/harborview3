@@ -69,7 +69,7 @@ import HarborView.Maunaloa.Common
 import HarborView.Maunaloa.JsonCharts 
   ( JsonChartResponse 
   , JsonChart
-  , JsonChartWindow
+  , JsonChartWindow(..)
   , JsonCandlestick
   )
 import HarborView.Maunaloa.Chart as Chart
@@ -88,7 +88,8 @@ import HarborView.Maunaloa.Candlestick
   ( candleToPix
   )
 import HarborView.Maunaloa.Bar
-  ( barToPix
+  ( Bars
+  , barToPix
   )
 import HarborView.Maunaloa.HRuler as H
 
@@ -166,8 +167,25 @@ chartValueRange lx bars cx scaling =
   in
   minMaxRanges scaling allVr
 
-chartWindow :: Drop -> Take -> JsonChart -> Scaling -> Boolean -> Int -> JsonChartWindow
-chartWindow dropAmt takeAmt c scaling doNormalizeLines numVlines =
+
+chartWindowBar_ :: Drop -> Take -> Bars -> Scaling -> Int -> JsonChartWindow
+chartWindowBar_ dropAmt takeAmt c scaling numVlines =
+  let
+    bars_ =
+      map (slice dropAmt takeAmt) c
+
+    valueRange =
+      chartValueRange [] bars_ [] scaling 
+
+  in
+  JsonChartWindowBar
+  { bars: bars_
+  , valueRange: valueRange
+  , numVlines: numVlines 
+  }
+
+chartWindow_ :: Drop -> Take -> JsonChart -> Scaling -> Boolean -> Int -> JsonChartWindow
+chartWindow_ dropAmt takeAmt c scaling doNormalizeLines numVlines =
   let
     lines_ = 
       let 
@@ -185,37 +203,75 @@ chartWindow dropAmt takeAmt c scaling doNormalizeLines numVlines =
       slice dropAmt takeAmt $ fromMaybe [] c.candlesticks
 
     valueRange =
-      chartValueRange lines_ bars_ cndl_ scaling 
+      chartValueRange lines_ [] cndl_ scaling 
 
   in
+  JsonChartWindow
   { lines: lines_
-  , bars: bars_
   , candlesticks: cndl_
   , valueRange: valueRange
   , numVlines: numVlines 
   }
 
 
-transformMapping1 :: ChartWidth -> ChartMapping -> JsonChartWindow -> Chart 
-transformMapping1 chartWidth cm@(ChartMapping mapping) ec = 
+chartWindow :: Drop -> Take -> JsonChart -> Scaling -> Boolean -> Int -> JsonChartWindow
+chartWindow dropAmt takeAmt c scaling doNormalizeLines numVlines =
+  let 
+    bars = fromMaybe [] c.bars
+  in
+  if bars == [] then
+    chartWindow_ dropAmt takeAmt c scaling doNormalizeLines numVlines 
+  else
+    chartWindowBar_ dropAmt takeAmt bars scaling numVlines 
+
+    -- { lines: lines_
+    -- , bars: bars_
+    -- , candlesticks: cndl_
+    -- , valueRange: valueRange
+    -- , numVlines: numVlines 
+    -- }
+
+
+transformMapping1 :: JsonChartWindow -> ChartWidth -> ChartMapping -> Chart 
+transformMapping1 (JsonChartWindow ec) chartWidth cm@(ChartMapping mapping) = 
   let 
     h = mapping.chartHeight
     vr = Chart.vruler ec.valueRange chartWidth h
     linesToPix = map (lineToPix vr) ec.lines
     cndlToPix = map (candleToPix vr) ec.candlesticks
-    barsToPix = map (barToPix vr) ec.bars
     clevel = mappingToChartLevel cm
   in
   Chart 
     { lines: linesToPix
     , candlesticks: cndlToPix
-    , bars: barsToPix 
+    , bars: []
     , canvasId: mapping.canvasId
     , vruler: vr 
     , w: chartWidth 
     , h: h
     , chartLevel: clevel 
     }
+transformMapping1 (JsonChartWindowBar ec) chartWidth cm@(ChartMapping mapping) =
+  let 
+    h = mapping.chartHeight
+    vr = Chart.vruler (Common.valueRangeZeroBased ec.valueRange) chartWidth h
+    barsToPix = map (barToPix vr) ec.bars
+    clevel = mappingToChartLevel cm
+  in
+  Chart 
+    { lines: []
+    , candlesticks: []
+    , bars: barsToPix
+    , canvasId: mapping.canvasId
+    , vruler: vr 
+    , w: chartWidth 
+    , h: h
+    , chartLevel: clevel 
+    }
+transformMapping1 JsonChartWindowEmpty _ _ = EmptyChart
+
+
+-- transformMapping1 chartWidth cm@(ChartMapping mapping) ec = 
 
 
 transformMapping :: forall r. 
@@ -238,17 +294,17 @@ transformMapping env response cm@(ChartMapping mapping) =
       let 
         cw = chartWindow dropAmt takeAmt response.chart scaling false 10
       in
-      transformMapping1 chartWidth cm cw
+      transformMapping1 cw chartWidth cm 
     ChartId "chart2" -> 
       let 
         cw = chartWindow dropAmt takeAmt response.chart2 (Scaling 1.00) true 10
       in
-      transformMapping1 chartWidth cm cw
+      transformMapping1 cw chartWidth cm 
     ChartId "chart3" -> 
       let 
         cw = chartWindow dropAmt takeAmt response.chart3 (Scaling 1.00) false 10
       in
-      transformMapping1 chartWidth cm cw
+      transformMapping1 cw chartWidth cm 
     _ -> 
         EmptyChart
 

@@ -243,6 +243,19 @@ var PS =
   var eqNumberImpl = refEq;
   var eqCharImpl = refEq;
   var eqStringImpl = refEq;
+  var eqArrayImpl = function(f) {
+    return function(xs) {
+      return function(ys) {
+        if (xs.length !== ys.length)
+          return false;
+        for (var i = 0; i < xs.length; i++) {
+          if (!f(xs[i])(ys[i]))
+            return false;
+        }
+        return true;
+      };
+    };
+  };
 
   // output/Data.Eq/index.js
   var eqString = {
@@ -283,6 +296,11 @@ var PS =
     return dict.eq;
   };
   var eq2 = /* @__PURE__ */ eq(eqBoolean);
+  var eqArray = function(dictEq) {
+    return {
+      eq: eqArrayImpl(eq(dictEq))
+    };
+  };
   var eqRowCons = function(dictEqRecord) {
     var eqRecord1 = eqRecord(dictEqRecord);
     return function() {
@@ -2793,12 +2811,12 @@ var PS =
     ctx.lineWidth = 0.5;
     const y = bar.yaxis;
     const x = bar.xaxis;
+    ctx.beginPath();
     for (var i = 0; i < x.length; ++i) {
-      ctx.beginPath();
       ctx.moveTo(x[i], yZero);
       ctx.lineTo(x[i], y[i]);
-      ctx.stroke();
     }
+    ctx.stroke();
   };
 
   // output/Data.Array/foreign.js
@@ -3255,6 +3273,12 @@ var PS =
     MonthChart2.value = new MonthChart2();
     return MonthChart2;
   }();
+  var valueRangeZeroBased = function(v) {
+    return {
+      minVal: 0,
+      maxVal: v.maxVal
+    };
+  };
   var valueRange = function(minv) {
     return function(maxv) {
       return {
@@ -3334,7 +3358,7 @@ var PS =
       return 3;
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.Common (line 225, column 1 - line 225, column 36): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.Common (line 229, column 1 - line 229, column 36): " + [v.constructor.name]);
   };
   var calcPpy = function(v) {
     return function(v1) {
@@ -3900,7 +3924,7 @@ var PS =
         return "(EmptyChart)";
       }
       ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 88, column 1 - line 103, column 23): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 88, column 1 - line 103, column 19): " + [v.constructor.name]);
     }
   };
   var paintEmpty = function(v) {
@@ -6865,11 +6889,143 @@ var PS =
     };
   };
 
+  // output/HarborView.Maunaloa.JsonCharts/index.js
+  var gDecodeJsonCons3 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldMaybe(/* @__PURE__ */ decodeArray2(/* @__PURE__ */ decodeArray2(decodeJsonNumber))));
+  var gDecodeJsonCons1 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
+  var gDecodeJsonCons22 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons3(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldMaybe(/* @__PURE__ */ decodeArray2(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons1(gDecodeJsonNil)({
+    reflectSymbol: function() {
+      return "o";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "l";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "h";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "c";
+    }
+  })()())())))(/* @__PURE__ */ gDecodeJsonCons3(gDecodeJsonNil)({
+    reflectSymbol: function() {
+      return "lines";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "candlesticks";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "bars";
+    }
+  })()())()));
+  var bind4 = /* @__PURE__ */ bind(bindAff);
+  var show9 = /* @__PURE__ */ show(showJsonDecodeError);
+  var pure8 = /* @__PURE__ */ pure(applicativeAff);
+  var JsonChartWindow = /* @__PURE__ */ function() {
+    function JsonChartWindow2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    JsonChartWindow2.create = function(value0) {
+      return new JsonChartWindow2(value0);
+    };
+    return JsonChartWindow2;
+  }();
+  var JsonChartWindowBar = /* @__PURE__ */ function() {
+    function JsonChartWindowBar2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    JsonChartWindowBar2.create = function(value0) {
+      return new JsonChartWindowBar2(value0);
+    };
+    return JsonChartWindowBar2;
+  }();
+  var JsonChartWindowEmpty = /* @__PURE__ */ function() {
+    function JsonChartWindowEmpty2() {
+    }
+    ;
+    JsonChartWindowEmpty2.value = new JsonChartWindowEmpty2();
+    return JsonChartWindowEmpty2;
+  }();
+  var chartsFromJson = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonString))(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeArray2(decodeJsonInt)))(gDecodeJsonNil)({
+    reflectSymbol: function() {
+      return "xAxis";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "ticker";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "minDx";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "chart3";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "chart2";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "chart";
+    }
+  })()())());
+  var chartUrl = function(v) {
+    return function(v1) {
+      if (v instanceof DayChart) {
+        return "/maunaloa/stockprice/days/" + v1;
+      }
+      ;
+      if (v instanceof WeekChart) {
+        return "/maunaloa/stockprice/weeks/" + v1;
+      }
+      ;
+      if (v instanceof MonthChart) {
+        return "/maunaloa/stockprice/months/" + v1;
+      }
+      ;
+      throw new Error("Failed pattern match at HarborView.Maunaloa.JsonCharts (line 88, column 1 - line 88, column 44): " + [v.constructor.name, v1.constructor.name]);
+    };
+  };
+  var fetchCharts = function(ticker) {
+    return function(chartType) {
+      return bind4(get2(json)(chartUrl(chartType)(ticker)))(function(res) {
+        var result = function() {
+          if (res instanceof Left) {
+            return new Left(new AffjaxError(printError(res.value0)));
+          }
+          ;
+          if (res instanceof Right) {
+            var charts = chartsFromJson(res.value0.body);
+            if (charts instanceof Left) {
+              return new Left(new JsonError(show9(charts.value0)));
+            }
+            ;
+            if (charts instanceof Right) {
+              return new Right(charts.value0);
+            }
+            ;
+            throw new Error("Failed pattern match at HarborView.Maunaloa.JsonCharts (line 109, column 25 - line 113, column 46): " + [charts.constructor.name]);
+          }
+          ;
+          throw new Error("Failed pattern match at HarborView.Maunaloa.JsonCharts (line 102, column 17 - line 113, column 46): " + [res.constructor.name]);
+        }();
+        return pure8(result);
+      });
+    };
+  };
+
   // output/HarborView.Maunaloa.ChartTransform/index.js
   var map16 = /* @__PURE__ */ map(functorArray);
-  var bind4 = /* @__PURE__ */ bind(/* @__PURE__ */ bindReaderT(bindIdentity));
+  var bind5 = /* @__PURE__ */ bind(/* @__PURE__ */ bindReaderT(bindIdentity));
   var ask2 = /* @__PURE__ */ ask(/* @__PURE__ */ monadAskReaderT(monadIdentity));
-  var pure8 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeReaderT(applicativeIdentity));
+  var pure9 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeReaderT(applicativeIdentity));
   var notEq3 = /* @__PURE__ */ notEq(/* @__PURE__ */ eqMaybe(eqValueRange));
   var bind12 = /* @__PURE__ */ bind(bindMaybe);
   var minimumBy2 = /* @__PURE__ */ minimumBy(foldableArray);
@@ -6878,6 +7034,7 @@ var PS =
   var maximum2 = /* @__PURE__ */ maximum(ordNumber)(foldableArray);
   var max6 = /* @__PURE__ */ max(ordNumber);
   var abs3 = /* @__PURE__ */ abs(ordNumber)(ringNumber);
+  var eq22 = /* @__PURE__ */ eq(/* @__PURE__ */ eqArray(/* @__PURE__ */ eqArray(eqNumber)));
   var fromJust5 = /* @__PURE__ */ fromJust();
   var transformMappingEmpty = function(chartWidth) {
     return function(v) {
@@ -6888,36 +7045,59 @@ var PS =
       });
     };
   };
-  var transformMapping1 = function(chartWidth) {
-    return function(v) {
-      return function(ec) {
-        var vr = vruler(ec.valueRange)(chartWidth)(v.chartHeight);
-        var linesToPix = map16(lineToPix(vr))(ec.lines);
-        var cndlToPix = map16(candleToPix(vr))(ec.candlesticks);
-        var clevel = mappingToChartLevel(v);
-        var barsToPix = map16(barToPix(vr))(ec.bars);
-        return new Chart({
-          lines: linesToPix,
-          candlesticks: cndlToPix,
-          bars: barsToPix,
-          canvasId: v.canvasId,
-          vruler: vr,
-          w: chartWidth,
-          h: v.chartHeight,
-          chartLevel: clevel
-        });
+  var transformMapping1 = function(v) {
+    return function(v1) {
+      return function(v2) {
+        if (v instanceof JsonChartWindow) {
+          var vr = vruler(v.value0.valueRange)(v1)(v2.chartHeight);
+          var linesToPix = map16(lineToPix(vr))(v.value0.lines);
+          var cndlToPix = map16(candleToPix(vr))(v.value0.candlesticks);
+          var clevel = mappingToChartLevel(v2);
+          return new Chart({
+            lines: linesToPix,
+            candlesticks: cndlToPix,
+            bars: [],
+            canvasId: v2.canvasId,
+            vruler: vr,
+            w: v1,
+            h: v2.chartHeight,
+            chartLevel: clevel
+          });
+        }
+        ;
+        if (v instanceof JsonChartWindowBar) {
+          var vr = vruler(valueRangeZeroBased(v.value0.valueRange))(v1)(v2.chartHeight);
+          var clevel = mappingToChartLevel(v2);
+          var barsToPix = map16(barToPix(vr))(v.value0.bars);
+          return new Chart({
+            lines: [],
+            candlesticks: [],
+            bars: barsToPix,
+            canvasId: v2.canvasId,
+            vruler: vr,
+            w: v1,
+            h: v2.chartHeight,
+            chartLevel: clevel
+          });
+        }
+        ;
+        if (v instanceof JsonChartWindowEmpty) {
+          return EmptyChart.value;
+        }
+        ;
+        throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 235, column 1 - line 235, column 76): " + [v.constructor.name, v1.constructor.name, v2.constructor.name]);
       };
     };
   };
-  var transformEmpty = /* @__PURE__ */ bind4(ask2)(function(v) {
+  var transformEmpty = /* @__PURE__ */ bind5(ask2)(function(v) {
     var charts = map16(transformMappingEmpty(v.globalChartWidth))(v.mappings);
-    return pure8(charts);
+    return pure9(charts);
   });
   var slice3 = function(v) {
     return function(v1) {
       return function(vals) {
-        var $51 = v === 0;
-        if ($51) {
+        var $58 = v === 0;
+        if ($58) {
           return take(v1)(vals);
         }
         ;
@@ -6938,8 +7118,8 @@ var PS =
       })(vals));
       var result = fromMaybe(nullValueRange)(bind12(minimumBy2(function(v1) {
         return function(v2) {
-          var $56 = v1.minVal < v2.minVal;
-          if ($56) {
+          var $63 = v1.minVal < v2.minVal;
+          if ($63) {
             return LT.value;
           }
           ;
@@ -6948,8 +7128,8 @@ var PS =
       })(mmas))(function(mib) {
         return bind12(maximumBy2(function(v1) {
           return function(v2) {
-            var $59 = v1.maxVal > v2.maxVal;
-            if ($59) {
+            var $66 = v1.maxVal > v2.maxVal;
+            if ($66) {
               return GT.value;
             }
             ;
@@ -6968,8 +7148,8 @@ var PS =
   var minMaxCndl = function(cndl) {
     return bind12(minimumBy2(function(x) {
       return function(y) {
-        var $62 = x.l < y.l;
-        if ($62) {
+        var $69 = x.l < y.l;
+        if ($69) {
           return LT.value;
         }
         ;
@@ -6978,8 +7158,8 @@ var PS =
     })(cndl))(function(mib) {
       return bind12(maximumBy2(function(x) {
         return function(y) {
-          var $63 = x.h > y.h;
-          if ($63) {
+          var $70 = x.h > y.h;
+          if ($70) {
             return GT.value;
           }
           ;
@@ -7024,7 +7204,7 @@ var PS =
       return 6;
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 258, column 1 - line 258, column 30): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 312, column 1 - line 312, column 30): " + [v.constructor.name]);
   };
   var chartValueRange = function(lx) {
     return function(bars) {
@@ -7039,7 +7219,24 @@ var PS =
       };
     };
   };
-  var chartWindow = function(dropAmt) {
+  var chartWindowBar_ = function(dropAmt) {
+    return function(takeAmt) {
+      return function(c) {
+        return function(scaling) {
+          return function(numVlines) {
+            var bars_ = map16(slice3(dropAmt)(takeAmt))(c);
+            var valueRange2 = chartValueRange([])(bars_)([])(scaling);
+            return new JsonChartWindowBar({
+              bars: bars_,
+              valueRange: valueRange2,
+              numVlines
+            });
+          };
+        };
+      };
+    };
+  };
+  var chartWindow_ = function(dropAmt) {
     return function(takeAmt) {
       return function(c) {
         return function(scaling) {
@@ -7047,23 +7244,41 @@ var PS =
             return function(numVlines) {
               var lines_2 = function() {
                 var tmp = map16(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.lines));
-                var $66 = doNormalizeLines === true;
-                if ($66) {
+                var $73 = doNormalizeLines === true;
+                if ($73) {
                   return map16(normalizeLine)(tmp);
                 }
                 ;
                 return tmp;
               }();
               var cndl_ = slice3(dropAmt)(takeAmt)(fromMaybe([])(c.candlesticks));
+              var valueRange2 = chartValueRange(lines_2)([])(cndl_)(scaling);
               var bars_ = map16(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.bars));
-              var valueRange2 = chartValueRange(lines_2)(bars_)(cndl_)(scaling);
-              return {
+              return new JsonChartWindow({
                 lines: lines_2,
-                bars: bars_,
                 candlesticks: cndl_,
                 valueRange: valueRange2,
                 numVlines
-              };
+              });
+            };
+          };
+        };
+      };
+    };
+  };
+  var chartWindow = function(dropAmt) {
+    return function(takeAmt) {
+      return function(c) {
+        return function(scaling) {
+          return function(doNormalizeLines) {
+            return function(numVlines) {
+              var bars = fromMaybe([])(c.bars);
+              var $74 = eq22(bars)([]);
+              if ($74) {
+                return chartWindow_(dropAmt)(takeAmt)(c)(scaling)(doNormalizeLines)(numVlines);
+              }
+              ;
+              return chartWindowBar_(dropAmt)(takeAmt)(bars)(scaling)(numVlines);
             };
           };
         };
@@ -7075,17 +7290,17 @@ var PS =
       return function(v) {
         if (v.chartId === "chart") {
           var cw = chartWindow(env.dropAmt)(env.takeAmt)(response.chart)(env.scaling)(false)(10);
-          return transformMapping1(env.globalChartWidth)(v)(cw);
+          return transformMapping1(cw)(env.globalChartWidth)(v);
         }
         ;
         if (v.chartId === "chart2") {
           var cw = chartWindow(env.dropAmt)(env.takeAmt)(response.chart2)(1)(true)(10);
-          return transformMapping1(env.globalChartWidth)(v)(cw);
+          return transformMapping1(cw)(env.globalChartWidth)(v);
         }
         ;
         if (v.chartId === "chart3") {
           var cw = chartWindow(env.dropAmt)(env.takeAmt)(response.chart3)(1)(false)(10);
-          return transformMapping1(env.globalChartWidth)(v)(cw);
+          return transformMapping1(cw)(env.globalChartWidth)(v);
         }
         ;
         return EmptyChart.value;
@@ -7093,122 +7308,17 @@ var PS =
     };
   };
   var transform2 = function(response) {
-    return bind4(ask2)(function(v) {
+    return bind5(ask2)(function(v) {
       var xaxis = slice3(v.dropAmt)(v.takeAmt)(response.xAxis);
       var ruler = create2(v.globalChartWidth)(response.minDx)(xaxis)(padding)(incMonths2(v.chartType));
       var ruler1 = fromJust5(ruler);
       var charts1 = map16(transformMapping(v)(response))(v.mappings);
-      return pure8({
+      return pure9({
         ticker: response.ticker,
         charts: charts1,
         hruler: ruler1
       });
     });
-  };
-
-  // output/HarborView.Maunaloa.JsonCharts/index.js
-  var gDecodeJsonCons3 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldMaybe(/* @__PURE__ */ decodeArray2(/* @__PURE__ */ decodeArray2(decodeJsonNumber))));
-  var gDecodeJsonCons1 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
-  var gDecodeJsonCons22 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons3(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldMaybe(/* @__PURE__ */ decodeArray2(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons1(gDecodeJsonNil)({
-    reflectSymbol: function() {
-      return "o";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "l";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "h";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "c";
-    }
-  })()())())))(/* @__PURE__ */ gDecodeJsonCons3(gDecodeJsonNil)({
-    reflectSymbol: function() {
-      return "lines";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "candlesticks";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "bars";
-    }
-  })()())()));
-  var bind5 = /* @__PURE__ */ bind(bindAff);
-  var show9 = /* @__PURE__ */ show(showJsonDecodeError);
-  var pure9 = /* @__PURE__ */ pure(applicativeAff);
-  var chartsFromJson = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons22(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonString))(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeArray2(decodeJsonInt)))(gDecodeJsonNil)({
-    reflectSymbol: function() {
-      return "xAxis";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "ticker";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "minDx";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "chart3";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "chart2";
-    }
-  })()())({
-    reflectSymbol: function() {
-      return "chart";
-    }
-  })()())());
-  var chartUrl = function(v) {
-    return function(v1) {
-      if (v instanceof DayChart) {
-        return "/maunaloa/stockprice/days/" + v1;
-      }
-      ;
-      if (v instanceof WeekChart) {
-        return "/maunaloa/stockprice/weeks/" + v1;
-      }
-      ;
-      if (v instanceof MonthChart) {
-        return "/maunaloa/stockprice/months/" + v1;
-      }
-      ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.JsonCharts (line 82, column 1 - line 82, column 44): " + [v.constructor.name, v1.constructor.name]);
-    };
-  };
-  var fetchCharts = function(ticker) {
-    return function(chartType) {
-      return bind5(get2(json)(chartUrl(chartType)(ticker)))(function(res) {
-        var result = function() {
-          if (res instanceof Left) {
-            return new Left(new AffjaxError(printError(res.value0)));
-          }
-          ;
-          if (res instanceof Right) {
-            var charts = chartsFromJson(res.value0.body);
-            if (charts instanceof Left) {
-              return new Left(new JsonError(show9(charts.value0)));
-            }
-            ;
-            if (charts instanceof Right) {
-              return new Right(charts.value0);
-            }
-            ;
-            throw new Error("Failed pattern match at HarborView.Maunaloa.JsonCharts (line 103, column 25 - line 107, column 46): " + [charts.constructor.name]);
-          }
-          ;
-          throw new Error("Failed pattern match at HarborView.Maunaloa.JsonCharts (line 96, column 17 - line 107, column 46): " + [res.constructor.name]);
-        }();
-        return pure9(result);
-      });
-    };
   };
 
   // output/HarborView.Maunaloa.Repository/foreign.js

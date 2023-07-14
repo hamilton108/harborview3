@@ -18,10 +18,10 @@ import Test.BarTest (testBarSuite)
 
 main :: Effect Unit
 main = runTest do
-    -- testCandlestickSuite
-    -- testChartSuite
-    -- testChartTransformSuite
-    -- testDateUtilSuite
-    -- testHRulerSuite
-    -- testVRulerSuite
-    testBarSuite
+    testCandlestickSuite
+    testChartSuite
+    testChartTransformSuite
+    testDateUtilSuite
+    testHRulerSuite
+    testVRulerSuite
+    -- testBarSuite

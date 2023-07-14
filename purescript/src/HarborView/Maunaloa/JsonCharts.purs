@@ -52,14 +52,20 @@ type JsonChart =
     , candlesticks :: Maybe (Array JsonCandlestick)
     }
 
-type JsonChartWindow =
+data JsonChartWindow =
+    JsonChartWindow 
     { lines :: Array (Array Number)
-    , bars :: Array (Array Number)
     , candlesticks :: Array JsonCandlestick
     , valueRange :: ValueRange 
     , numVlines :: Int
     }
-    
+    | JsonChartWindowBar  
+    { bars :: Array (Array Number)
+    , valueRange :: ValueRange 
+    , numVlines :: Int
+    }
+    | JsonChartWindowEmpty
+
 type JsonChartResponse =
     { ticker :: String
     , chart :: JsonChart
