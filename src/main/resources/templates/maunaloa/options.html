@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="head.html :: head('Maunaloa')">
+<head th:replace="~{head.html :: head('Maunaloa')}">
     <title>Maunaloa</title>
 </head>
 
 <body>
-    <div th:replace="navbar.html :: navbar"></div>
+    <div th:replace="~{navbar.html :: navbar}"></div>
 
     <div class="logo"></div>
     <div role="tabpanel" style="margin-bottom: 1rem">
@@ -30,8 +30,8 @@
         </div>
     </div>
 
-    <div th:replace="head.html :: scripts"></div>
-    <div th:replace="footer.html :: footer"></div>
+    <div th:replace="~{head.html :: scripts}"></div>
+    <div th:replace="~{footer.html :: footer}"></div>
     <script type="text/javascript" src="/js/maunaloa/elm-options.js"></script>
     <script type="text/javascript" src="/js/common.js"></script>
     <script type="text/javascript">
