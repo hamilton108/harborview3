@@ -180,4 +180,4 @@ if __name__ == '__main__':
         build()
         export()
         minify()
-        copy()
+        copyfile(JS_MIN, TARGET_JS)

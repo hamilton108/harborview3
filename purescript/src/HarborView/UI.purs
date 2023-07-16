@@ -68,10 +68,15 @@ mkSelect (Title title) items evt =
   let 
     sel = mkSelect_ items evt
   in
-  HH.span [ HP.classes [ ClassName "form-group" ]]
+  HH.span [ HP.classes [ ClassName "form-group form-group--menu-bar" ]]
     [ HH.label [] [ HH.text title ]
     , sel
     ]
+
+
+mkSelectSimple :: forall w i. SelectItems -> (String -> i) -> HTML w i
+mkSelectSimple items evt = 
+  mkSelect_ items evt
 
 mkInput_ :: forall w i. InputType -> (String -> i) -> Maybe InputVal -> HTML w i
 mkInput_ inpType evt val = 

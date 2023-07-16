@@ -168,6 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return [mainChart, osc, volume];
     };
 
+    /*
     const fetchTickers = (nodeId, eventHandler) => {
         fetch("/maunaloa/stockprice/tickers").then(result => {
             result.json().then(data => {
@@ -183,6 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     };
+    */
 
     const DAY = 1;
     const WEEK = 2;
@@ -238,9 +240,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const init = (chartType) => {
         const _params = chartTypeParams(chartType);
+        /*
         const _chartMappings = toChartMappings(_params.canvasesType);
         var _currentTicker = null;
         var _shiftIndex = 0;
+
+
         const fetchPrices = (event) => {
             if (isPositiveInt(event.target.value)) {
                 _currentTicker = event.target.value;
@@ -297,6 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
         lastBtn.addEventListener("click", shiftPricesLast);
         const resetChartsBtn = document.querySelector(_params.resetChartsBtnClass);
         resetChartsBtn.addEventListener("click", resetCharts);
+        */
 
         //---------------------- Scrapbooks ----------------------
         const scrapConfig = _params.scrapBookConfig;

@@ -40,3 +40,16 @@ gradle/
 gradlew.bat
 logs/
 
+purescript/.bash_history
+purescript/.cache-0.13.8/
+purescript/.cache-0.14.4/
+purescript/.cache/
+purescript/.local/
+purescript/.npm/
+purescript/.spago-0.13.8/
+purescript/.spago-0.14.4/
+purescript/deploy_ps.py
+purescript/dist/
+harborview.code-workspace
+purescript/tmp/
+

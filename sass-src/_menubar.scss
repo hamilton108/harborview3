@@ -1,3 +1,11 @@
+
+.grid-menu-bar-main {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: 200px 1fr;
+  /*grid-template-rows: 600px 110px 200px;*/
+}
+
 .grid-menu-bar {
   display: flex;
   margin-top: 1rem;

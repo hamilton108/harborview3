@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
@@ -7,14 +7,80 @@
 </head>
 
 <body>
-  <div th:fragment="menubar(n)" class="grid-menu-bar">
-    <div class="form-group form-group--menu-bar">
-      <select class="form-control" th:id="|tickers-${n}|">
-        <option>-</option>
-      </select>
+    <div th:fragment="menubar(n)" class="grid-menu-bar-main">
+        <!--
+        <div class="form-group form-group--menu-bar">
+          <select class="form-control" th:id="|tickers-${n}|">
+            <option>-</option>
+          </select>
+        </div>
+        -->
+        <!--
+            <div class="grid-menu-bar-ps">
+                <div class="form-group form-group--menu-bar">
+                    <select class="form-control">
+                        <option value="0">-</option>
+                        <option value="18">AKSO - Aker Solutions</option>
+                        <option value="3">YAR - Yara</option>
+                    </select>
+                </div>
+            </div>
+            -->
+        <div th:id="|ps-menubar-${n}|"></div>
+
+        <div class="grid-menu-bar">
+            <div class="form-group form-group--menu-bar">
+                <span class="scrap-span">
+                    <i class="fa-solid fa-crow fa-fw" th:id="|btn-draggable-${n}|" title="Draggable"></i>
+                </span>
+                <span class="scrap-span">
+                    <i th:id="|btn-scrapbook${n}-line|" class="fa-solid fa-slash fa-fw" title="Scrapbook line"></i>
+                </span>
+                <span class="scrap-span">
+                    <i th:id="|btn-scrapbook${n}-horiz|" class="fa-solid fa-minus fa-fw" title="Scrapbook horiz. line"></i>
+                </span>
+                <span class="scrap-span">
+                    <i th:id="|btn-scrapbook${n}-save|" class="fa-solid fa-download fa-fw" title="Save scrapbook to file"></i>
+                </span>
+                <span class="scrap-span">
+                    <i th:id="|btn-scrapbook${n}-arrow|" class="fa-solid fa-seedling fa-fw" title="Scrapbook arrow+text"></i>
+                </span>
+                <span class="scrap-span">
+                     <i th:id="|btn-scrapbook${n}-text|" class="fa-solid fa-pen-nib fa-fw" title="Scrapbook text"></i>
+                </span>
+            </div>
+            <div class="form-group form-group--menu-bar">
+                <textarea rows="2" cols="18" th:id="|comment${n}|"></textarea>
+            </div>
+            <div class="form-group form-group--menu-bar">
+                <select class="form-control" th:id="|arrow${n}-orient|">
+                    <option>NW</option>
+                    <option>NE</option>
+                    <option>SE</option>
+                    <option selected="selected">SW</option>
+                </select>
+            </div>
+            <div class="form-group form-group--menu-bar">
+                <input type="color" value="#72a30f" th:id="|color${n}|">
+            </div>
+            <div class="form-group form-group--menu-bar">
+                <select class="form-control" th:id="|rg-layer${n}|">
+                    <option value="1" selected="selected">Scrap</option>
+                    <option value="2">Level Line</option>
+                    <option value="3">SVG</option>
+                </select>
+            </div>
+            <div class="form-group form-group--menu-bar">
+                <select class="form-control" th:id="|rg-line${n}|">
+                    <option value="1" selected="selected">Small</option>
+                    <option value="2">Normal</option>
+                    <option value="3">Large</option>
+                </select>
+            </div>
+        </div>
     </div>
 
-    <!-- 
+    <!--
     <div class="form-group form-group--menu-bar">
       <p><i class="fa-solid fa-coffee fa-2xs"></i> When my six o’clock alarm buzzes, I require a pot of good java.</p>
       <p><i class="fa-solid fa-coffee fa-xs"></i> When my six o’clock alarm buzzes, I require a pot of good java.</p>
@@ -27,6 +93,7 @@
     -->
 
 
+    <!--
     <div class="form-group form-group--menu-bar">
       <span class="scrap-span">
         <i th:class="|fa-solid fa-ghost reset-chart-${n} fa-fw|" title="Reset chart"></i>
@@ -41,17 +108,17 @@
         <i th:class="|fa-solid fa-arrow-right-to-bracket shift-last-${n} fa-fw|" title="Last"></i>
       </span>
       <span class="scrap-span">
-        <i class="fa-solid fa-ruler-vertical fa-fw" th:id="|btn-levelline-${n}" title="Levelline"></i>
+        <i class="fa-solid fa-ruler-vertical fa-fw" th:id="|btn-levelline-${n}|" title="Level Line"></i>
       </span>
       <span class="scrap-span">
-        <i class="fa-solid fa-pen-ruler fa-fw" th:id="|btn-persistent-levelline-${n}" title="Persistent levelline"></i>
+        <i class="fa-solid fa-pen-ruler fa-fw" th:id="|btn-persistent-levelline-${n}|" title="Persistent Level Line"></i>
       </span>
       <span class="scrap-span">
-        <i class="fa-solid fa-ruler-combined fa-fw" th:id="|btn-del-persistent-levelline-${n}"
-          title="Delete levelline"></i>
+        <i class="fa-solid fa-ruler-combined fa-fw" th:id="|btn-del-persistent-levelline-${n}|"
+          title="Delete Level Line"></i>
       </span>
       <span class="scrap-span">
-        <i class="fa-solid fa-crow fa-fw" th:id="|btn-draggable-${n}" title="Draggable"></i>
+        <i class="fa-solid fa-crow fa-fw" th:id="|btn-draggable-${n}|" title="Draggable"></i>
       </span>
       <span class="scrap-span">
         <i th:id="|btn-scrapbook${n}-line|" class="fa-solid fa-slash fa-fw" title="Scrapbook line"></i>
@@ -84,12 +151,12 @@
       </select>
     </div>
     <div class="form-group form-group--menu-bar">
-      <input type="color" value="#72a30f" th:id="|color${n}|"></input>
+      <input type="color" value="#72a30f" th:id="|color${n}|">
     </div>
     <div class="form-group form-group--menu-bar">
       <select class="form-control" th:id="|rg-layer${n}|">
         <option value="1" selected="selected">Scrap</option>
-        <option value="2">Levelline</option>
+        <option value="2">Level Line</option>
         <option value="3">SVG</option>
       </select>
     </div>
@@ -101,4 +168,5 @@
       </select>
     </div>
   </div>
+  -->
 </body>
