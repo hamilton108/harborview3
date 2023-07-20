@@ -109,8 +109,8 @@ paint ct (ChartCollection coll) =
     let 
         paint_ = C.paint coll.hruler
     in
-    traverse_ paint_ coll.charts *>
-    levelLines ct coll.ticker coll.charts
+    traverse_ paint_ coll.charts 
+    -- levelLines ct coll.ticker coll.charts
 
 paintAff :: ChartType -> ChartCollection -> Aff Unit
 paintAff ct coll = 

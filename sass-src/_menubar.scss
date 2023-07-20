@@ -1,9 +1,17 @@
+/* _menubar.scss */
 
 .grid-menu-bar-main {
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: 200px 1fr;
-  /*grid-template-rows: 600px 110px 200px;*/
+  grid-template-columns: 5fr 8fr;
+}
+
+.grid-menu-bar-ps {
+  display: flex;
+  margin-top: 1rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  grid-column: 1;
 }
 
 .grid-menu-bar {
@@ -11,10 +19,11 @@
   margin-top: 1rem;
   margin-left: 3rem;
   margin-right: 3rem;
+  grid-column: 2;
 }
 
 .form-group--menu-bar {
-  align-self: flex-end;
+  /*align-self: flex-end;*/
   margin-left: 1rem;
 }
 

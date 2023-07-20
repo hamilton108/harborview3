@@ -1,6 +1,7 @@
 module HarborView.Maunaloa.View where
 
 
+import Data.Tuple ( Tuple(..) )
 import Effect.Class (class MonadEffect)
 import Effect.Aff.Class (class MonadAff)
 import HarborView.Maunaloa.Common ( ChartType )
@@ -10,6 +11,7 @@ import HarborView.UI  ( Title(..)
                       , SelectItem
                       , SelectItems
                       )
+import HarborView.Maunaloa.Core as Core
 import Web.UIEvent.MouseEvent (MouseEvent)
 import Web.UIEvent.MouseEvent as ME
 import Web.Event.Event as E
@@ -79,13 +81,42 @@ mainClass = ClassName "grid-menu-bar-ps"
 menuBarClass :: ClassName 
 menuBarClass = ClassName "form-group form-group--menu-bar" 
 
-tmp = 
-      HH.span 
-        [ HP.classes [ ClassName "scrap-span" ]]
-        [ HH.i 
-            [ HP.classes [ ClassName "fa-solid fa-arrow-right fa-fw" ]]
-            []
-        ]
+type Icon = Tuple String String
+
+icon :: forall w i. Icon -> HTML w i
+icon (Tuple iconClass title) = 
+  let 
+    cn = "fa-solid " <> iconClass <> " fa-fw"
+  in
+  HH.span 
+    [ HP.classes [ ClassName "scrap-span" ]]
+    [ HH.i 
+        [ HP.classes [ ClassName cn ], HP.title title ]
+        []
+    ]
+
+
+resetChart :: Icon
+resetChart = Tuple "fa-ghost" "Reset Chart"
+
+arrowRight :: Icon 
+arrowRight = Tuple "fa-arrow-right" "Next"
+
+arrowLeft :: Icon 
+arrowLeft = Tuple "fa-arrow-left" "Previous"
+
+arrowLast :: Icon
+arrowLast = Tuple "fa-arrow-right-to-bracket" "Last"
+
+levelLine :: Icon
+levelLine = Tuple "fa-ruler-vertical" "Level Line"
+
+persistentLevelLine :: Icon
+persistentLevelLine = Tuple "fa-pen-ruler" "Persistent Level Line"
+
+deleteLevelLine :: Icon
+deleteLevelLine = Tuple "fa-ruler-combined" "Delete Level Line"
+
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
@@ -101,13 +132,16 @@ render st =
     ]
     , HH.div 
     [ HP.classes [ menuBarClass ]]
-    [ tmp 
-    , tmp 
-    , tmp 
+    [ icon resetChart 
+    , icon arrowLeft 
+    , icon arrowRight 
+    , icon arrowLast
+    , icon levelLine
+    , icon persistentLevelLine 
+    , icon deleteLevelLine 
     ]
     -- , HH.p_ [ HH.text st.chart ]
   ]
-
 
 handleAction :: forall cs o m. MonadAff m => Action -> H.HalogenM State Action cs o m Unit       
 handleAction = case _ of
