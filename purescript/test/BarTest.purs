@@ -161,8 +161,7 @@ testTicker =
 chartMapping :: ChartMapping
 chartMapping = 
   ChartMapping 
-  { ticker: testTicker 
-  , chartId: ChartId "chart3"
+  { chartId: ChartId "chart3"
   , canvasId: HtmlId "test-canvasId"
   , chartHeight: ChartHeight 120.0
   , levelCanvasId: HtmlId "" 

@@ -129,14 +129,44 @@ clearLevelLines cti =
   logShow "clearLevelLines" *>
   clear cti
 
+  {-
 chartTypeAsMapping :: ChartType -> ChartMapping
-chartTypeAsMapping ct = 
-newtype ChartMapping = ChartMapping 
-    { ticker ::StockTicker 
-    , chartId :: ChartId
-    , canvasId :: HtmlId
-    , chartHeight :: ChartHeight 
-    , levelCanvasId :: HtmlId
-    , addLevelId :: HtmlId
-    , fetchLevelId :: HtmlId
-    }
+chartTypeAsMapping DayChart = 
+  ChartMapping 
+  { chartId :: 
+  , canvasId :: HtmlId
+  , chartHeight :: ChartHeight 
+  , levelCanvasId :: HtmlId
+  , addLevelId :: HtmlId
+  , fetchLevelId :: HtmlId
+  }
+
+        DAY: {
+            MAIN_CHART: 'chart-1',
+            VOLUME: 'vol-1',
+            OSC: 'osc-1',
+            LEVEL_LINES: 'levellines-1',
+            BTN_LEVELLINE: "btn-levelline-1",
+            BTN_RISCLINES: "btn-persistent-levelline-1",
+            BTN_DEL_RISCLINES: "btn-del-persistent-levelline-1"
+        },
+        WEEK: {
+            MAIN_CHART: 'chart-2',
+            VOLUME: 'vol-2',
+            OSC: 'osc-2',
+            LEVEL_LINES: 'levellines-2',
+            BTN_LEVELLINE: "btn-levelline-2",
+            BTN_RISCLINES: "btn-persistent-levelline-2",
+            BTN_DEL_RISCLINES: "btn-del-persistent-levelline-2"
+        },
+        MONTH: {
+            MAIN_CHART: 'chart-3',
+            VOLUME: 'vol-3',
+            OSC: 'osc-3',
+            LEVEL_LINES: 'levellines-3',
+            BTN_LEVELLINE: "btn-levelline-3",
+            BTN_RISCLINES: "btn-persistent-levelline-3",
+            BTN_DEL_RISCLINES: "btn-del-persistent-levelline-3"
+        }
+    };
+-}

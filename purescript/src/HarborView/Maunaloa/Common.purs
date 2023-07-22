@@ -197,8 +197,8 @@ instance showChartId :: Show ChartId where
 
 
 newtype ChartMapping = ChartMapping 
-    { ticker ::StockTicker 
-    , chartId :: ChartId
+    { -- ticker ::StockTicker 
+    chartId :: ChartId
     , canvasId :: HtmlId
     , chartHeight :: ChartHeight 
     , levelCanvasId :: HtmlId

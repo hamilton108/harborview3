@@ -208,8 +208,7 @@ defaultJsonChartInfo =
 chartMapping :: HtmlId -> HtmlId -> HtmlId -> ChartMapping
 chartMapping levelCanvasId addLevelId fetchLevelId = 
   ChartMapping 
-  { ticker: StockTicker "NHY"
-  , chartId: ChartId "chart"
+  { chartId: ChartId "chart"
   , canvasId: HtmlId "test-canvasId"
   , chartHeight: ChartHeight 500.0
   , levelCanvasId: levelCanvasId 
