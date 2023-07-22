@@ -313,6 +313,7 @@ incMonths :: ChartType -> Int
 incMonths DayChart = 1
 incMonths WeekChart = 3
 incMonths MonthChart = 6
+incMonths EmptyChartType = 0
 
 transform :: JsonChartResponse -> Reader Env ChartCollection
 transform response = 

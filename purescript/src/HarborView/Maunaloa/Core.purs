@@ -22,17 +22,21 @@ import HarborView.Maunaloa.ChartTransform as ChartTransform
 import HarborView.Maunaloa.JsonCharts (fetchCharts)
 import HarborView.Maunaloa.MaunaloaError (handleErrorAff)
 import HarborView.Maunaloa.Repository as Repository 
+import HarborView.Maunaloa.Common as Common
 import HarborView.Maunaloa.Common 
   ( ChartMapping(..)
   , ChartMappings
+  , ChartHeight(..)
+  , ChartId(..)
+  , ChartType(..)
   , Drop(..)
   , Take(..)
   , Env(..)
+  , HtmlId(..)
   , StockTicker(..)
   , ChartType(..)
   , ChartWidth(..)
   , Scaling(..)
-  , asChartType
   )
 import HarborView.Maunaloa.ChartCollection 
   as ChartCollection 
@@ -55,21 +59,21 @@ createEnvEmpty mappings =
   { ticker: StockTicker "-"
   , dropAmt: Drop 0 
   , takeAmt: Take 0
-  , chartType: asChartType 1 
+  , chartType: DayChart 
   , mappings: mappings
   , globalChartWidth: ChartWidth 1750.0
   , scaling: Scaling 1.0
   }
 
 
-reposIdFor :: Int -> String -> String 
-reposIdFor chartTypeId ticker = 
-  ticker <> ":" <> (toString $ toNumber chartTypeId)
+reposIdFor :: ChartType -> StockTicker -> String 
+reposIdFor chartType (StockTicker ticker) = 
+  ticker <> ":" <> (toString $ toNumber $ Common.chartTypeAsInt chartType)
 
-resetChart :: Int -> String -> Effect Unit
-resetChart chartTypeId ticker = 
+resetChart :: ChartType -> StockTicker -> Effect Unit
+resetChart chartType ticker = 
   let
-    reposId = reposIdFor chartTypeId ticker 
+    reposId = reposIdFor chartType ticker 
   in
   Repository.resetChart reposId
 
@@ -77,29 +81,27 @@ resetCharts :: Effect Unit
 resetCharts = 
   Repository.resetCharts 
 
-paint :: Int -> ChartMappings -> String -> Int -> Int -> Effect Unit
-paint chartTypeId mappings ticker dropAmt takeAmt = 
-  if chartTypeId == 4 then
-    pure unit
-  else
+paint :: ChartType -> ChartMappings -> StockTicker -> Drop -> Take -> Effect Unit
+paint EmptyChartType _ _ _ _ = 
+  pure unit
+paint chartType mappings ticker dropAmt takeAmt = 
     let
-      curTicker = StockTicker ticker 
-      curChartType = asChartType chartTypeId
-      curEnv = createEnv curChartType curTicker (Drop dropAmt) (Take takeAmt) mappings
-      reposId = reposIdFor chartTypeId ticker 
+      curEnv = createEnv chartType ticker dropAmt takeAmt mappings
+      reposId = reposIdFor chartType ticker 
       cachedResponse =  Repository.getJsonResponse reposId
+      (StockTicker tickerS) = ticker
     in 
-    logShow ("StockTicker: " <> ticker) *>
+    logShow ("StockTicker: " <> tickerS) *>
     case cachedResponse of 
       Just cachedResponse1 ->
         let 
           collection = runReader (ChartTransform.transform cachedResponse1) curEnv
         in
         logShow "Fetched response from repository" *>
-        ChartCollection.paint curChartType collection
+        ChartCollection.paint chartType collection
       Nothing ->
         launchAff_ $
-          fetchCharts curTicker curChartType >>= \charts ->
+          fetchCharts ticker chartType >>= \charts ->
             case charts of 
               Left err ->
                 handleErrorAff err 
@@ -108,7 +110,7 @@ paint chartTypeId mappings ticker dropAmt takeAmt =
                   collection = runReader (ChartTransform.transform jsonChartResponse) curEnv
                 in
                 (liftEffect $ Repository.setJsonResponse reposId jsonChartResponse) *>
-                ChartCollection.paintAff curChartType collection
+                ChartCollection.paintAff chartType collection
 
 
 paintEmpty :: ChartMappings -> Effect Unit
@@ -129,18 +131,135 @@ clearLevelLines cti =
   logShow "clearLevelLines" *>
   clear cti
 
-  {-
-chartTypeAsMapping :: ChartType -> ChartMapping
-chartTypeAsMapping DayChart = 
-  ChartMapping 
-  { chartId :: 
-  , canvasId :: HtmlId
-  , chartHeight :: ChartHeight 
-  , levelCanvasId :: HtmlId
-  , addLevelId :: HtmlId
-  , fetchLevelId :: HtmlId
-  }
+chartTypeAsMappings :: ChartType -> ChartMappings
+chartTypeAsMappings DayChart = 
+  let 
+    mainChart = 
+      ChartMapping 
+      { chartId: ChartId "chart"
+      , canvasId: HtmlId "chart-1"
+      , chartHeight: ChartHeight 600.0
+      , levelCanvasId: HtmlId "levellines-1"
+      , addLevelId: HtmlId "btn-levelline-1"
+      , fetchLevelId: HtmlId "btn-persistent-levelline-1"
+      }
+    osc = 
+      ChartMapping 
+      { chartId: ChartId "chart2"
+      , canvasId: HtmlId "osc-1"
+      , chartHeight: ChartHeight 200.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+    volume = 
+      ChartMapping 
+      { chartId: ChartId "chart3"
+      , canvasId: HtmlId "vol-1"
+      , chartHeight: ChartHeight 110.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+  in 
+  [ mainChart, osc, volume ]
+chartTypeAsMappings WeekChart = 
+  let 
+    mainChart = 
+      ChartMapping 
+      { chartId: ChartId "chart"
+      , canvasId: HtmlId "chart-2"
+      , chartHeight: ChartHeight 600.0
+      , levelCanvasId: HtmlId "levellines-2"
+      , addLevelId: HtmlId "btn-levelline-2"
+      , fetchLevelId: HtmlId "btn-persistent-levelline-2"
+      }
+    osc = 
+      ChartMapping 
+      { chartId: ChartId "chart2"
+      , canvasId: HtmlId "osc-2"
+      , chartHeight: ChartHeight 200.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+    volume = 
+      ChartMapping 
+      { chartId: ChartId "chart3"
+      , canvasId: HtmlId "vol-2"
+      , chartHeight: ChartHeight 110.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+  in 
+  [ mainChart, osc, volume ]
+chartTypeAsMappings MonthChart = 
+  let 
+    mainChart = 
+      ChartMapping 
+      { chartId: ChartId "chart"
+      , canvasId: HtmlId "chart-3"
+      , chartHeight: ChartHeight 600.0
+      , levelCanvasId: HtmlId "levellines-3"
+      , addLevelId: HtmlId "btn-levelline-3"
+      , fetchLevelId: HtmlId "btn-persistent-levelline-3"
+      }
+    osc = 
+      ChartMapping 
+      { chartId: ChartId "chart2"
+      , canvasId: HtmlId "osc-3"
+      , chartHeight: ChartHeight 200.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+    volume = 
+      ChartMapping 
+      { chartId: ChartId "chart3"
+      , canvasId: HtmlId "vol-3"
+      , chartHeight: ChartHeight 110.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+  in 
+  [ mainChart, osc, volume ]
+chartTypeAsMappings EmptyChartType = 
+  let 
+    mainChart = 
+      ChartMapping 
+      { chartId: ChartId "chart"
+      , canvasId: HtmlId "chart-3"
+      , chartHeight: ChartHeight 600.0
+      , levelCanvasId: HtmlId "levellines-3"
+      , addLevelId: HtmlId "btn-levelline-3"
+      , fetchLevelId: HtmlId "btn-persistent-levelline-3"
+      }
+    osc = 
+      ChartMapping 
+      { chartId: ChartId "chart2"
+      , canvasId: HtmlId "osc-3"
+      , chartHeight: ChartHeight 200.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+    volume = 
+      ChartMapping 
+      { chartId: ChartId "chart3"
+      , canvasId: HtmlId "vol-3"
+      , chartHeight: ChartHeight 110.0
+      , levelCanvasId: HtmlId ""
+      , addLevelId: HtmlId ""
+      , fetchLevelId: HtmlId ""
+      }
+  in 
+  [ mainChart, osc, volume ]
 
+
+
+  {-
         DAY: {
             MAIN_CHART: 'chart-1',
             VOLUME: 'vol-1',

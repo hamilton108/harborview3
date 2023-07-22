@@ -92,6 +92,7 @@ chartUrl WeekChart (StockTicker ticker) =
     "/maunaloa/stockprice/weeks/" <> ticker
 chartUrl MonthChart (StockTicker ticker) = 
     "/maunaloa/stockprice/months/" <> ticker
+chartUrl EmptyChartType _ = ""
 
 fetchCharts :: StockTicker -> ChartType -> Aff (Either MaunaloaError JsonChartResponse)
 fetchCharts ticker chartType =  

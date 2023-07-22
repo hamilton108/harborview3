@@ -197,8 +197,7 @@ instance showChartId :: Show ChartId where
 
 
 newtype ChartMapping = ChartMapping 
-    { -- ticker ::StockTicker 
-    chartId :: ChartId
+    { chartId :: ChartId
     , canvasId :: HtmlId
     , chartHeight :: ChartHeight 
     , levelCanvasId :: HtmlId
@@ -215,6 +214,7 @@ data ChartType
     = DayChart
     | WeekChart
     | MonthChart
+    | EmptyChartType
 
 asChartType :: Int -> ChartType
 asChartType 1 = 
@@ -230,6 +230,7 @@ chartTypeAsInt  :: ChartType -> Int
 chartTypeAsInt DayChart   = 1 
 chartTypeAsInt WeekChart  = 2
 chartTypeAsInt MonthChart = 3
+chartTypeAsInt EmptyChartType = 4
 
 newtype Drop = Drop Int
 

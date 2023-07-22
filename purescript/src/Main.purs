@@ -19,8 +19,12 @@ import HarborView.Maunaloa.LevelLine
   )
 import HarborView.Maunaloa.Core as Core
 import HarborView.Maunaloa.View as View
-import HarborView.Maunaloa.Common (ChartType(..))
-
+import HarborView.Maunaloa.Common 
+  ( ChartType(..)
+  , StockTicker(..)
+  , Take(..)
+  , Drop(..)
+  )
 
 tmp :: Line -> Int
 tmp (StdLine v) = 1
@@ -53,7 +57,7 @@ main :: Effect Unit
 main = 
   HA.runHalogenAff $
     liftEffect (
-      Core.paint 4  [] "-" 0 0 *>
+      Core.paint EmptyChartType [] (StockTicker "-") (Drop 0) (Take 0) *>
       Core.paintEmpty [] *>
       Core.clearLevelLines 1  *> 
       Core.resetCharts
