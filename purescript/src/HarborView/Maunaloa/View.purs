@@ -4,7 +4,12 @@ module HarborView.Maunaloa.View where
 import Data.Tuple ( Tuple(..) )
 import Effect.Class (class MonadEffect)
 import Effect.Aff.Class (class MonadAff)
-import HarborView.Maunaloa.Common ( ChartType )
+import HarborView.Maunaloa.Common 
+  ( ChartType 
+  , Drop(..)
+  , Take(..)
+  , StockTicker(..)
+  )
 import HarborView.UI as UI
 import HarborView.UI  ( Title(..)
                       , InputVal(..)
@@ -145,8 +150,11 @@ render st =
 
 handleAction :: forall cs o m. MonadAff m => Action -> H.HalogenM State Action cs o m Unit       
 handleAction = case _ of
-  (Noop e) -> pure unit
-  (SelectChange s) -> 
-    liftEffect (logShow s) *>
+  Noop e -> 
     pure unit
+  SelectChange s -> 
+    -- liftEffect (logShow s) *>
+    H.gets _.ct >>= \ct1 ->
+      liftEffect (Core.paint ct1 (StockTicker s) (Drop 0) (Take 90)) *>
+      pure unit
 

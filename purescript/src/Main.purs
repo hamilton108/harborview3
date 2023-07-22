@@ -57,7 +57,7 @@ main :: Effect Unit
 main = 
   HA.runHalogenAff $
     liftEffect (
-      Core.paint EmptyChartType [] (StockTicker "-") (Drop 0) (Take 0) *>
+      Core.paint EmptyChartType (StockTicker "-") (Drop 0) (Take 0) *>
       Core.paintEmpty [] *>
       Core.clearLevelLines 1  *> 
       Core.resetCharts

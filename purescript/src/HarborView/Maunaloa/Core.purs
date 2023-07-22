@@ -81,17 +81,17 @@ resetCharts :: Effect Unit
 resetCharts = 
   Repository.resetCharts 
 
-paint :: ChartType -> ChartMappings -> StockTicker -> Drop -> Take -> Effect Unit
-paint EmptyChartType _ _ _ _ = 
+paint :: ChartType -> StockTicker -> Drop -> Take -> Effect Unit
+paint EmptyChartType _ _ _ = 
   pure unit
-paint chartType mappings ticker dropAmt takeAmt = 
+paint chartType ticker dropAmt takeAmt = 
     let
+      mappings = chartTypeAsMappings chartType
       curEnv = createEnv chartType ticker dropAmt takeAmt mappings
       reposId = reposIdFor chartType ticker 
       cachedResponse =  Repository.getJsonResponse reposId
-      (StockTicker tickerS) = ticker
     in 
-    logShow ("StockTicker: " <> tickerS) *>
+    logShow ticker *>
     case cachedResponse of 
       Just cachedResponse1 ->
         let 
