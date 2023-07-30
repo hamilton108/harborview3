@@ -19,16 +19,8 @@ chartMapping levelCanvasId addLevelId fetchLevelId =
     , canvasId: HtmlId "test-canvasId"
     , chartHeight: ChartHeight 500.0
     , levelCanvasId: levelCanvasId 
-    , addLevelId: addLevelId 
     , fetchLevelId: fetchLevelId 
     }
-
-asChartLevel :: ChartMapping -> Chart.ChartLevel
-asChartLevel (ChartMapping m) = 
-    { levelCanvasId: m.levelCanvasId
-    , addLevelId: m.addLevelId
-    , fetchLevelId: m.fetchLevelId 
-    } 
 
 chartMappingsWithoutChartLevel :: ChartMappings 
 chartMappingsWithoutChartLevel = [chartMapping (HtmlId "") (HtmlId "") (HtmlId "")]

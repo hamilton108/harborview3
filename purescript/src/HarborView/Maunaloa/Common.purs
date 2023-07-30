@@ -82,10 +82,13 @@ instance showStockTicker :: Show StockTicker where
   show (StockTicker x) = "(StockTicker: " <> x <> ")"
 
 ------------------------- HtmlId ------------------------- 
-newtype HtmlId = HtmlId String 
+data HtmlId = 
+  HtmlId String 
+  | NoHtmlId
 
 instance showHtmlId :: Show HtmlId where
   show (HtmlId x) = "(HtmlId : " <> x <> ")"
+  show (NoHtmlId) = "(NoHtmlId)"
 
 derive instance eqHtmlId :: Eq HtmlId 
 
@@ -192,18 +195,20 @@ calcPpy (ChartHeight dim) (ValueRange {minVal,maxVal}) (Padding p) =
 
 newtype ChartId = ChartId String
 
+derive instance eqChartId :: Eq ChartId
+
 instance showChartId :: Show ChartId where
   show (ChartId c) = "(ChartId " <> c <> ")"
-
 
 newtype ChartMapping = ChartMapping 
     { chartId :: ChartId
     , canvasId :: HtmlId
     , chartHeight :: ChartHeight 
     , levelCanvasId :: HtmlId
-    , addLevelId :: HtmlId
     , fetchLevelId :: HtmlId
     }
+
+derive instance eqChartMapping :: Eq ChartMapping 
 
 instance showChartMapping :: Show ChartMapping where
     show (ChartMapping x) = "(ChartMapping " <> show x <> ")"

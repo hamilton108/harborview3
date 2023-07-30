@@ -74,9 +74,9 @@ mkSelect (Title title) items evt =
     ]
 
 
-mkSelectSimple :: forall w i. SelectItems -> (String -> i) -> HTML w i
-mkSelectSimple items evt = 
-  mkSelect_ items evt
+--mkSelectSimple :: forall w i. SelectItems -> (String -> i) -> HTML w i
+--mkSelectSimple items evt = 
+--  mkSelect_ items evt
 
 mkInput_ :: forall w i. InputType -> (String -> i) -> Maybe InputVal -> HTML w i
 mkInput_ inpType evt val = 

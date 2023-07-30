@@ -165,7 +165,6 @@ chartMapping =
   , canvasId: HtmlId "test-canvasId"
   , chartHeight: ChartHeight 120.0
   , levelCanvasId: HtmlId "" 
-  , addLevelId: HtmlId "" 
   , fetchLevelId: HtmlId "" 
   }
 

@@ -15,11 +15,11 @@ import HarborView.Maunaloa.Common
   , ChartWidth(..)
   , ChartHeight(..)
   , ChartId(..)
+  , ChartMapping(..)
   )
 --import Util.Value (foreignValue)
 import HarborView.Maunaloa.Chart 
     ( Chart(..)
-    , ChartLevel
     , valueRangeFor 
     )
 
@@ -38,16 +38,26 @@ chartW = ChartWidth 200.0
 chartH :: ChartHeight
 chartH = ChartHeight 600.0
 
+testMapping :: ChartMapping
+testMapping = ChartMapping
+  { chartId: cid
+  , canvasId: canvId
+  , chartHeight: chartH
+  , levelCanvasId: HtmlId ""
+  , fetchLevelId: HtmlId ""
+  }
+
 echart :: Chart
 echart = Chart {
     lines: [[360.0,600.0,330.0,0.0,210.0]]
   , candlesticks: []
   , bars: []
-  , canvasId: canvId
   , vruler : VT.testVRuler 
   , w: chartW
-  , h: chartH
-  , chartLevel: Nothing 
+  , mapping: testMapping 
+  --, h: chartH
+  --, canvasId: canvId
+  --, chartLevel: Nothing 
 }
 
 getLines :: Chart -> L.Lines
@@ -62,21 +72,21 @@ getLine c =
   in
   unsafePartial $ fromJust $ Array.head lx
 
-chartLevel :: ChartLevel
-chartLevel = 
-    { levelCanvasId: HtmlId "canvasId"
-    , addLevelId: HtmlId "levelId"
-    , fetchLevelId: HtmlId "fetchLevelId"
-    }
+-- chartLevel :: ChartLevel
+-- chartLevel = 
+--     { levelCanvasId: HtmlId "canvasId"
+--     , addLevelId: HtmlId "levelId"
+--     , fetchLevelId: HtmlId "fetchLevelId"
+--     }
 
   
-getChartLevel :: Chart -> ChartLevel
-getChartLevel (Chart c) = 
-    unsafePartial $ fromJust $ c.chartLevel
-getChartLevel (ChartWithoutTicker _) = 
-    chartLevel
-getChartLevel EmptyChart = 
-    chartLevel
+-- getChartLevel :: Chart -> ChartLevel
+-- getChartLevel (Chart c) = 
+--     unsafePartial $ fromJust $ c.chartLevel
+-- getChartLevel (ChartWithoutTicker _) = 
+--     chartLevel
+-- getChartLevel EmptyChart = 
+--     chartLevel
     
 
 

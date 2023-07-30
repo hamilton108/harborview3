@@ -79,7 +79,6 @@ import HarborView.Maunaloa.Chart
 import HarborView.Maunaloa.ChartCollection
   ( ChartCollection(..)
   , EmptyChartCollection(..)
-  , mappingToChartLevel
   )
 import HarborView.Maunaloa.Line
   ( lineToPix
@@ -224,14 +223,6 @@ chartWindow dropAmt takeAmt c scaling doNormalizeLines numVlines =
   else
     chartWindowBar_ dropAmt takeAmt bars scaling numVlines 
 
-    -- { lines: lines_
-    -- , bars: bars_
-    -- , candlesticks: cndl_
-    -- , valueRange: valueRange
-    -- , numVlines: numVlines 
-    -- }
-
-
 transformMapping1 :: JsonChartWindow -> ChartWidth -> ChartMapping -> Chart 
 transformMapping1 (JsonChartWindow ec) chartWidth cm@(ChartMapping mapping) = 
   let 
@@ -239,39 +230,30 @@ transformMapping1 (JsonChartWindow ec) chartWidth cm@(ChartMapping mapping) =
     vr = Chart.vruler ec.valueRange chartWidth h
     linesToPix = map (lineToPix vr) ec.lines
     cndlToPix = map (candleToPix vr) ec.candlesticks
-    clevel = mappingToChartLevel cm
   in
   Chart 
     { lines: linesToPix
     , candlesticks: cndlToPix
     , bars: []
-    , canvasId: mapping.canvasId
     , vruler: vr 
     , w: chartWidth 
-    , h: h
-    , chartLevel: clevel 
+    , mapping: cm
     }
 transformMapping1 (JsonChartWindowBar ec) chartWidth cm@(ChartMapping mapping) =
   let 
     h = mapping.chartHeight
     vr = Chart.vruler (Common.valueRangeZeroBased ec.valueRange) chartWidth h
     barsToPix = map (barToPix vr) ec.bars
-    clevel = mappingToChartLevel cm
   in
   Chart 
     { lines: []
     , candlesticks: []
     , bars: barsToPix
-    , canvasId: mapping.canvasId
     , vruler: vr 
     , w: chartWidth 
-    , h: h
-    , chartLevel: clevel 
+    , mapping: cm
     }
 transformMapping1 JsonChartWindowEmpty _ _ = EmptyChart
-
-
--- transformMapping1 chartWidth cm@(ChartMapping mapping) ec = 
 
 
 transformMapping :: forall r. 

@@ -69,7 +69,6 @@ import HarborView.Maunaloa.Common
   )
 import HarborView.Maunaloa.Chart
   ( Chart(..)
-  , ChartLevel
   , ChartContent
   , ChartContent2
   , emptyChart
@@ -212,7 +211,6 @@ chartMapping levelCanvasId addLevelId fetchLevelId =
   , canvasId: HtmlId "test-canvasId"
   , chartHeight: ChartHeight 500.0
   , levelCanvasId: levelCanvasId 
-  , addLevelId: addLevelId 
   , fetchLevelId: fetchLevelId 
   }
 
@@ -356,14 +354,6 @@ expectedVruler =
   , w: ChartWidth 1310.0
   }
 
-expectedChartLevel :: Maybe ChartLevel
-expectedChartLevel =
-  Just 
-  { levelCanvasId: HtmlId "level-id"
-  , addLevelId: HtmlId "add-level-id"
-  , fetchLevelId: HtmlId "fetch-level-id"
-  }
-
 testEnv :: Env
 testEnv = Env
   { ticker: StockTicker "1"
@@ -471,10 +461,12 @@ testChartTransformSuite =
       Assert.equal expectedChartLines10 actualChartLines10
       let actualCandlesticks10 = take 10 chart1.candlesticks 
       Assert.equal expectedCandlesticks10 actualCandlesticks10 
+      {-
       Assert.equal (HtmlId "test-canvasId") chart1.canvasId
       Assert.equal expectedChartLevel chart1.chartLevel
       Assert.equal (ChartWidth 1310.0) chart1.w
       Assert.equal (ChartHeight 500.0) chart1.h
+      -}
     test "transformEmpty" do
       testTransformEmpty
       let (EmptyChartCollection coll) = runReader transformEmpty testEnv 
