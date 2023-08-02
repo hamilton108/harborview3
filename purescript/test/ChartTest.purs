@@ -4,7 +4,7 @@ import Prelude
 
 import Test.Unit.Assert as Assert
 import Test.Unit (suite, test, TestSuite)
-import Data.Maybe (fromJust,Maybe(..))
+import Data.Maybe (fromJust)
 import Data.Array as Array
 
 import Partial.Unsafe (unsafePartial)
@@ -44,7 +44,6 @@ testMapping = ChartMapping
   , canvasId: canvId
   , chartHeight: chartH
   , levelCanvasId: HtmlId ""
-  , fetchLevelId: HtmlId ""
   }
 
 echart :: Chart
@@ -71,24 +70,6 @@ getLine c =
     lx = getLines c
   in
   unsafePartial $ fromJust $ Array.head lx
-
--- chartLevel :: ChartLevel
--- chartLevel = 
---     { levelCanvasId: HtmlId "canvasId"
---     , addLevelId: HtmlId "levelId"
---     , fetchLevelId: HtmlId "fetchLevelId"
---     }
-
-  
--- getChartLevel :: Chart -> ChartLevel
--- getChartLevel (Chart c) = 
---     unsafePartial $ fromJust $ c.chartLevel
--- getChartLevel (ChartWithoutTicker _) = 
---     chartLevel
--- getChartLevel EmptyChart = 
---     chartLevel
-    
-
 
 testChartSuite :: TestSuite
 testChartSuite = 

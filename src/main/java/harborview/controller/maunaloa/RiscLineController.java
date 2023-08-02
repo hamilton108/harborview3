@@ -22,9 +22,10 @@ public class RiscLineController {
         this.maunaloaCore = maunaloaCore;
     }
 
+    //public List<RLine> riscLines(@PathVariable("ticker") String ticker) {
     @ResponseBody
     @GetMapping(value = "/{ticker}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RLine> riscLines(@PathVariable("ticker") String ticker) {
+    public List<RLine> riscLines(@PathVariable("ticker") int ticker) {
         var stockTicker = new StockTicker(ticker);
         return maunaloaCore.getRiscLines(stockTicker);
     }

@@ -204,20 +204,19 @@ defaultJsonChartInfo =
   , minDx: 0.0
   }
 
-chartMapping :: HtmlId -> HtmlId -> HtmlId -> ChartMapping
-chartMapping levelCanvasId addLevelId fetchLevelId = 
+chartMapping :: HtmlId -> ChartMapping
+chartMapping levelCanvasId = 
   ChartMapping 
   { chartId: ChartId "chart"
   , canvasId: HtmlId "test-canvasId"
   , chartHeight: ChartHeight 500.0
   , levelCanvasId: levelCanvasId 
-  , fetchLevelId: fetchLevelId 
   }
 
 defaultChartMappings :: ChartMappings
 defaultChartMappings =
   let 
-    mapping1 = chartMapping (HtmlId "level-id") (HtmlId "add-level-id") (HtmlId "fetch-level-id")
+    mapping1 = chartMapping (HtmlId "level-id") 
   in
   [mapping1]
 

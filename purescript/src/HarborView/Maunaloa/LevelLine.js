@@ -71,7 +71,6 @@ class LevelLineInternal {
         this.ctx = null;
         this.v = null;
         this.lines = initLines();
-        this.eventListeners = [];
     }
 
     paint(x2, y, displayValue, strokeStyle) {
@@ -165,16 +164,6 @@ class LevelLineInternal {
         const _v = this.v;
         return ((_v.maxVal - value) * _v.ppy) + _v.padding.top;
     };
-    addListener(listener) {
-        this.eventListeners.push(listener);
-    }
-    resetListeners() {
-        this.eventListeners = [];
-        this.lines = initLines();
-    }
-    getListeners() {
-        return this.eventListeners;
-    }
     getVruler() {
         return this.v;
     }
@@ -244,28 +233,12 @@ class LevelLineInternal {
         }
         this.draw();
     }
-    redraw(ctx, vruler) {
-        ctx.clearRect(0, 0, vruler.w, vruler.h);
-        this.ctx = ctx;
-        this.v = vruler;
-    };
     updateVruler(vruler) {
         this.v = vruler;
     };
     updateCtx(ctx) {
         this.ctx = ctx;
     };
-    clearCanvas() {
-        if (this.ctx === null) {
-            return;
-        }
-        if (this.v === null) {
-            return;
-        }
-        this.clearRect();
-        this.lines = initLines();
-    };
-
     clearLines() {
         this.lines = initLines();
         this.clearRect();
@@ -300,20 +273,6 @@ export const currentVruler = chartType => () => {
     return lin.getVruler();
 }
 
-export const addListener = chartType => listener => () => {
-    const lin = getLin(chartType);
-    lin.addListener(listener);
-};
-export const resetListeners = chartType => () => {
-    const lin = getLin(chartType);
-    lin.resetListeners();
-}
-
-export const getListeners = chartType => () => {
-    const lin = getLin(chartType);
-    return lin.getListeners();
-}
-
 export const onMouseDown = chartType => evt => () => {
     const lin = getLin(chartType);
     lin.onMouseDown(evt);
@@ -334,11 +293,6 @@ export const updateRiscLine = chartType => riscLine => newValue => () => {
     lin.updateRiscLine(riscLine, newValue);
 }
 
-export const redrawImpl = chartType => ctx => vruler => () => {
-    const lin = getLin(chartType);
-    lin.redraw(ctx, vruler);
-};
-
 export const updateVrulerImpl = chartType => vruler => () => {
     const lin = getLin(chartType);
     lin.updateVruler(vruler);
@@ -347,11 +301,6 @@ export const updateCtxImpl = chartType => ctx => () => {
     const lin = getLin(chartType);
     lin.updateCtx(ctx);
 }
-
-export const clearCanvas = chartType => () => {
-    const lin = getLin(chartType);
-    lin.clearCanvas();
-};
 
 export const clearLines = chartType => () => {
     const lin = getLin(chartType);

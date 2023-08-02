@@ -6,6 +6,7 @@ import Data.Either (Either(..))
 import Effect (Effect)
 import Effect.Class (liftEffect)
 import Effect.Aff (Aff)
+import Web.Event.Event as Event
 -- import Effect.Console (logShow)
 
 import Data.Number.Format as Format
@@ -58,3 +59,8 @@ jsonResultToString result =
     Right result1 -> 
       result1.msg
 
+
+defaultEventHandling :: Event.Event -> Effect Unit
+defaultEventHandling event = 
+  Event.stopPropagation event *>
+  Event.preventDefault event 

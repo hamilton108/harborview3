@@ -1,32 +1,28 @@
 module Test.ChartCollectionTest where
 
 --import Util.Value (foreignValue)
-import HarborView.Maunaloa.Chart as Chart 
---import Maunaloa.ChartCollection as ChartCollection
 import HarborView.Maunaloa.Common 
     ( HtmlId(..)
-    , StockTicker(..)
     , ChartHeight(..)
     , ChartMapping(..)
     , ChartId(..)
     , ChartMappings
     )
 
-chartMapping :: HtmlId -> HtmlId -> HtmlId -> ChartMapping
-chartMapping levelCanvasId addLevelId fetchLevelId = 
+chartMapping :: HtmlId -> ChartMapping
+chartMapping levelCanvasId = 
     ChartMapping 
     { chartId: ChartId "chart"
     , canvasId: HtmlId "test-canvasId"
     , chartHeight: ChartHeight 500.0
     , levelCanvasId: levelCanvasId 
-    , fetchLevelId: fetchLevelId 
     }
 
 chartMappingsWithoutChartLevel :: ChartMappings 
-chartMappingsWithoutChartLevel = [chartMapping (HtmlId "") (HtmlId "") (HtmlId "")]
+chartMappingsWithoutChartLevel = [chartMapping (HtmlId "")]
      
 chartMappingWithChartLevel :: ChartMapping
-chartMappingWithChartLevel = chartMapping (HtmlId "level-canvasid") (HtmlId "add-level-id") (HtmlId "fetch-level-id")
+chartMappingWithChartLevel = chartMapping (HtmlId "level-canvasid")
 
 chartMappingsWithChartLevel :: ChartMappings 
 chartMappingsWithChartLevel = [chartMappingWithChartLevel]

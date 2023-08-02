@@ -72,7 +72,6 @@ emptyChart =
                 , canvasId: HtmlId ""
                 , chartHeight: ChartHeight 0.0
                 , levelCanvasId: HtmlId ""
-                , fetchLevelId: HtmlId ""
                 }
   }
 

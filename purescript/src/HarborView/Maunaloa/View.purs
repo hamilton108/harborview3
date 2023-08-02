@@ -2,37 +2,35 @@ module HarborView.Maunaloa.View where
 
 
 -- import Data.Tuple ( Tuple(..) )
-import Effect.Class (class MonadEffect)
+--import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Aff.Class (class MonadAff)
+import Effect.Class (liftEffect)
 import Data.Maybe (Maybe(..))
+import HarborView.Maunaloa.Common as Common
 import HarborView.Maunaloa.Common 
   ( ChartType 
   , Drop(..)
   , Take(..)
   , StockTicker(..)
-  , chartTypeAsInt
   )
 import HarborView.UI as UI
-import HarborView.UI  ( Title(..)
-                      , InputVal(..)
-                      , SelectItem
-                      , SelectItems
-                      )
+import HarborView.UI  
+  ( SelectItems
+  )
 import HarborView.Maunaloa.Core as Core
 import Web.UIEvent.MouseEvent (MouseEvent)
-import Web.UIEvent.MouseEvent as ME
-import Web.Event.Event as E
-import DOM.HTML.Indexed.InputType (InputType(..))
+--import Web.Event.Event as E
+--import DOM.HTML.Indexed.InputType (InputType(..))
 import Halogen as H
 import Halogen.HTML.Properties as HP
 import Halogen.HTML as HH
-import Halogen.HTML ( HTML
-                    , ClassName(..)
-                    )
+import Halogen.HTML 
+  ( HTML
+  , ClassName(..)
+  )
 import Halogen.HTML.Events as HE
 
 import Effect.Console (logShow)
-import Effect.Class (liftEffect)
 
 import Prelude
 
@@ -61,7 +59,9 @@ import Prelude
 type State = 
   { tickers :: SelectItems
   , ct :: ChartType
-  , selectedTicker :: SelectItem
+  , selectedTicker :: String 
+  , takeAmt :: Take
+  , dropAmt :: Int
   }
 
 mkTickers :: SelectItems
@@ -74,13 +74,21 @@ data Action
   = SelectChange String
   | Initialize
   | AddLevelLine MouseEvent
+  | FetchRiscLines MouseEvent
+  | NoOp MouseEvent
+  | Previous MouseEvent
+  | Next MouseEvent
+  | Last MouseEvent
+  | DeleteAll MouseEvent
 
 component :: forall q i o m. MonadAff m => ChartType -> H.Component q i o m
 component c =
   H.mkComponent
     { initialState: \_ -> { tickers: mkTickers 
                           , ct: c
-                          , selectedTicker: UI.emptySelectItem
+                          , selectedTicker: "0" --UI.emptySelectItem
+                          , takeAmt: Take 90
+                          , dropAmt: 0
                           }
     , render
     , eval: H.mkEval H.defaultEval 
@@ -97,12 +105,11 @@ menuBarClass = ClassName "form-group form-group--menu-bar"
 
 type Icon = 
   { iconClass :: String
-  , htmlId :: String
   , title :: String 
   } 
 
 icon :: forall w i. Icon -> (MouseEvent -> i) -> HTML w i
-icon { iconClass, htmlId, title } evt = 
+icon { iconClass, title } evt = 
   let 
     cn = "fa-solid " <> iconClass <> " fa-fw"
   in
@@ -116,31 +123,31 @@ icon { iconClass, htmlId, title } evt =
 
 resetChart :: Icon
 resetChart = 
-  { iconClass: "fa-ghost", htmlId: "", title: "Reset Chart" }
+  { iconClass: "fa-ghost", title: "Reset Chart" }
 
 arrowRight :: Icon 
 arrowRight =
-  { iconClass: "fa-arrow-right", htmlId: "", title: "Next" }
+  { iconClass: "fa-arrow-right", title: "Next" }
 
 arrowLeft :: Icon 
 arrowLeft = 
-  { iconClass: "fa-arrow-left", htmlId: "", title: "Previous" }
+  { iconClass: "fa-arrow-left", title: "Previous" }
 
 arrowLast :: Icon
 arrowLast = 
-  { iconClass: "fa-arrow-right-to-bracket", htmlId: "", title: "Last" }
+  { iconClass: "fa-arrow-right-to-bracket", title: "Last" }
 
 levelLine :: Icon
 levelLine = 
-  { iconClass: "fa-ruler-vertical", htmlId: "", title: "Level Line" }
+  { iconClass: "fa-ruler-vertical", title: "Level Line" }
 
 persistentLevelLine :: Icon
 persistentLevelLine = 
-  { iconClass: "fa-pen-ruler", htmlId: "", title: "Persistent Level Line" }
+  { iconClass: "fa-pen-ruler", title: "Persistent Level Line" }
 
-deleteLevelLine :: Icon
-deleteLevelLine = 
-  { iconClass: "fa-ruler-combined", htmlId: "", title: "Delete Level Line" }
+deleteLevelLines :: Icon
+deleteLevelLines = 
+  { iconClass: "fa-ruler-combined", title: "Delete all Level Lines" }
 
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
@@ -157,35 +164,68 @@ render st =
     ]
     , HH.div 
     [ HP.classes [ menuBarClass ]]
-    [ -- icon resetChart DemoMouse
-    -- , icon arrowLeft 
-    -- , icon arrowRight 
-    -- , icon arrowLast
-    icon levelLine AddLevelLine
-    -- , icon persistentLevelLine 
-    -- , icon deleteLevelLine 
+    [ icon resetChart NoOp 
+    , icon arrowLeft Previous 
+    , icon arrowRight Next
+    , icon arrowLast Last
+    , icon levelLine AddLevelLine
+    , icon persistentLevelLine FetchRiscLines
+    , icon deleteLevelLines DeleteAll
     ]
   ]
 
 handleAction :: forall cs o m. MonadAff m => Action -> H.HalogenM State Action cs o m Unit       
 handleAction = case _ of
   SelectChange s -> 
-    H.gets _.ct >>= \ct1 ->
-      let 
-        ticker = StockTicker s
-      in 
-      if s == "0" then
-        liftEffect (Core.paintEmpty ct1) *>
-        pure unit
-      else
-        liftEffect (Core.paint ct1 (StockTicker s) (Drop 0) (Take 90)) *>
-        pure unit
+    H.get >>= \st -> 
+      ( if s == "0" then
+          liftEffect (Core.paintEmpty st.ct) 
+        else
+          liftEffect (Core.paint st.ct (StockTicker s) (Drop st.dropAmt) st.takeAmt) 
+      ) *> 
+    H.modify_ \stx -> stx { selectedTicker = s } 
   Initialize -> 
     H.gets _.ct >>= \ct1 ->
-      liftEffect (logShow $ chartTypeAsInt ct1) *>
-      liftEffect (Core.initEvents ct1) *>
-      pure unit
+      liftEffect (logShow $ Common.chartTypeAsInt ct1) *>
+      liftEffect (Core.initEvents ct1)
   AddLevelLine _ -> 
     H.gets _.ct >>= \ct1 ->
       liftEffect (Core.addLevelLine ct1)
-
+  FetchRiscLines _ -> 
+    H.get >>= \st -> 
+      liftEffect (Core.fetchLevelLines st.ct (StockTicker st.selectedTicker))
+  NoOp _ -> 
+    pure unit
+  Previous _ -> 
+    H.get >>= \st -> 
+      if st.selectedTicker == "0" then
+        pure unit
+      else
+        let 
+          newDropAmt = st.dropAmt + 90
+        in
+        liftEffect (Core.paint st.ct (StockTicker st.selectedTicker) (Drop newDropAmt) st.takeAmt) *>
+        H.modify_ \stx -> stx { dropAmt = newDropAmt } 
+  Next _ -> 
+    H.get >>= \st -> 
+      if st.selectedTicker == "0" then
+        pure unit
+      else
+        let 
+          newDropAmt = st.dropAmt - 90
+        in
+        liftEffect (Core.paint st.ct (StockTicker st.selectedTicker) (Drop newDropAmt) st.takeAmt) *>
+        H.modify_ \stx -> stx { dropAmt = newDropAmt } 
+  Last _ -> 
+    H.get >>= \st -> 
+      if st.selectedTicker == "0" then
+        pure unit
+      else
+        liftEffect (Core.paint st.ct (StockTicker st.selectedTicker) (Drop 0) st.takeAmt) *>
+        H.modify_ \stx -> stx { dropAmt = 0 } 
+  DeleteAll _ -> 
+    H.get >>= \st -> 
+      if st.selectedTicker == "0" then
+        pure unit
+      else
+        liftEffect (Core.deleteAllLevelLines st.ct)

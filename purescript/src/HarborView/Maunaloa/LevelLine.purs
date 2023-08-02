@@ -1,15 +1,15 @@
 module HarborView.Maunaloa.LevelLine 
-  ( initEvents
-  , addLine
-  , clear
-  , updateVruler
+  ( addLine
+  , deleteAll 
+  , fetchLevelLines 
+  , initEvents
   , Line(..)
+  , updateVruler
   ) where
 
 import Prelude
 import Data.Maybe (Maybe(..))
 --import Data.Array ((:)) 
-import Data.Array (length)
 import Data.Either (Either(..))
 import Data.Number.Format (toStringWith,fixed)
 import Effect (Effect)
@@ -42,6 +42,7 @@ import HarborView.Maunaloa.MaunaloaError
   )
 
 
+import HarborView.Common (defaultEventHandling)
 import HarborView.Maunaloa.Common 
   ( Pix(..)
   , ChartMapping(..)
@@ -78,15 +79,6 @@ main = do
   testCounter counter
 -}
 
-
-
-
-foreign import addListener :: Int -> EventListenerInfo -> Effect Unit
-
-foreign import resetListeners :: Int -> Effect Unit 
-
-foreign import getListeners :: Int -> Effect (Array EventListenerInfo)
-
 foreign import clearLines :: Int -> Effect Unit
 
 foreign import addLineImpl :: Int -> Line -> Effect Unit
@@ -99,13 +91,9 @@ foreign import onMouseUpImpl :: Int -> (Line -> Maybe Line) -> (Maybe Line) -> E
 
 foreign import updateRiscLine :: Int -> Line -> Number -> Effect Unit
 
-foreign import redrawImpl :: Int -> Context2D -> VRuler -> Effect Unit 
-
 foreign import updateVrulerImpl :: Int -> VRuler -> Effect Unit 
 
 foreign import updateCtxImpl :: Int -> Context2D -> Effect Unit 
-
-foreign import clearCanvas :: Int -> Effect Unit
 
 foreign import randomRgb :: Effect String
 
@@ -186,11 +174,6 @@ instance showLines :: Show Lines where
     show (Lines { lines, pilotLine }) = "Lines, " <> show lines <> ", pilotLine: " <> show pilotLine
 -}
 
-defaultEventHandling :: Event.Event -> Effect Unit
-defaultEventHandling event = 
-  Event.stopPropagation event *>
-  Event.preventDefault event 
-
 getDoc :: Effect NonElementParentNode
 getDoc = 
   HTML.window >>= \win ->
@@ -235,18 +218,18 @@ type UpdatedOptionPriceJson =
 updOptionPriceFromJson :: Json -> Either JsonDecodeError UpdatedOptionPriceJson 
 updOptionPriceFromJson = Decode.decodeJson
 
-unlisten :: EventListenerInfo -> Effect Unit
-unlisten (EventListenerInfo {target,listener,eventType}) = 
-  EventTarget.removeEventListener eventType listener false (toEventTarget target)
+-- unlisten :: EventListenerInfo -> Effect Unit
+-- unlisten (EventListenerInfo {target,listener,eventType}) = 
+--   EventTarget.removeEventListener eventType listener false (toEventTarget target)
 
-unlistenEvents :: ChartType -> Effect Unit
-unlistenEvents ct = 
-  let 
-    cti = chartTypeAsInt ct
-  in
-  getListeners cti >>= \listeners ->
-  Traversable.traverse_ unlisten listeners *>
-  resetListeners cti
+-- unlistenEvents :: ChartType -> Effect Unit
+-- unlistenEvents ct = 
+--   let 
+--     cti = chartTypeAsInt ct
+--   in
+--   getListeners cti >>= \listeners ->
+--   Traversable.traverse_ unlisten listeners *>
+--   resetListeners cti
 
 {-
 unlistener :: EventListenerRef -> Int -> Effect Unit
@@ -261,16 +244,12 @@ remButtonClick evt =
     resetListeners 
 -}
 
+deleteAll :: ChartType -> Effect Unit
+deleteAll ct =
+  clearLines (chartTypeAsInt ct)
+
 addLine :: ChartType -> Effect Unit
 addLine ct =
-  randomRgb >>= \curColor ->
-  let
-    line = StdLine { y: 200.0, selected: false, lt: ltSTD, color: curColor }
-  in
-  addLineImpl (chartTypeAsInt ct) line
-
-addLevelLineButtonClick :: ChartType -> Event.Event -> Effect Unit
-addLevelLineButtonClick ct _ =
   randomRgb >>= \curColor ->
   let
     line = StdLine { y: 200.0, selected: false, lt: ltSTD, color: curColor }
@@ -287,43 +266,46 @@ optionPriceURL (OptionTicker ticker) curStockPrice =
   mainURL <> "/stockoption/price/" <> ticker <> "/" <> toStringWith (fixed 2) curStockPrice
 
 
-addRiscLine :: ChartType -> VRuler -> RiscLineJson -> Effect Unit
-addRiscLine ct vr line = 
+addRiscLine :: ChartType -> RiscLineJson -> Effect Unit
+addRiscLine ct line = 
   let 
     cti = chartTypeAsInt ct
     ticker = OptionTicker line.ticker
-    rl = 
-      RiscLine
-      { y: valueToPix vr line.riscStockPrice
-      , selected: false
-      , ticker: ticker
-      , ask: line.ask 
-      , bid: line.bid
-      , risc: line.risc 
-      , riscPrice: line.riscOptionPrice
-      , lt: ltRISC
-      }
-    bl = 
-      BreakEvenLine
-      { y: valueToPix vr line.be
-      , ticker: ticker
-      , ask: line.ask 
-      , breakEven: line.be
-      , lt: ltBREAK_EVEN
-      }
   in
-  addLineImpl cti rl *>
-  addLineImpl cti bl 
+  currentVruler cti >>= \vr ->
+    let 
+      rl = 
+        RiscLine
+        { y: valueToPix vr line.riscStockPrice
+        , selected: false
+        , ticker: ticker
+        , ask: line.ask 
+        , bid: line.bid
+        , risc: line.risc 
+        , riscPrice: line.riscOptionPrice
+        , lt: ltRISC
+        }
+      bl = 
+        BreakEvenLine
+        { y: valueToPix vr line.be
+        , ticker: ticker
+        , ask: line.ask 
+        , breakEven: line.be
+        , lt: ltBREAK_EVEN
+        }
+    in
+    addLineImpl cti rl *>
+    addLineImpl cti bl 
 
-addRiscLines :: ChartType -> VRuler -> RiscLinesJson -> Effect Unit
-addRiscLines ct vr lines = 
+addRiscLines :: ChartType -> RiscLinesJson -> Effect Unit
+addRiscLines ct lines = 
   let 
-    addRiscLine1 = addRiscLine ct vr
+    addRiscLine1 = addRiscLine ct
   in
   Traversable.traverse_ addRiscLine1 lines
 
-fetchLevelLines :: StockTicker -> Aff (Either MaunaloaError RiscLinesJson)
-fetchLevelLines ticker = 
+fetchLevelLines_ :: StockTicker -> Aff (Either MaunaloaError RiscLinesJson)
+fetchLevelLines_ ticker = 
   Affjax.get ResponseFormat.json (fetchLevelLinesURL ticker) >>= \res ->
     let 
       result :: Either MaunaloaError RiscLinesJson 
@@ -343,24 +325,22 @@ fetchLevelLines ticker =
     in
     pure result
 
-fetchLevelLineButtonClick :: ChartType -> StockTicker -> VRuler -> Event.Event -> Effect Unit
-fetchLevelLineButtonClick ct ticker vruler evt = 
-  defaultEventHandling evt *>
+fetchLevelLines :: ChartType -> StockTicker -> Effect Unit
+fetchLevelLines ct ticker = 
+  -- defaultEventHandling evt *>
   launchAff_ 
   (
-    fetchLevelLines ticker >>= \lines ->
+    fetchLevelLines_ ticker >>= \lines ->
       case lines of
         Left err ->
           handleErrorAff err
         Right lines1 ->
           liftEffect 
           (
-            --logShow lines1 *>
             clearLines (chartTypeAsInt ct) *>
-            addRiscLines ct vruler lines1
+            addRiscLines ct lines1
           )
   )
-
 
 mouseEventDown :: ChartType -> Event.Event -> Effect Unit
 mouseEventDown ct evt = 
@@ -400,7 +380,6 @@ handleUpdateOptionPrice ct vr lref@(RiscLine line) =
       cti = chartTypeAsInt ct
       sp = pixToValue vr (Pix line.y)
     in
-    --(liftEffect $ logShow lref) *>
     fetchUpdatedOptionPrice line.ticker sp >>= \n ->
       case n of 
         Left err ->
@@ -472,46 +451,17 @@ getHtmlContext
 getHtmlContext _ = 
   pure Nothing
 
-initEvent :: ChartType -> (Event.Event -> Effect Unit) -> Element -> EventType -> Effect Unit
-initEvent ct toListener element eventType =
+initEvent :: (Event.Event -> Effect Unit) -> Element -> EventType -> Effect Unit
+initEvent toListener element eventType =
   EventTarget.eventListener toListener >>= \e1 -> 
-  let
-    info = EventListenerInfo {target: element, listener: e1, eventType: eventType}
-    -- ncti = chartTypeAsInt ct
-  in 
-  -- addListener cti info *>
-  EventTarget.addEventListener eventType e1 false (toEventTarget element) 
-
--- initEvents_ :: ChartType -> StockTicker -> VRuler -> ChartLevel -> Effect Unit
--- initEvents_ ct ticker vruler chartLevel =
---   unlistenEvents ct *>
---   getHtmlContext chartLevel >>= \context ->
---     case context of
---         Nothing ->
---           alert "ERROR! (initEvents) No getHtmlContext chartLevel!" *>
---           pure unit
---         Just context1 ->
---           let 
---             ce = context1.canvasContext  
---           in
---           Canvas.getContext2D ce >>= \ctx ->
---             redrawImpl (chartTypeAsInt ct) ctx vruler *>
---             initEvent ct (addLevelLineButtonClick ct) context1.addLevelLineBtn (EventType "click") *>
---             initEvent ct (mouseEventDown ct) context1.canvasElement (EventType "mousedown") *>
---             initEvent ct (mouseEventDrag ct) context1.canvasElement (EventType "mousemove") *>
---             initEvent ct (mouseEventUp ct vruler) context1.canvasElement (EventType "mouseup") *>
---             initEvent ct (fetchLevelLineButtonClick ct ticker vruler) context1.fetchLevelLinesBtn (EventType "click") 
-            
--- redraw_ :: ChartType -> Context2D -> VRuler -> Effect Unit
--- redraw_ ct ctx vruler = 
---   redrawImpl (chartTypeAsInt ct) ctx vruler
+    EventTarget.addEventListener eventType e1 false (toEventTarget element) 
 
 initEvents :: ChartType -> ChartMapping -> Effect Unit
 initEvents ct (ChartMapping cm) =
   getHtmlContext cm >>= \context ->
     case context of
         Nothing ->
-          logShow ("(initEvents) No getHtmlContext for: " <> (show $ chartTypeAsInt ct)) *>
+          logShow ("(initEvents) No getHtmlContext for: " <> (show cm.levelCanvasId)) *>
           pure unit
         Just context1 ->
           let 
@@ -519,32 +469,10 @@ initEvents ct (ChartMapping cm) =
           in
           Canvas.getContext2D ce >>= \ctx ->
             updateCtxImpl (chartTypeAsInt ct) ctx *>
-            initEvent ct (mouseEventDown ct) context1.canvasElement (EventType "mousedown") *>
-            initEvent ct (mouseEventDrag ct) context1.canvasElement (EventType "mousemove") *>
-            initEvent ct (mouseEventUp ct) context1.canvasElement (EventType "mouseup") 
-            -- initEvent ct (addLevelLineButtonClick ct) context1.addLevelLineBtn (EventType "click") 
-
-redraw :: ChartType -> VRuler -> ChartMapping -> Effect Unit
-redraw ct vruler (ChartMapping cm) = 
-  getHtmlContext cm >>= \context ->
-    case context of
-        Nothing ->
-          --alert "ERROR! (initEvents) No getHtmlContext chartLevel!" *>
-          pure unit
-        Just context1 ->
-          let 
-            ce = context1.canvasContext  
-          in
-          Canvas.getContext2D ce >>= \ctx ->
-            redrawImpl (chartTypeAsInt ct) ctx vruler
+            initEvent (mouseEventDown ct) context1.canvasElement (EventType "mousedown") *>
+            initEvent (mouseEventDrag ct) context1.canvasElement (EventType "mousemove") *>
+            initEvent (mouseEventUp ct) context1.canvasElement (EventType "mouseup") 
 
 updateVruler :: ChartType -> VRuler -> Effect Unit
 updateVruler ct vr = 
   updateVrulerImpl (chartTypeAsInt ct) vr
-
--- updateContext :: ChartType -> Context2D -> Effect Unit
--- updateContext ct ctx  = 
---   updateCtxImpl (chartTypeAsInt ct) ctx 
-
-clear :: Int -> Effect Unit
-clear cti = clearCanvas cti

@@ -195,9 +195,6 @@ chartWindow_ dropAmt takeAmt c scaling doNormalizeLines numVlines =
       else
         tmp
 
-    bars_ =
-      map (slice dropAmt takeAmt) $ fromMaybe [] c.bars
-
     cndl_ =
       slice dropAmt takeAmt $ fromMaybe [] c.candlesticks
 

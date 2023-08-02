@@ -36,7 +36,6 @@ Removed:
   , "numbers"
   , "prelude"
   , "partial"
-  , "strings"
   , "test-unit"
   , "transformers"
   , "tuples"
