@@ -10,20 +10,13 @@ import Halogen.Aff as HA
 import Halogen.VDom.Driver (runUI)
 import Web.DOM.ParentNode (QuerySelector(..))
 import Web.HTML (HTMLElement)
-import Web.DOM.ParentNode (QuerySelector(..))
 import Data.Maybe (Maybe(..))
 
-import HarborView.Maunaloa.LevelLine 
-  ( Line(..)
-  , clear
-  )
-import HarborView.Maunaloa.Core as Core
+import HarborView.Maunaloa.LevelLine (Line(..))
+  
 import HarborView.Maunaloa.View as View
 import HarborView.Maunaloa.Common 
   ( ChartType(..)
-  , StockTicker(..)
-  , Take(..)
-  , Drop(..)
   )
 
 tmp :: Line -> Int
@@ -56,12 +49,12 @@ run node qs c =
 main :: Effect Unit
 main = 
   HA.runHalogenAff $
-    liftEffect (
-      Core.paint EmptyChartType (StockTicker "-") (Drop 0) (Take 0) *>
-      Core.paintEmpty EmptyChartType *>
-      Core.clearLevelLines 1  *> 
-      Core.resetCharts
-    ) *>
+    -- liftEffect (
+    --   Core.paint EmptyChartType (StockTicker "-") (Drop 0) (Take 0) *>
+    --   Core.paintEmpty EmptyChartType *>
+    --   Core.clearLevelLines 1  *> 
+    --   Core.resetCharts
+    -- ) *>
     HA.awaitLoad *> 
     let 
       qs1 = QuerySelector "#ps-menubar-1"
@@ -70,10 +63,10 @@ main =
     in
     HA.selectElement qs1 >>= \node ->
       run node qs1 DayChart *>
-    HA.selectElement qs2 >>= \node ->
-      run node qs2 WeekChart *>
-    HA.selectElement qs3 >>= \node ->
-      run node qs3 MonthChart 
+    HA.selectElement qs2 >>= \node2 ->
+      run node2 qs2 WeekChart *>
+    HA.selectElement qs3 >>= \node3 ->
+      run node3 qs3 MonthChart 
 
 {-
 run :: Maybe HTMLElement -> QuerySelector -> Aff Unit

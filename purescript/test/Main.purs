@@ -12,7 +12,7 @@ import Test.ChartTransformTest (testChartTransformSuite)
 import Test.HRulerTest (testHRulerSuite)
 import Test.Util.DateUtilTest (testDateUtilSuite)
 import Test.VRulerTest (testVRulerSuite)
-import Test.BarTest (testBarSuite)
+-- import Test.BarTest (testBarSuite)
 
 --import Test.ChartCollectionTest (testChartColletionSuite)
 

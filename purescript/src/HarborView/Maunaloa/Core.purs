@@ -9,16 +9,12 @@ import Data.Maybe (Maybe(..))
 import Data.Number.Format (toString)
 import Data.Traversable (traverse_)
 import Effect (Effect)
-import Effect.Aff  (launchAff_, Aff)
+import Effect.Aff  (launchAff_)
 import Effect.Class (liftEffect)
 import Effect.Console (logShow)
-import Halogen.Aff as HA
 
 
 import HarborView.Maunaloa.LevelLine as LevelLine
-import HarborView.Maunaloa.LevelLine 
-  ( Line(..)
-  )
 import HarborView.Maunaloa.ChartTransform as ChartTransform 
 import HarborView.Maunaloa.JsonCharts (fetchCharts)
 import HarborView.Maunaloa.MaunaloaError (handleErrorAff)
@@ -29,7 +25,6 @@ import HarborView.Maunaloa.Common
   , ChartMappings
   , ChartHeight(..)
   , ChartId(..)
-  , ChartType(..)
   , Drop(..)
   , Take(..)
   , Env(..)
@@ -81,6 +76,27 @@ resetChart chartType ticker =
 resetCharts :: Effect Unit
 resetCharts = 
   Repository.resetCharts 
+  
+paintNoCache :: ChartType -> StockTicker -> Drop -> Take -> Effect Unit
+paintNoCache EmptyChartType _ _ _ = 
+  pure unit
+paintNoCache chartType ticker dropAmt takeAmt = 
+  let 
+    mappings = chartTypeAsMappings chartType
+    reposId = reposIdFor chartType ticker 
+    curEnv = createEnv chartType ticker dropAmt takeAmt mappings
+  in
+  launchAff_ $
+    fetchCharts ticker chartType >>= \charts ->
+      case charts of 
+        Left err ->
+          handleErrorAff err 
+        Right jsonChartResponse ->
+          let 
+            collection = runReader (ChartTransform.transform jsonChartResponse) curEnv
+          in
+          (liftEffect $ Repository.setJsonResponse reposId jsonChartResponse) *>
+          ChartCollection.paintAff chartType collection
 
 paint :: ChartType -> StockTicker -> Drop -> Take -> Effect Unit
 paint EmptyChartType _ _ _ = 
@@ -88,7 +104,6 @@ paint EmptyChartType _ _ _ =
 paint chartType ticker dropAmt takeAmt = 
   let
     mappings = chartTypeAsMappings chartType
-    curEnv = createEnv chartType ticker dropAmt takeAmt mappings
     reposId = reposIdFor chartType ticker 
     cachedResponse =  Repository.getJsonResponse reposId
   in 
@@ -96,11 +111,15 @@ paint chartType ticker dropAmt takeAmt =
   case cachedResponse of 
     Just cachedResponse1 ->
       let 
+        curEnv = createEnv chartType ticker dropAmt takeAmt mappings
         collection = runReader (ChartTransform.transform cachedResponse1) curEnv
       in
       logShow "Fetched response from repository" *>
       ChartCollection.paint chartType collection
     Nothing ->
+      let 
+        curEnv = createEnv chartType ticker dropAmt takeAmt mappings
+      in
       launchAff_ $
         fetchCharts ticker chartType >>= \charts ->
           case charts of 
@@ -127,11 +146,6 @@ paintEmpty ct =
   logShow coll *>
   ChartCollection.paintEmpty collection
 
-clearLevelLines :: Int -> Effect Unit
-clearLevelLines cti =
-  logShow "clearLevelLines" *>
-  LevelLine.clear cti
-
 initEvents :: ChartType -> Effect Unit
 initEvents ct = 
   let 
@@ -143,8 +157,13 @@ addLevelLine :: ChartType -> Effect Unit
 addLevelLine ct = 
   LevelLine.addLine ct 
 
---fetchLevelLines :: ChartType -> Effect Unit
---fetchLevelLines 
+fetchLevelLines :: ChartType -> StockTicker -> Effect Unit
+fetchLevelLines ct ticker =  
+  LevelLine.fetchLevelLines ct ticker
+
+deleteAllLevelLines :: ChartType -> Effect Unit
+deleteAllLevelLines ct = 
+  LevelLine.deleteAll ct
 
 chartTypeAsMappings :: ChartType -> ChartMappings
 chartTypeAsMappings DayChart = 
@@ -155,7 +174,6 @@ chartTypeAsMappings DayChart =
       , canvasId: HtmlId "chart-1"
       , chartHeight: ChartHeight 600.0
       , levelCanvasId: HtmlId "levellines-1"
-      , fetchLevelId: HtmlId "btn-persistent-levelline-1"
       }
     osc = 
       ChartMapping 
@@ -163,7 +181,6 @@ chartTypeAsMappings DayChart =
       , canvasId: HtmlId "osc-1"
       , chartHeight: ChartHeight 200.0
       , levelCanvasId: NoHtmlId 
-      , fetchLevelId: NoHtmlId 
       }
     volume = 
       ChartMapping 
@@ -171,7 +188,6 @@ chartTypeAsMappings DayChart =
       , canvasId: HtmlId "vol-1"
       , chartHeight: ChartHeight 110.0
       , levelCanvasId: NoHtmlId 
-      , fetchLevelId: NoHtmlId 
       }
   in 
   [ mainChart, osc, volume ]
@@ -183,7 +199,6 @@ chartTypeAsMappings WeekChart =
       , canvasId: HtmlId "chart-2"
       , chartHeight: ChartHeight 600.0
       , levelCanvasId: HtmlId "levellines-2"
-      , fetchLevelId: HtmlId "btn-persistent-levelline-2"
       }
     osc = 
       ChartMapping 
@@ -191,7 +206,6 @@ chartTypeAsMappings WeekChart =
       , canvasId: HtmlId "osc-2"
       , chartHeight: ChartHeight 200.0
       , levelCanvasId: NoHtmlId 
-      , fetchLevelId: NoHtmlId 
       }
     volume = 
       ChartMapping 
@@ -199,7 +213,6 @@ chartTypeAsMappings WeekChart =
       , canvasId: HtmlId "vol-2"
       , chartHeight: ChartHeight 110.0
       , levelCanvasId: NoHtmlId 
-      , fetchLevelId: NoHtmlId 
       }
   in 
   [ mainChart, osc, volume ]
@@ -211,7 +224,6 @@ chartTypeAsMappings MonthChart =
       , canvasId: HtmlId "chart-3"
       , chartHeight: ChartHeight 600.0
       , levelCanvasId: HtmlId "levellines-3"
-      , fetchLevelId: HtmlId "btn-persistent-levelline-3"
       }
     osc = 
       ChartMapping 
@@ -219,7 +231,6 @@ chartTypeAsMappings MonthChart =
       , canvasId: HtmlId "osc-3"
       , chartHeight: ChartHeight 200.0
       , levelCanvasId: NoHtmlId 
-      , fetchLevelId: NoHtmlId 
       }
     volume = 
       ChartMapping 
@@ -227,7 +238,6 @@ chartTypeAsMappings MonthChart =
       , canvasId: HtmlId "vol-3"
       , chartHeight: ChartHeight 110.0
       , levelCanvasId: NoHtmlId 
-      , fetchLevelId: NoHtmlId 
       }
   in 
   [ mainChart, osc, volume ]

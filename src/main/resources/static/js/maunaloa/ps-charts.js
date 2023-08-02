@@ -764,102 +764,6 @@ var PS =
     };
   }();
 
-  // output/Effect/foreign.js
-  var pureE = function(a2) {
-    return function() {
-      return a2;
-    };
-  };
-  var bindE = function(a2) {
-    return function(f) {
-      return function() {
-        return f(a2())();
-      };
-    };
-  };
-
-  // output/Control.Monad/index.js
-  var unlessM = function(dictMonad) {
-    var bind17 = bind(dictMonad.Bind1());
-    var unless2 = unless(dictMonad.Applicative0());
-    return function(mb) {
-      return function(m) {
-        return bind17(mb)(function(b2) {
-          return unless2(b2)(m);
-        });
-      };
-    };
-  };
-  var ap = function(dictMonad) {
-    var bind17 = bind(dictMonad.Bind1());
-    var pure21 = pure(dictMonad.Applicative0());
-    return function(f) {
-      return function(a2) {
-        return bind17(f)(function(f$prime) {
-          return bind17(a2)(function(a$prime) {
-            return pure21(f$prime(a$prime));
-          });
-        });
-      };
-    };
-  };
-
-  // output/Data.Monoid/index.js
-  var mempty = function(dict) {
-    return dict.mempty;
-  };
-
-  // output/Effect/index.js
-  var $runtime_lazy = function(name16, moduleName, init3) {
-    var state3 = 0;
-    var val;
-    return function(lineNumber) {
-      if (state3 === 2)
-        return val;
-      if (state3 === 1)
-        throw new ReferenceError(name16 + " was needed before it finished initializing (module " + moduleName + ", line " + lineNumber + ")", moduleName, lineNumber);
-      state3 = 1;
-      val = init3();
-      state3 = 2;
-      return val;
-    };
-  };
-  var monadEffect = {
-    Applicative0: function() {
-      return applicativeEffect;
-    },
-    Bind1: function() {
-      return bindEffect;
-    }
-  };
-  var bindEffect = {
-    bind: bindE,
-    Apply0: function() {
-      return $lazy_applyEffect(0);
-    }
-  };
-  var applicativeEffect = {
-    pure: pureE,
-    Apply0: function() {
-      return $lazy_applyEffect(0);
-    }
-  };
-  var $lazy_functorEffect = /* @__PURE__ */ $runtime_lazy("functorEffect", "Effect", function() {
-    return {
-      map: liftA1(applicativeEffect)
-    };
-  });
-  var $lazy_applyEffect = /* @__PURE__ */ $runtime_lazy("applyEffect", "Effect", function() {
-    return {
-      apply: ap(monadEffect),
-      Functor0: function() {
-        return $lazy_functorEffect(0);
-      }
-    };
-  });
-  var functorEffect = /* @__PURE__ */ $lazy_functorEffect(20);
-  var applyEffect = /* @__PURE__ */ $lazy_applyEffect(23);
-
   // output/Effect.Aff/foreign.js
   var Aff = function() {
     var EMPTY = {};
@@ -1764,6 +1668,32 @@ var PS =
   }();
   var _sequential = Aff.Seq;
 
+  // output/Control.Monad/index.js
+  var unlessM = function(dictMonad) {
+    var bind17 = bind(dictMonad.Bind1());
+    var unless2 = unless(dictMonad.Applicative0());
+    return function(mb) {
+      return function(m) {
+        return bind17(mb)(function(b2) {
+          return unless2(b2)(m);
+        });
+      };
+    };
+  };
+  var ap = function(dictMonad) {
+    var bind17 = bind(dictMonad.Bind1());
+    var pure21 = pure(dictMonad.Applicative0());
+    return function(f) {
+      return function(a2) {
+        return bind17(f)(function(f$prime) {
+          return bind17(a2)(function(a$prime) {
+            return pure21(f$prime(a$prime));
+          });
+        });
+      };
+    };
+  };
+
   // output/Data.Either/index.js
   var Left = /* @__PURE__ */ function() {
     function Left2(value0) {
@@ -1859,6 +1789,76 @@ var PS =
       }
     };
   }();
+
+  // output/Effect/foreign.js
+  var pureE = function(a2) {
+    return function() {
+      return a2;
+    };
+  };
+  var bindE = function(a2) {
+    return function(f) {
+      return function() {
+        return f(a2())();
+      };
+    };
+  };
+
+  // output/Data.Monoid/index.js
+  var mempty = function(dict) {
+    return dict.mempty;
+  };
+
+  // output/Effect/index.js
+  var $runtime_lazy = function(name16, moduleName, init3) {
+    var state3 = 0;
+    var val;
+    return function(lineNumber) {
+      if (state3 === 2)
+        return val;
+      if (state3 === 1)
+        throw new ReferenceError(name16 + " was needed before it finished initializing (module " + moduleName + ", line " + lineNumber + ")", moduleName, lineNumber);
+      state3 = 1;
+      val = init3();
+      state3 = 2;
+      return val;
+    };
+  };
+  var monadEffect = {
+    Applicative0: function() {
+      return applicativeEffect;
+    },
+    Bind1: function() {
+      return bindEffect;
+    }
+  };
+  var bindEffect = {
+    bind: bindE,
+    Apply0: function() {
+      return $lazy_applyEffect(0);
+    }
+  };
+  var applicativeEffect = {
+    pure: pureE,
+    Apply0: function() {
+      return $lazy_applyEffect(0);
+    }
+  };
+  var $lazy_functorEffect = /* @__PURE__ */ $runtime_lazy("functorEffect", "Effect", function() {
+    return {
+      map: liftA1(applicativeEffect)
+    };
+  });
+  var $lazy_applyEffect = /* @__PURE__ */ $runtime_lazy("applyEffect", "Effect", function() {
+    return {
+      apply: ap(monadEffect),
+      Functor0: function() {
+        return $lazy_functorEffect(0);
+      }
+    };
+  });
+  var functorEffect = /* @__PURE__ */ $lazy_functorEffect(20);
+  var applyEffect = /* @__PURE__ */ $lazy_applyEffect(23);
 
   // output/Effect.Exception/foreign.js
   function error(msg) {
@@ -2187,6 +2187,14 @@ var PS =
   var state = function(dict) {
     return dict.state;
   };
+  var modify_2 = function(dictMonadState) {
+    var state1 = state(dictMonadState);
+    return function(f) {
+      return state1(function(s) {
+        return new Tuple(unit, f(s));
+      });
+    };
+  };
   var gets = function(dictMonadState) {
     var state1 = state(dictMonadState);
     return function(f) {
@@ -2194,6 +2202,11 @@ var PS =
         return new Tuple(f(s), s);
       });
     };
+  };
+  var get = function(dictMonadState) {
+    return state(dictMonadState)(function(s) {
+      return new Tuple(s, s);
+    });
   };
 
   // output/Effect.Class/index.js
@@ -2546,13 +2559,13 @@ var PS =
     return dict.foldr;
   };
   var traverse_ = function(dictApplicative) {
-    var applySecond8 = applySecond(dictApplicative.Apply0());
+    var applySecond9 = applySecond(dictApplicative.Apply0());
     var pure21 = pure(dictApplicative);
     return function(dictFoldable) {
       var foldr22 = foldr(dictFoldable);
       return function(f) {
         return foldr22(function($449) {
-          return applySecond8(f($449));
+          return applySecond9(f($449));
         })(pure21(unit));
       };
     };
@@ -2793,10 +2806,10 @@ var PS =
   var identity6 = /* @__PURE__ */ identity(categoryFn);
   var parTraverse_ = function(dictParallel) {
     var sequential3 = sequential(dictParallel);
-    var traverse_9 = traverse_(dictParallel.Applicative1());
+    var traverse_10 = traverse_(dictParallel.Applicative1());
     var parallel3 = parallel(dictParallel);
     return function(dictFoldable) {
-      var traverse_14 = traverse_9(dictFoldable);
+      var traverse_14 = traverse_10(dictFoldable);
       return function(f) {
         var $48 = traverse_14(function($50) {
           return parallel3(f($50));
@@ -4588,10 +4601,10 @@ var PS =
 
   // output/Halogen.Data.Slot/index.js
   var foreachSlot = function(dictApplicative) {
-    var traverse_9 = traverse_(dictApplicative)(foldableMap);
+    var traverse_10 = traverse_(dictApplicative)(foldableMap);
     return function(v) {
       return function(k) {
-        return traverse_9(function($54) {
+        return traverse_10(function($54) {
           return k($54);
         })(v);
       };
@@ -7118,10 +7131,10 @@ var PS =
   var unRenderStateX = unsafeCoerce2;
   var unDriverStateX = unsafeCoerce2;
   var renderStateX_ = function(dictApplicative) {
-    var traverse_9 = traverse_(dictApplicative)(foldableMaybe);
+    var traverse_10 = traverse_(dictApplicative)(foldableMaybe);
     return function(f) {
       return unDriverStateX(function(st) {
-        return traverse_9(f)(st.rendering);
+        return traverse_10(f)(st.rendering);
       });
     };
   };
@@ -8200,7 +8213,7 @@ var PS =
       return 4;
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.Common (line 234, column 1 - line 234, column 36): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.Common (line 233, column 1 - line 233, column 36): " + [v.constructor.name]);
   };
   var calcPpy = function(v) {
     return function(v1) {
@@ -8216,540 +8229,6 @@ var PS =
         var padding_w = v - v2.left - v2.right;
         var diffDays = toNumber((v1.oHead - v1.oLast | 0) + 1 | 0);
         return padding_w / diffDays;
-      };
-    };
-  };
-
-  // output/Control.Monad.Reader/index.js
-  var unwrap4 = /* @__PURE__ */ unwrap();
-  var runReader = function(v) {
-    return function($4) {
-      return unwrap4(v($4));
-    };
-  };
-
-  // output/Data.Number.Format/foreign.js
-  function wrap3(method2) {
-    return function(d) {
-      return function(num) {
-        return method2.apply(num, [d]);
-      };
-    };
-  }
-  var toPrecisionNative = wrap3(Number.prototype.toPrecision);
-  var toFixedNative = wrap3(Number.prototype.toFixed);
-  var toExponentialNative = wrap3(Number.prototype.toExponential);
-  function toString(num) {
-    return num.toString();
-  }
-
-  // output/Data.Number.Format/index.js
-  var clamp2 = /* @__PURE__ */ clamp(ordInt);
-  var Precision = /* @__PURE__ */ function() {
-    function Precision2(value0) {
-      this.value0 = value0;
-    }
-    ;
-    Precision2.create = function(value0) {
-      return new Precision2(value0);
-    };
-    return Precision2;
-  }();
-  var Fixed = /* @__PURE__ */ function() {
-    function Fixed2(value0) {
-      this.value0 = value0;
-    }
-    ;
-    Fixed2.create = function(value0) {
-      return new Fixed2(value0);
-    };
-    return Fixed2;
-  }();
-  var Exponential = /* @__PURE__ */ function() {
-    function Exponential2(value0) {
-      this.value0 = value0;
-    }
-    ;
-    Exponential2.create = function(value0) {
-      return new Exponential2(value0);
-    };
-    return Exponential2;
-  }();
-  var toStringWith = function(v) {
-    if (v instanceof Precision) {
-      return toPrecisionNative(v.value0);
-    }
-    ;
-    if (v instanceof Fixed) {
-      return toFixedNative(v.value0);
-    }
-    ;
-    if (v instanceof Exponential) {
-      return toExponentialNative(v.value0);
-    }
-    ;
-    throw new Error("Failed pattern match at Data.Number.Format (line 59, column 1 - line 59, column 43): " + [v.constructor.name]);
-  };
-  var fixed = /* @__PURE__ */ function() {
-    var $9 = clamp2(0)(20);
-    return function($10) {
-      return Fixed.create($9($10));
-    };
-  }();
-
-  // output/Graphics.Canvas/foreign.js
-  function getCanvasElementByIdImpl(id3, Just2, Nothing2) {
-    return function() {
-      var el = document.getElementById(id3);
-      if (el && el instanceof HTMLCanvasElement) {
-        return Just2(el);
-      } else {
-        return Nothing2;
-      }
-    };
-  }
-  function getContext2D(c) {
-    return function() {
-      return c.getContext("2d");
-    };
-  }
-  function clearRect(ctx) {
-    return function(r) {
-      return function() {
-        ctx.clearRect(r.x, r.y, r.width, r.height);
-      };
-    };
-  }
-
-  // output/Graphics.Canvas/index.js
-  var getCanvasElementById = function(elId) {
-    return getCanvasElementByIdImpl(elId, Just.create, Nothing.value);
-  };
-
-  // output/HarborView.Maunaloa.Bar/foreign.js
-  var fi_paint_bars = function(bars) {
-    return function(ctx) {
-      return function() {
-        for (var i2 = 0; i2 < bars.length; ++i2) {
-          paintBar(ctx, bars[i2]);
-        }
-      };
-    };
-  };
-  var paintBar = function(ctx, bar) {
-    const yZero = 110;
-    ctx.strokeStyle = bar.strokeStyle;
-    ctx.lineWidth = 0.5;
-    const y = bar.yaxis;
-    const x = bar.xaxis;
-    ctx.beginPath();
-    for (var i2 = 0; i2 < x.length; ++i2) {
-      ctx.moveTo(x[i2], yZero);
-      ctx.lineTo(x[i2], y[i2]);
-    }
-    ctx.stroke();
-  };
-
-  // output/HarborView.Maunaloa.VRuler/foreign.js
-  var fi_lines = function(ctx) {
-    return function(boundary) {
-      return function(lines3) {
-        return function() {
-          const x12 = boundary.p1;
-          const x2 = boundary.p2;
-          ctx.strokeStyle = "#000000";
-          ctx.fillStyle = "#000000";
-          ctx.lineWidth = 0.25;
-          ctx.beginPath();
-          for (var i2 = 0; i2 < lines3.length; ++i2) {
-            const y = lines3[i2].p0;
-            ctx.moveTo(x12, y);
-            ctx.lineTo(x2, y);
-            ctx.fillText(lines3[i2].tx, x12 + 5, y + 15);
-          }
-          ctx.stroke();
-        };
-      };
-    };
-  };
-
-  // output/HarborView.Maunaloa.VRuler/index.js
-  var map19 = /* @__PURE__ */ map(functorArray);
-  var show4 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord()()(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "h";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "maxVal";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "padding";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "ppy";
-    }
-  })(/* @__PURE__ */ showRecordFieldsConsNil({
-    reflectSymbol: function() {
-      return "w";
-    }
-  })(showChartWidth))(showPix))(showPadding))(showNumber))(showChartHeight)));
-  var valueToPix = function(v) {
-    return function(value15) {
-      return (v.maxVal - value15) * v.ppy + v.padding.top;
-    };
-  };
-  var showHRuler = {
-    show: function(v) {
-      return "(VRuler " + (show4(v) + ")");
-    }
-  };
-  var pixToValue = function(v) {
-    return function(v1) {
-      return v.maxVal - (v1 - v.padding.top) / v.ppy;
-    };
-  };
-  var createLine = function(vruler2) {
-    return function(vpix) {
-      return function(padTop) {
-        return function(n) {
-          var curPix = padTop + vpix * toNumber(n);
-          var val = pixToValue(vruler2)(curPix);
-          var tx = toStringWith(fixed(2))(val);
-          return {
-            p0: curPix,
-            tx
-          };
-        };
-      };
-    };
-  };
-  var lines = function(v) {
-    return function(num) {
-      var vpix = (v.h - v.padding.top - v.padding.bottom) / toNumber(num);
-      var sections = range2(0)(num);
-      return map19(createLine(v)(vpix)(v.padding.top))(sections);
-    };
-  };
-  var paint = function(v) {
-    return function(ctx) {
-      var curLines = lines(v)(4);
-      var linesX = {
-        p1: 0,
-        p2: v.w
-      };
-      return fi_lines(ctx)(linesX)(curLines);
-    };
-  };
-  var create4 = function(v) {
-    return function(w) {
-      return function(h) {
-        return function(pad) {
-          return {
-            ppy: calcPpy(h)(v)(pad),
-            maxVal: v.maxVal,
-            w,
-            h,
-            padding: pad
-          };
-        };
-      };
-    };
-  };
-
-  // output/HarborView.Maunaloa.Bar/index.js
-  var map20 = /* @__PURE__ */ map(functorArray);
-  var strokes = ["#ff0000"];
-  var createJSBar = function(xaxis) {
-    return function(bar) {
-      return function(strokeStyle) {
-        return {
-          xaxis,
-          yaxis: bar,
-          strokeStyle
-        };
-      };
-    };
-  };
-  var paint2 = function(v) {
-    return function(bars) {
-      return function(ctx) {
-        var fn = createJSBar(v.xaxis);
-        var jsBars = zipWith(fn)(bars)(strokes);
-        return fi_paint_bars(jsBars)(ctx);
-      };
-    };
-  };
-  var barToPix = function(vr) {
-    return function(bar) {
-      var vfun = valueToPix(vr);
-      return map20(vfun)(bar);
-    };
-  };
-
-  // output/HarborView.Maunaloa.Candlestick/foreign.js
-  var fi_paint_candlestix = function(xaxis) {
-    return function(candlestix) {
-      return function(ctx) {
-        return function() {
-          ctx.strokeStyle = "#000000";
-          ctx.fillStyle = "#ffaa00";
-          ctx.lineWidth = 0.5;
-          const numCandlestix = candlestix.length;
-          for (var i2 = 0; i2 < numCandlestix; ++i2) {
-            paintCandlestick(xaxis[i2], candlestix[i2], ctx);
-          }
-        };
-      };
-    };
-  };
-  var paintCandlestick = function(x, cndl, ctx) {
-    const x0 = x - 4;
-    ctx.beginPath();
-    if (cndl.c > cndl.o) {
-      ctx.moveTo(x, cndl.h);
-      ctx.lineTo(x, cndl.o);
-      ctx.moveTo(x, cndl.c);
-      ctx.lineTo(x, cndl.l);
-      const cndlHeight2 = cndl.c - cndl.o;
-      ctx.rect(x0, cndl.o, 8, cndlHeight2);
-      ctx.fillRect(x0, cndl.o, 8, cndlHeight2);
-    } else {
-      var cndlHeight = cndl.o - cndl.c;
-      if (cndlHeight === 0) {
-        cndlHeight = 1;
-        const x12 = x + 4;
-        ctx.moveTo(x, cndl.h);
-        ctx.lineTo(x, cndl.l);
-        ctx.moveTo(x0, cndl.c);
-        ctx.lineTo(x12, cndl.c);
-      } else {
-        ctx.moveTo(x, cndl.h);
-        ctx.lineTo(x, cndl.c);
-        ctx.moveTo(x, cndl.o);
-        ctx.lineTo(x, cndl.l);
-        ctx.rect(x0, cndl.c, 8, cndlHeight);
-      }
-    }
-    ctx.stroke();
-  };
-
-  // output/HarborView.Maunaloa.Candlestick/index.js
-  var show5 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord()()(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "c";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "h";
-    }
-  })(/* @__PURE__ */ showRecordFieldsCons({
-    reflectSymbol: function() {
-      return "l";
-    }
-  })(/* @__PURE__ */ showRecordFieldsConsNil({
-    reflectSymbol: function() {
-      return "o";
-    }
-  })(showNumber))(showNumber))(showNumber))(showNumber)));
-  var showCandlestick = {
-    show: function(v) {
-      return "(Candlestick " + (show5(v) + ")");
-    }
-  };
-  var paint3 = function(v) {
-    return function(cndls) {
-      return function(ctx) {
-        return fi_paint_candlestix(v.xaxis)(cndls)(ctx);
-      };
-    };
-  };
-  var candleToPix = function(vr) {
-    return function(v) {
-      var po = valueToPix(vr)(v.o);
-      var pl = valueToPix(vr)(v.l);
-      var ph = valueToPix(vr)(v.h);
-      var pc = valueToPix(vr)(v.c);
-      return {
-        o: po,
-        h: ph,
-        l: pl,
-        c: pc
-      };
-    };
-  };
-
-  // output/HarborView.Maunaloa.HRuler/foreign.js
-  var fi_incMonths = function(startTime) {
-    return function(numMonths) {
-      var stm = new Date(startTime);
-      return Date.UTC(stm.getFullYear(), stm.getMonth() + numMonths, 1);
-    };
-  };
-  var fi_dateToString = function(tm) {
-    var d = new Date(tm);
-    var m = d.getMonth() + 1;
-    if (m < 10) {
-      return "0" + m + "." + d.getFullYear();
-    } else {
-      return m + "." + d.getFullYear();
-    }
-  };
-  var fi_lines2 = function(ctx) {
-    return function(boundary) {
-      return function(lines3) {
-        return function() {
-          const y1 = boundary.p1;
-          const y2 = boundary.p2;
-          ctx.strokeStyle = "#000000";
-          ctx.fillStyle = "#000000";
-          ctx.lineWidth = 0.25;
-          ctx.beginPath();
-          for (var i2 = 0; i2 < lines3.length; ++i2) {
-            const x = lines3[i2].p0;
-            ctx.moveTo(x, y1);
-            ctx.lineTo(x, y2);
-            ctx.fillText(lines3[i2].tx, x + 5, y1 + 15);
-          }
-          ctx.stroke();
-        };
-      };
-    };
-  };
-  var fi_startOfNextMonth = function(tm) {
-    const curDate = new Date(tm);
-    return Date.UTC(curDate.getFullYear(), curDate.getMonth() + 1, 1);
-  };
-
-  // output/HarborView.Util.DateUtil/index.js
-  var dateRangeOf = function(v) {
-    return function(lx) {
-      var lo = v + dayInMillis * toNumber(fromMaybe(0)(last(lx)));
-      var hi = v + dayInMillis * toNumber(fromMaybe(0)(head2(lx)));
-      return new Tuple(lo, hi);
-    };
-  };
-
-  // output/HarborView.Maunaloa.HRuler/index.js
-  var map21 = /* @__PURE__ */ map(functorArray);
-  var greaterThanOrEq2 = /* @__PURE__ */ greaterThanOrEq(ordUnixTime);
-  var bind5 = /* @__PURE__ */ bind(bindMaybe);
-  var timeStampToPix = function(v) {
-    return function(v1) {
-      var days = (v1 - v.startTime) / dayInMillis;
-      return v.padding.left + days * v.ppx;
-    };
-  };
-  var startOfNextMonth = function(v) {
-    return fi_startOfNextMonth(v);
-  };
-  var offsetsToPix = function(startOffset) {
-    return function(offsets) {
-      return function(v) {
-        return function(padLeft) {
-          return map21(function(x) {
-            return padLeft + toNumber(x - startOffset | 0) * v;
-          })(offsets);
-        };
-      };
-    };
-  };
-  var incMonths = function(v) {
-    return function(numMonths) {
-      return fi_incMonths(v)(numMonths);
-    };
-  };
-  var dateToString = function(v) {
-    return fi_dateToString(v);
-  };
-  var lines_ = function($copy_timestampFn) {
-    return function($copy_endTime) {
-      return function($copy_numMonths) {
-        return function($copy_curLines) {
-          return function($copy_curTime) {
-            var $tco_var_timestampFn = $copy_timestampFn;
-            var $tco_var_endTime = $copy_endTime;
-            var $tco_var_numMonths = $copy_numMonths;
-            var $tco_var_curLines = $copy_curLines;
-            var $tco_done = false;
-            var $tco_result;
-            function $tco_loop(timestampFn, endTime, numMonths, curLines, curTime) {
-              if (greaterThanOrEq2(curTime)(endTime)) {
-                $tco_done = true;
-                return curLines;
-              }
-              ;
-              if (otherwise) {
-                var nextTime = incMonths(curTime)(numMonths);
-                var newCurLines = cons2({
-                  p0: timestampFn(curTime),
-                  tx: dateToString(curTime)
-                })(curLines);
-                $tco_var_timestampFn = timestampFn;
-                $tco_var_endTime = endTime;
-                $tco_var_numMonths = numMonths;
-                $tco_var_curLines = newCurLines;
-                $copy_curTime = nextTime;
-                return;
-              }
-              ;
-              throw new Error("Failed pattern match at HarborView.Maunaloa.HRuler (line 81, column 1 - line 81, column 108): " + [timestampFn.constructor.name, endTime.constructor.name, numMonths.constructor.name, curLines.constructor.name, curTime.constructor.name]);
-            }
-            ;
-            while (!$tco_done) {
-              $tco_result = $tco_loop($tco_var_timestampFn, $tco_var_endTime, $tco_var_numMonths, $tco_var_curLines, $copy_curTime);
-            }
-            ;
-            return $tco_result;
-          };
-        };
-      };
-    };
-  };
-  var lines2 = function(v) {
-    var timestampFn = timeStampToPix(v);
-    var snm = startOfNextMonth(v.startTime);
-    return lines_(timestampFn)(v.endTime)(v.myIncMonths)([])(snm);
-  };
-  var paint4 = function(hruler) {
-    return function(v) {
-      return function(ctx) {
-        var curLines = lines2(hruler);
-        var linesX = {
-          p1: 0,
-          p2: v
-        };
-        return fi_lines2(ctx)(linesX)(curLines);
-      };
-    };
-  };
-  var create5 = function(w) {
-    return function(minDx) {
-      return function(offsets) {
-        return function(v) {
-          return function(myIncMonths) {
-            return bind5(head2(offsets))(function(offset0) {
-              return bind5(last(offsets))(function(offsetN) {
-                var v1 = dateRangeOf(minDx)(offsets);
-                var offsetBoundary = {
-                  oHead: offset0,
-                  oLast: offsetN
-                };
-                var pix = calcPpx(w)(offsetBoundary)(v);
-                return new Just({
-                  startTime: v1.value0,
-                  endTime: v1.value1,
-                  xaxis: offsetsToPix(offsetN)(offsets)(pix)(v.left),
-                  ppx: pix,
-                  padding: v,
-                  myIncMonths
-                });
-              });
-            });
-          };
-        };
       };
     };
   };
@@ -8811,7 +8290,6 @@ var PS =
       this.ctx = null;
       this.v = null;
       this.lines = initLines();
-      this.eventListeners = [];
     }
     paint(x2, y, displayValue, strokeStyle) {
       const _ctx = this.ctx;
@@ -8896,16 +8374,6 @@ var PS =
       const _v = this.v;
       return (_v.maxVal - value15) * _v.ppy + _v.padding.top;
     }
-    addListener(listener) {
-      this.eventListeners.push(listener);
-    }
-    resetListeners() {
-      this.eventListeners = [];
-      this.lines = initLines();
-    }
-    getListeners() {
-      return this.eventListeners;
-    }
     getVruler() {
       return this.v;
     }
@@ -8971,26 +8439,11 @@ var PS =
       }
       this.draw();
     }
-    redraw(ctx, vruler2) {
-      ctx.clearRect(0, 0, vruler2.w, vruler2.h);
-      this.ctx = ctx;
-      this.v = vruler2;
-    }
     updateVruler(vruler2) {
       this.v = vruler2;
     }
     updateCtx(ctx) {
       this.ctx = ctx;
-    }
-    clearCanvas() {
-      if (this.ctx === null) {
-        return;
-      }
-      if (this.v === null) {
-        return;
-      }
-      this.clearRect();
-      this.lines = initLines();
     }
     clearLines() {
       this.lines = initLines();
@@ -9045,9 +8498,9 @@ var PS =
     const lin = getLin(chartType);
     lin.updateCtx(ctx);
   };
-  var clearCanvas = (chartType) => () => {
+  var clearLines = (chartType) => () => {
     const lin = getLin(chartType);
-    lin.clearCanvas();
+    lin.clearLines();
   };
   var addLineImpl = (chartType) => (line) => () => {
     const lin = getLin(chartType);
@@ -9198,7 +8651,7 @@ var PS =
   };
 
   // output/Affjax.RequestHeader/index.js
-  var unwrap5 = /* @__PURE__ */ unwrap();
+  var unwrap4 = /* @__PURE__ */ unwrap();
   var Accept = /* @__PURE__ */ function() {
     function Accept2(value0) {
       this.value0 = value0;
@@ -9234,11 +8687,11 @@ var PS =
   }();
   var value13 = function(v) {
     if (v instanceof Accept) {
-      return unwrap5(v.value0);
+      return unwrap4(v.value0);
     }
     ;
     if (v instanceof ContentType) {
-      return unwrap5(v.value0);
+      return unwrap4(v.value0);
     }
     ;
     if (v instanceof RequestHeader) {
@@ -9382,9 +8835,9 @@ var PS =
   }();
 
   // output/Control.Monad.Except/index.js
-  var unwrap6 = /* @__PURE__ */ unwrap();
+  var unwrap5 = /* @__PURE__ */ unwrap();
   var runExcept = function($3) {
-    return unwrap6(runExceptT($3));
+    return unwrap5(runExceptT($3));
   };
 
   // output/Data.Argonaut.Core/foreign.js
@@ -9496,7 +8949,7 @@ var PS =
 
   // output/Data.FormURLEncoded/index.js
   var apply2 = /* @__PURE__ */ apply(applyMaybe);
-  var map23 = /* @__PURE__ */ map(functorMaybe);
+  var map19 = /* @__PURE__ */ map(functorMaybe);
   var traverse2 = /* @__PURE__ */ traverse(traversableArray)(applicativeMaybe);
   var toArray2 = function(v) {
     return v;
@@ -9508,7 +8961,7 @@ var PS =
       }
       ;
       if (v.value1 instanceof Just) {
-        return apply2(map23(function(key) {
+        return apply2(map19(function(key) {
           return function(val) {
             return key + ("=" + val);
           };
@@ -9517,7 +8970,7 @@ var PS =
       ;
       throw new Error("Failed pattern match at Data.FormURLEncoded (line 37, column 16 - line 39, column 114): " + [v.constructor.name]);
     };
-    var $37 = map23(joinWith("&"));
+    var $37 = map19(joinWith("&"));
     var $38 = traverse2(encodePart);
     return function($39) {
       return $37($38(toArray2($39)));
@@ -9742,7 +9195,7 @@ var PS =
   var unsafeReadTagged2 = /* @__PURE__ */ unsafeReadTagged(monadIdentity);
   var alt5 = /* @__PURE__ */ alt(/* @__PURE__ */ altExceptT(semigroupNonEmptyList)(monadIdentity));
   var composeKleisliFlipped3 = /* @__PURE__ */ composeKleisliFlipped(/* @__PURE__ */ bindExceptT(monadIdentity));
-  var map24 = /* @__PURE__ */ map(functorMaybe);
+  var map20 = /* @__PURE__ */ map(functorMaybe);
   var any3 = /* @__PURE__ */ any(foldableArray)(heytingAlgebraBoolean);
   var eq3 = /* @__PURE__ */ eq(eqString);
   var bindFlipped8 = /* @__PURE__ */ bindFlipped(bindMaybe);
@@ -9861,7 +9314,7 @@ var PS =
         }
         ;
         if (v2 instanceof FormURLEncoded) {
-          return note("Body contains values that cannot be encoded as application/x-www-form-urlencoded")(map24(unsafeToForeign)(encode(v2.value0)));
+          return note("Body contains values that cannot be encoded as application/x-www-form-urlencoded")(map20(unsafeToForeign)(encode(v2.value0)));
         }
         ;
         if (v2 instanceof Json) {
@@ -9880,7 +9333,7 @@ var PS =
         };
       };
       var headers = function(reqContent) {
-        return addHeader(map24(ContentType.create)(bindFlipped8(toMediaType)(reqContent)))(addHeader(map24(Accept.create)(toMediaType2(req.responseFormat)))(req.headers));
+        return addHeader(map20(ContentType.create)(bindFlipped8(toMediaType)(reqContent)))(addHeader(map20(Accept.create)(toMediaType2(req.responseFormat)))(req.headers));
       };
       var ajaxRequest = function(v2) {
         return {
@@ -9897,7 +9350,7 @@ var PS =
           username: toNullable(req.username),
           password: toNullable(req.password),
           withCredentials: req.withCredentials,
-          timeout: fromMaybe(0)(map24(function(v1) {
+          timeout: fromMaybe(0)(map20(function(v1) {
             return v1;
           })(req.timeout))
         };
@@ -10030,7 +9483,7 @@ var PS =
   var get3 = /* @__PURE__ */ get2(driver);
 
   // output/Data.Argonaut.Decode.Error/index.js
-  var show6 = /* @__PURE__ */ show(showString);
+  var show4 = /* @__PURE__ */ show(showString);
   var show13 = /* @__PURE__ */ show(showInt);
   var TypeMismatch2 = /* @__PURE__ */ function() {
     function TypeMismatch3(value0) {
@@ -10101,7 +9554,7 @@ var PS =
   var showJsonDecodeError = {
     show: function(v) {
       if (v instanceof TypeMismatch2) {
-        return "(TypeMismatch " + (show6(v.value0) + ")");
+        return "(TypeMismatch " + (show4(v.value0) + ")");
       }
       ;
       if (v instanceof UnexpectedValue) {
@@ -10113,11 +9566,11 @@ var PS =
       }
       ;
       if (v instanceof AtKey) {
-        return "(AtKey " + (show6(v.value0) + (" " + (show(showJsonDecodeError)(v.value1) + ")")));
+        return "(AtKey " + (show4(v.value0) + (" " + (show(showJsonDecodeError)(v.value1) + ")")));
       }
       ;
       if (v instanceof Named) {
-        return "(Named " + (show6(v.value0) + (" " + (show(showJsonDecodeError)(v.value1) + ")")));
+        return "(Named " + (show4(v.value0) + (" " + (show(showJsonDecodeError)(v.value1) + ")")));
       }
       ;
       if (v instanceof MissingValue) {
@@ -10193,7 +9646,7 @@ var PS =
 
   // output/Data.Argonaut.Decode.Decoders/index.js
   var pure10 = /* @__PURE__ */ pure(applicativeEither);
-  var map25 = /* @__PURE__ */ map(functorEither);
+  var map21 = /* @__PURE__ */ map(functorEither);
   var lmap2 = /* @__PURE__ */ lmap(bifunctorEither);
   var composeKleisliFlipped4 = /* @__PURE__ */ composeKleisliFlipped(bindEither);
   var traverseWithIndex2 = /* @__PURE__ */ traverseWithIndex(traversableWithIndexArray)(applicativeEither);
@@ -10210,7 +9663,7 @@ var PS =
       }
       ;
       if (otherwise) {
-        return map25(Just.create)(decoder(json2));
+        return map21(Just.create)(decoder(json2));
       }
       ;
       throw new Error("Failed pattern match at Data.Argonaut.Decode.Decoders (line 37, column 1 - line 41, column 38): " + [decoder.constructor.name, json2.constructor.name]);
@@ -10260,9 +9713,9 @@ var PS =
   };
 
   // output/Data.Argonaut.Decode.Class/index.js
-  var bind6 = /* @__PURE__ */ bind(bindEither);
+  var bind5 = /* @__PURE__ */ bind(bindEither);
   var lmap3 = /* @__PURE__ */ lmap(bifunctorEither);
-  var map26 = /* @__PURE__ */ map(functorMaybe);
+  var map23 = /* @__PURE__ */ map(functorMaybe);
   var gDecodeJsonNil = {
     gDecodeJson: function(v) {
       return function(v1) {
@@ -10320,8 +9773,8 @@ var PS =
                   var fieldValue = lookup2(fieldName)(object2);
                   var v1 = decodeJsonField1(fieldValue);
                   if (v1 instanceof Just) {
-                    return bind6(lmap3(AtKey.create(fieldName))(v1.value0))(function(val) {
-                      return bind6(gDecodeJson1(object2)($$Proxy.value))(function(rest) {
+                    return bind5(lmap3(AtKey.create(fieldName))(v1.value0))(function(val) {
+                      return bind5(gDecodeJson1(object2)($$Proxy.value))(function(rest) {
                         return new Right(insert6($$Proxy.value)(val)(rest));
                       });
                     });
@@ -10368,7 +9821,7 @@ var PS =
     var decodeJson1 = decodeJson(dictDecodeJson);
     return {
       decodeJsonField: function(j) {
-        return map26(decodeJson1)(j);
+        return map23(decodeJson1)(j);
       }
     };
   };
@@ -10376,6 +9829,130 @@ var PS =
     return {
       decodeJson: decodeArray(decodeJson(dictDecodeJson))
     };
+  };
+
+  // output/Data.Number.Format/foreign.js
+  function wrap3(method2) {
+    return function(d) {
+      return function(num) {
+        return method2.apply(num, [d]);
+      };
+    };
+  }
+  var toPrecisionNative = wrap3(Number.prototype.toPrecision);
+  var toFixedNative = wrap3(Number.prototype.toFixed);
+  var toExponentialNative = wrap3(Number.prototype.toExponential);
+  function toString2(num) {
+    return num.toString();
+  }
+
+  // output/Data.Number.Format/index.js
+  var clamp2 = /* @__PURE__ */ clamp(ordInt);
+  var Precision = /* @__PURE__ */ function() {
+    function Precision2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    Precision2.create = function(value0) {
+      return new Precision2(value0);
+    };
+    return Precision2;
+  }();
+  var Fixed = /* @__PURE__ */ function() {
+    function Fixed2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    Fixed2.create = function(value0) {
+      return new Fixed2(value0);
+    };
+    return Fixed2;
+  }();
+  var Exponential = /* @__PURE__ */ function() {
+    function Exponential2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    Exponential2.create = function(value0) {
+      return new Exponential2(value0);
+    };
+    return Exponential2;
+  }();
+  var toStringWith = function(v) {
+    if (v instanceof Precision) {
+      return toPrecisionNative(v.value0);
+    }
+    ;
+    if (v instanceof Fixed) {
+      return toFixedNative(v.value0);
+    }
+    ;
+    if (v instanceof Exponential) {
+      return toExponentialNative(v.value0);
+    }
+    ;
+    throw new Error("Failed pattern match at Data.Number.Format (line 59, column 1 - line 59, column 43): " + [v.constructor.name]);
+  };
+  var fixed = /* @__PURE__ */ function() {
+    var $9 = clamp2(0)(20);
+    return function($10) {
+      return Fixed.create($9($10));
+    };
+  }();
+
+  // output/Graphics.Canvas/foreign.js
+  function getCanvasElementByIdImpl(id3, Just2, Nothing2) {
+    return function() {
+      var el = document.getElementById(id3);
+      if (el && el instanceof HTMLCanvasElement) {
+        return Just2(el);
+      } else {
+        return Nothing2;
+      }
+    };
+  }
+  function getContext2D(c) {
+    return function() {
+      return c.getContext("2d");
+    };
+  }
+  function clearRect(ctx) {
+    return function(r) {
+      return function() {
+        ctx.clearRect(r.x, r.y, r.width, r.height);
+      };
+    };
+  }
+
+  // output/Graphics.Canvas/index.js
+  var getCanvasElementById = function(elId) {
+    return getCanvasElementByIdImpl(elId, Just.create, Nothing.value);
+  };
+
+  // output/Web.Event.Event/foreign.js
+  function _currentTarget(e) {
+    return e.currentTarget;
+  }
+  function preventDefault(e) {
+    return function() {
+      return e.preventDefault();
+    };
+  }
+  function stopPropagation(e) {
+    return function() {
+      return e.stopPropagation();
+    };
+  }
+
+  // output/Web.Event.Event/index.js
+  var currentTarget = function($5) {
+    return toMaybe(_currentTarget($5));
+  };
+
+  // output/HarborView.Common/index.js
+  var applySecond2 = /* @__PURE__ */ applySecond(applyEffect);
+  var defaultEventHandling = function(event) {
+    return applySecond2(stopPropagation(event))(preventDefault(event));
   };
 
   // output/HarborView.Maunaloa.MaunaloaError/index.js
@@ -10413,6 +9990,115 @@ var PS =
     throw new Error("Failed pattern match at HarborView.Maunaloa.MaunaloaError (line 23, column 1 - line 23, column 44): " + [v.constructor.name]);
   };
 
+  // output/HarborView.Maunaloa.VRuler/foreign.js
+  var fi_lines = function(ctx) {
+    return function(boundary) {
+      return function(lines3) {
+        return function() {
+          const x12 = boundary.p1;
+          const x2 = boundary.p2;
+          ctx.strokeStyle = "#000000";
+          ctx.fillStyle = "#000000";
+          ctx.lineWidth = 0.25;
+          ctx.beginPath();
+          for (var i2 = 0; i2 < lines3.length; ++i2) {
+            const y = lines3[i2].p0;
+            ctx.moveTo(x12, y);
+            ctx.lineTo(x2, y);
+            ctx.fillText(lines3[i2].tx, x12 + 5, y + 15);
+          }
+          ctx.stroke();
+        };
+      };
+    };
+  };
+
+  // output/HarborView.Maunaloa.VRuler/index.js
+  var map24 = /* @__PURE__ */ map(functorArray);
+  var show5 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord()()(/* @__PURE__ */ showRecordFieldsCons({
+    reflectSymbol: function() {
+      return "h";
+    }
+  })(/* @__PURE__ */ showRecordFieldsCons({
+    reflectSymbol: function() {
+      return "maxVal";
+    }
+  })(/* @__PURE__ */ showRecordFieldsCons({
+    reflectSymbol: function() {
+      return "padding";
+    }
+  })(/* @__PURE__ */ showRecordFieldsCons({
+    reflectSymbol: function() {
+      return "ppy";
+    }
+  })(/* @__PURE__ */ showRecordFieldsConsNil({
+    reflectSymbol: function() {
+      return "w";
+    }
+  })(showChartWidth))(showPix))(showPadding))(showNumber))(showChartHeight)));
+  var valueToPix = function(v) {
+    return function(value15) {
+      return (v.maxVal - value15) * v.ppy + v.padding.top;
+    };
+  };
+  var showHRuler = {
+    show: function(v) {
+      return "(VRuler " + (show5(v) + ")");
+    }
+  };
+  var pixToValue = function(v) {
+    return function(v1) {
+      return v.maxVal - (v1 - v.padding.top) / v.ppy;
+    };
+  };
+  var createLine = function(vruler2) {
+    return function(vpix) {
+      return function(padTop) {
+        return function(n) {
+          var curPix = padTop + vpix * toNumber(n);
+          var val = pixToValue(vruler2)(curPix);
+          var tx = toStringWith(fixed(2))(val);
+          return {
+            p0: curPix,
+            tx
+          };
+        };
+      };
+    };
+  };
+  var lines = function(v) {
+    return function(num) {
+      var vpix = (v.h - v.padding.top - v.padding.bottom) / toNumber(num);
+      var sections = range2(0)(num);
+      return map24(createLine(v)(vpix)(v.padding.top))(sections);
+    };
+  };
+  var paint = function(v) {
+    return function(ctx) {
+      var curLines = lines(v)(4);
+      var linesX = {
+        p1: 0,
+        p2: v.w
+      };
+      return fi_lines(ctx)(linesX)(curLines);
+    };
+  };
+  var create4 = function(v) {
+    return function(w) {
+      return function(h) {
+        return function(pad) {
+          return {
+            ppy: calcPpy(h)(v)(pad),
+            maxVal: v.maxVal,
+            w,
+            h,
+            padding: pad
+          };
+        };
+      };
+    };
+  };
+
   // output/Web.DOM.NonElementParentNode/foreign.js
   function _getElementById(id3) {
     return function(node) {
@@ -10423,46 +10109,47 @@ var PS =
   }
 
   // output/Web.DOM.NonElementParentNode/index.js
-  var map27 = /* @__PURE__ */ map(functorEffect);
+  var map25 = /* @__PURE__ */ map(functorEffect);
   var getElementById = function(eid) {
-    var $2 = map27(toMaybe);
+    var $2 = map25(toMaybe);
     var $3 = _getElementById(eid);
     return function($4) {
       return $2($3($4));
     };
   };
 
-  // output/Web.Event.Event/foreign.js
-  function _currentTarget(e) {
-    return e.currentTarget;
-  }
-  function preventDefault(e) {
-    return function() {
-      return e.preventDefault();
-    };
-  }
-  function stopPropagation(e) {
-    return function() {
-      return e.stopPropagation();
-    };
-  }
-
-  // output/Web.Event.Event/index.js
-  var currentTarget = function($5) {
-    return toMaybe(_currentTarget($5));
-  };
-
   // output/HarborView.Maunaloa.LevelLine/index.js
   var pure11 = /* @__PURE__ */ pure(applicativeEffect);
   var gDecodeJsonCons2 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
-  var applySecond2 = /* @__PURE__ */ applySecond(applyEffect);
+  var askIsSymbol = {
+    reflectSymbol: function() {
+      return "ask";
+    }
+  };
+  var bidIsSymbol = {
+    reflectSymbol: function() {
+      return "bid";
+    }
+  };
+  var riscIsSymbol = {
+    reflectSymbol: function() {
+      return "risc";
+    }
+  };
+  var tickerIsSymbol = {
+    reflectSymbol: function() {
+      return "ticker";
+    }
+  };
+  var applySecond3 = /* @__PURE__ */ applySecond(applyEffect);
   var bind15 = /* @__PURE__ */ bind(bindMaybe);
   var logShow3 = /* @__PURE__ */ logShow(showString);
   var bind22 = /* @__PURE__ */ bind(bindAff);
   var show32 = /* @__PURE__ */ show(showJsonDecodeError);
   var pure14 = /* @__PURE__ */ pure(applicativeAff);
   var liftEffect8 = /* @__PURE__ */ liftEffect(monadEffectAff);
-  var show42 = /* @__PURE__ */ show(showInt);
+  var show42 = /* @__PURE__ */ show(showHtmlId);
+  var traverse_7 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableArray);
   var StdLine = /* @__PURE__ */ function() {
     function StdLine2(value0) {
       this.value0 = value0;
@@ -10483,6 +10170,16 @@ var PS =
     };
     return RiscLine2;
   }();
+  var BreakEvenLine = /* @__PURE__ */ function() {
+    function BreakEvenLine2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    BreakEvenLine2.create = function(value0) {
+      return new BreakEvenLine2(value0);
+    };
+    return BreakEvenLine2;
+  }();
   var validateMaybe = function(desc) {
     return function(el) {
       if (el instanceof Nothing) {
@@ -10493,7 +10190,7 @@ var PS =
         return pure11(unit);
       }
       ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 454, column 3 - line 456, column 24): " + [el.constructor.name]);
+      throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 433, column 3 - line 435, column 24): " + [el.constructor.name]);
     };
   };
   var updateVruler = function(ct) {
@@ -10506,6 +10203,19 @@ var PS =
       return "value";
     }
   })()())());
+  var riscLinesFromJson = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeArray2(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonString))(gDecodeJsonNil)(tickerIsSymbol)()())({
+    reflectSymbol: function() {
+      return "riscStockPrice";
+    }
+  })()())({
+    reflectSymbol: function() {
+      return "riscOptionPrice";
+    }
+  })()())(riscIsSymbol)()())(bidIsSymbol)()())({
+    reflectSymbol: function() {
+      return "be";
+    }
+  })()())(askIsSymbol)()())()));
   var optionPriceURL = function(v) {
     return function(curStockPrice) {
       return mainURL + ("/stockoption/price/" + (v + ("/" + toStringWith(fixed(2))(curStockPrice))));
@@ -10516,20 +10226,25 @@ var PS =
       return onMouseUpImpl(chartTypeAsInt(ct))(Just.create)(Nothing.value);
     };
   };
+  var mouseEventDrag = function(ct) {
+    return function(evt) {
+      return applySecond3(defaultEventHandling(evt))(onMouseDrag(chartTypeAsInt(ct))(evt));
+    };
+  };
+  var mouseEventDown = function(ct) {
+    return function(evt) {
+      return applySecond3(defaultEventHandling(evt))(onMouseDown(chartTypeAsInt(ct))(evt));
+    };
+  };
   var ltSTD = 1;
-  var initEvent = function(ct) {
-    return function(toListener) {
-      return function(element3) {
-        return function(eventType) {
-          return function __do3() {
-            var e1 = eventListener(toListener)();
-            var info2 = {
-              target: element3,
-              listener: e1,
-              eventType
-            };
-            return addEventListener(eventType)(e1)(false)(toEventTarget2(element3))();
-          };
+  var ltRISC = 2;
+  var ltBREAK_EVEN = 3;
+  var initEvent = function(toListener) {
+    return function(element3) {
+      return function(eventType) {
+        return function __do3() {
+          var e1 = eventListener(toListener)();
+          return addEventListener(eventType)(e1)(false)(toEventTarget2(element3))();
         };
       };
     };
@@ -10552,10 +10267,10 @@ var PS =
   var getHtmlContext = function(v) {
     if (v.levelCanvasId instanceof HtmlId) {
       return function __do3() {
-        var doc = applySecond2(logShow3("levelCanvasId1: " + v.levelCanvasId.value0))(getDoc)();
+        var doc = applySecond3(logShow3("levelCanvasId1: " + v.levelCanvasId.value0))(getDoc)();
         var canvasElement = getElementById(v.levelCanvasId.value0)(doc)();
         var canvas2 = getCanvasElementById(v.levelCanvasId.value0)();
-        return applySecond2(applySecond2(validateMaybe("canvasElement")(canvasElement))(validateMaybe("canvas")(canvas2)))(pure11(getHtmlContext1({
+        return applySecond3(applySecond3(validateMaybe("canvasElement")(canvasElement))(validateMaybe("canvas")(canvas2)))(pure11(getHtmlContext1({
           canvas: canvasElement,
           ctx: canvas2
         })))();
@@ -10582,10 +10297,10 @@ var PS =
               return new Right(json2.value0.value);
             }
             ;
-            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 388, column 13 - line 392, column 34): " + [json2.constructor.name]);
+            throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 368, column 13 - line 372, column 34): " + [json2.constructor.name]);
           }
           ;
-          throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 381, column 9 - line 392, column 34): " + [res.constructor.name]);
+          throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 361, column 9 - line 372, column 34): " + [res.constructor.name]);
         }();
         return pure14(result);
       });
@@ -10607,7 +10322,7 @@ var PS =
                 return liftEffect8(updateRiscLine(cti)(v2)(n.value0));
               }
               ;
-              throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 405, column 7 - line 409, column 55): " + [n.constructor.name]);
+              throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 384, column 7 - line 388, column 55): " + [n.constructor.name]);
             });
           }());
         }
@@ -10627,27 +10342,14 @@ var PS =
           return handleUpdateOptionPrice(ct)(vr)(line.value0);
         }
         ;
-        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 415, column 3 - line 419, column 42): " + [line.constructor.name]);
+        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 394, column 3 - line 398, column 42): " + [line.constructor.name]);
       };
-    };
-  };
-  var defaultEventHandling = function(event) {
-    return applySecond2(stopPropagation(event))(preventDefault(event));
-  };
-  var mouseEventDown = function(ct) {
-    return function(evt) {
-      return applySecond2(defaultEventHandling(evt))(onMouseDown(chartTypeAsInt(ct))(evt));
-    };
-  };
-  var mouseEventDrag = function(ct) {
-    return function(evt) {
-      return applySecond2(defaultEventHandling(evt))(onMouseDrag(chartTypeAsInt(ct))(evt));
     };
   };
   var mouseEventUp = function(ct) {
     return function(evt) {
       return function __do3() {
-        var line = applySecond2(defaultEventHandling(evt))(onMouseUp(ct)(evt))();
+        var line = applySecond3(defaultEventHandling(evt))(onMouseUp(ct)(evt))();
         var vruler2 = currentVruler(chartTypeAsInt(ct))();
         return handleMouseEventUpLine(ct)(vruler2)(line)();
       };
@@ -10658,20 +10360,95 @@ var PS =
       return function __do3() {
         var context = getHtmlContext(v)();
         if (context instanceof Nothing) {
-          return applySecond2(logShow3("(initEvents) No getHtmlContext for: " + show42(chartTypeAsInt(ct))))(pure11(unit))();
+          return applySecond3(logShow3("(initEvents) No getHtmlContext for: " + show42(v.levelCanvasId)))(pure11(unit))();
         }
         ;
         if (context instanceof Just) {
           var ctx = getContext2D(context.value0.canvasContext)();
-          return applySecond2(applySecond2(applySecond2(updateCtxImpl(chartTypeAsInt(ct))(ctx))(initEvent(ct)(mouseEventDown(ct))(context.value0.canvasElement)("mousedown")))(initEvent(ct)(mouseEventDrag(ct))(context.value0.canvasElement)("mousemove")))(initEvent(ct)(mouseEventUp(ct))(context.value0.canvasElement)("mouseup"))();
+          return applySecond3(applySecond3(applySecond3(updateCtxImpl(chartTypeAsInt(ct))(ctx))(initEvent(mouseEventDown(ct))(context.value0.canvasElement)("mousedown")))(initEvent(mouseEventDrag(ct))(context.value0.canvasElement)("mousemove")))(initEvent(mouseEventUp(ct))(context.value0.canvasElement)("mouseup"))();
         }
         ;
-        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 512, column 5 - line 524, column 88): " + [context.constructor.name]);
+        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 462, column 5 - line 474, column 85): " + [context.constructor.name]);
       };
     };
   };
-  var clear2 = function(cti) {
-    return clearCanvas(cti);
+  var fetchLevelLinesURL = function(v) {
+    return mainURL + ("/risclines/" + v);
+  };
+  var fetchLevelLines_ = function(ticker) {
+    return bind22(get3(json)(fetchLevelLinesURL(ticker)))(function(res) {
+      var result = function() {
+        if (res instanceof Left) {
+          return new Left(new AffjaxError(printError(res.value0)));
+        }
+        ;
+        if (res instanceof Right) {
+          var lines3 = riscLinesFromJson(res.value0.body);
+          if (lines3 instanceof Left) {
+            return new Left(new JsonError(show32(lines3.value0)));
+          }
+          ;
+          if (lines3 instanceof Right) {
+            return new Right(lines3.value0);
+          }
+          ;
+          throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 320, column 13 - line 324, column 29): " + [lines3.constructor.name]);
+        }
+        ;
+        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 313, column 9 - line 324, column 29): " + [res.constructor.name]);
+      }();
+      return pure14(result);
+    });
+  };
+  var deleteAll = function(ct) {
+    return clearLines(chartTypeAsInt(ct));
+  };
+  var addRiscLine = function(ct) {
+    return function(line) {
+      var cti = chartTypeAsInt(ct);
+      return function __do3() {
+        var vr = currentVruler(cti)();
+        var rl = new RiscLine({
+          y: valueToPix(vr)(line.riscStockPrice),
+          selected: false,
+          ticker: line.ticker,
+          ask: line.ask,
+          bid: line.bid,
+          risc: line.risc,
+          riscPrice: line.riscOptionPrice,
+          lt: ltRISC
+        });
+        var bl = new BreakEvenLine({
+          y: valueToPix(vr)(line.be),
+          ticker: line.ticker,
+          ask: line.ask,
+          breakEven: line.be,
+          lt: ltBREAK_EVEN
+        });
+        return applySecond3(addLineImpl(cti)(rl))(addLineImpl(cti)(bl))();
+      };
+    };
+  };
+  var addRiscLines = function(ct) {
+    return function(lines3) {
+      var addRiscLine1 = addRiscLine(ct);
+      return traverse_7(addRiscLine1)(lines3);
+    };
+  };
+  var fetchLevelLines = function(ct) {
+    return function(ticker) {
+      return launchAff_(bind22(fetchLevelLines_(ticker))(function(lines3) {
+        if (lines3 instanceof Left) {
+          return handleErrorAff(lines3.value0);
+        }
+        ;
+        if (lines3 instanceof Right) {
+          return liftEffect8(applySecond3(clearLines(chartTypeAsInt(ct)))(addRiscLines(ct)(lines3.value0)));
+        }
+        ;
+        throw new Error("Failed pattern match at HarborView.Maunaloa.LevelLine (line 334, column 7 - line 342, column 12): " + [lines3.constructor.name]);
+      }));
+    };
   };
   var addLine = function(ct) {
     return function __do3() {
@@ -10683,6 +10460,400 @@ var PS =
         color: curColor
       });
       return addLineImpl(chartTypeAsInt(ct))(line)();
+    };
+  };
+
+  // output/Foreign.Index/foreign.js
+  function unsafeReadPropImpl(f, s, key, value15) {
+    return value15 == null ? f : s(value15[key]);
+  }
+
+  // output/Foreign.Index/index.js
+  var unsafeReadProp = function(dictMonad) {
+    var fail3 = fail(dictMonad);
+    var pure21 = pure(applicativeExceptT(dictMonad));
+    return function(k) {
+      return function(value15) {
+        return unsafeReadPropImpl(fail3(new TypeMismatch("object", typeOf(value15))), pure21, k, value15);
+      };
+    };
+  };
+  var readProp = function(dictMonad) {
+    return unsafeReadProp(dictMonad);
+  };
+
+  // output/Web.UIEvent.MouseEvent.EventTypes/index.js
+  var click2 = "click";
+
+  // output/Halogen.HTML.Events/index.js
+  var map26 = /* @__PURE__ */ map(functorMaybe);
+  var composeKleisli2 = /* @__PURE__ */ composeKleisli(bindMaybe);
+  var composeKleisliFlipped5 = /* @__PURE__ */ composeKleisliFlipped(/* @__PURE__ */ bindExceptT(monadIdentity));
+  var readProp2 = /* @__PURE__ */ readProp(monadIdentity);
+  var readString2 = /* @__PURE__ */ readString(monadIdentity);
+  var mouseHandler = unsafeCoerce2;
+  var handler$prime = function(et) {
+    return function(f) {
+      return handler(et)(function(ev) {
+        return map26(Action.create)(f(ev));
+      });
+    };
+  };
+  var handler2 = function(et) {
+    return function(f) {
+      return handler(et)(function(ev) {
+        return new Just(new Action(f(ev)));
+      });
+    };
+  };
+  var onClick = /* @__PURE__ */ function() {
+    var $15 = handler2(click2);
+    return function($16) {
+      return $15(mouseHandler($16));
+    };
+  }();
+  var addForeignPropHandler = function(key) {
+    return function(prop3) {
+      return function(reader) {
+        return function(f) {
+          var go2 = function(a2) {
+            return composeKleisliFlipped5(reader)(readProp2(prop3))(unsafeToForeign(a2));
+          };
+          return handler$prime(key)(composeKleisli2(currentTarget)(function(e) {
+            return either($$const(Nothing.value))(function($85) {
+              return Just.create(f($85));
+            })(runExcept(go2(e)));
+          }));
+        };
+      };
+    };
+  };
+  var onValueChange = /* @__PURE__ */ addForeignPropHandler(change)("value")(readString2);
+
+  // output/Control.Monad.Reader/index.js
+  var unwrap6 = /* @__PURE__ */ unwrap();
+  var runReader = function(v) {
+    return function($4) {
+      return unwrap6(v($4));
+    };
+  };
+
+  // output/HarborView.Maunaloa.Bar/foreign.js
+  var fi_paint_bars = function(bars) {
+    return function(ctx) {
+      return function() {
+        for (var i2 = 0; i2 < bars.length; ++i2) {
+          paintBar(ctx, bars[i2]);
+        }
+      };
+    };
+  };
+  var paintBar = function(ctx, bar) {
+    const yZero = 110;
+    ctx.strokeStyle = bar.strokeStyle;
+    ctx.lineWidth = 0.5;
+    const y = bar.yaxis;
+    const x = bar.xaxis;
+    ctx.beginPath();
+    for (var i2 = 0; i2 < x.length; ++i2) {
+      ctx.moveTo(x[i2], yZero);
+      ctx.lineTo(x[i2], y[i2]);
+    }
+    ctx.stroke();
+  };
+
+  // output/HarborView.Maunaloa.Bar/index.js
+  var map27 = /* @__PURE__ */ map(functorArray);
+  var strokes = ["#ff0000"];
+  var createJSBar = function(xaxis) {
+    return function(bar) {
+      return function(strokeStyle) {
+        return {
+          xaxis,
+          yaxis: bar,
+          strokeStyle
+        };
+      };
+    };
+  };
+  var paint2 = function(v) {
+    return function(bars) {
+      return function(ctx) {
+        var fn = createJSBar(v.xaxis);
+        var jsBars = zipWith(fn)(bars)(strokes);
+        return fi_paint_bars(jsBars)(ctx);
+      };
+    };
+  };
+  var barToPix = function(vr) {
+    return function(bar) {
+      var vfun = valueToPix(vr);
+      return map27(vfun)(bar);
+    };
+  };
+
+  // output/HarborView.Maunaloa.Candlestick/foreign.js
+  var fi_paint_candlestix = function(xaxis) {
+    return function(candlestix) {
+      return function(ctx) {
+        return function() {
+          ctx.strokeStyle = "#000000";
+          ctx.fillStyle = "#ffaa00";
+          ctx.lineWidth = 0.5;
+          const numCandlestix = candlestix.length;
+          for (var i2 = 0; i2 < numCandlestix; ++i2) {
+            paintCandlestick(xaxis[i2], candlestix[i2], ctx);
+          }
+        };
+      };
+    };
+  };
+  var paintCandlestick = function(x, cndl, ctx) {
+    const x0 = x - 4;
+    ctx.beginPath();
+    if (cndl.c > cndl.o) {
+      ctx.moveTo(x, cndl.h);
+      ctx.lineTo(x, cndl.o);
+      ctx.moveTo(x, cndl.c);
+      ctx.lineTo(x, cndl.l);
+      const cndlHeight2 = cndl.c - cndl.o;
+      ctx.rect(x0, cndl.o, 8, cndlHeight2);
+      ctx.fillRect(x0, cndl.o, 8, cndlHeight2);
+    } else {
+      var cndlHeight = cndl.o - cndl.c;
+      if (cndlHeight === 0) {
+        cndlHeight = 1;
+        const x12 = x + 4;
+        ctx.moveTo(x, cndl.h);
+        ctx.lineTo(x, cndl.l);
+        ctx.moveTo(x0, cndl.c);
+        ctx.lineTo(x12, cndl.c);
+      } else {
+        ctx.moveTo(x, cndl.h);
+        ctx.lineTo(x, cndl.c);
+        ctx.moveTo(x, cndl.o);
+        ctx.lineTo(x, cndl.l);
+        ctx.rect(x0, cndl.c, 8, cndlHeight);
+      }
+    }
+    ctx.stroke();
+  };
+
+  // output/HarborView.Maunaloa.Candlestick/index.js
+  var show6 = /* @__PURE__ */ show(/* @__PURE__ */ showRecord()()(/* @__PURE__ */ showRecordFieldsCons({
+    reflectSymbol: function() {
+      return "c";
+    }
+  })(/* @__PURE__ */ showRecordFieldsCons({
+    reflectSymbol: function() {
+      return "h";
+    }
+  })(/* @__PURE__ */ showRecordFieldsCons({
+    reflectSymbol: function() {
+      return "l";
+    }
+  })(/* @__PURE__ */ showRecordFieldsConsNil({
+    reflectSymbol: function() {
+      return "o";
+    }
+  })(showNumber))(showNumber))(showNumber))(showNumber)));
+  var showCandlestick = {
+    show: function(v) {
+      return "(Candlestick " + (show6(v) + ")");
+    }
+  };
+  var paint3 = function(v) {
+    return function(cndls) {
+      return function(ctx) {
+        return fi_paint_candlestix(v.xaxis)(cndls)(ctx);
+      };
+    };
+  };
+  var candleToPix = function(vr) {
+    return function(v) {
+      var po = valueToPix(vr)(v.o);
+      var pl = valueToPix(vr)(v.l);
+      var ph = valueToPix(vr)(v.h);
+      var pc = valueToPix(vr)(v.c);
+      return {
+        o: po,
+        h: ph,
+        l: pl,
+        c: pc
+      };
+    };
+  };
+
+  // output/HarborView.Maunaloa.HRuler/foreign.js
+  var fi_incMonths = function(startTime) {
+    return function(numMonths) {
+      var stm = new Date(startTime);
+      return Date.UTC(stm.getFullYear(), stm.getMonth() + numMonths, 1);
+    };
+  };
+  var fi_dateToString = function(tm) {
+    var d = new Date(tm);
+    var m = d.getMonth() + 1;
+    if (m < 10) {
+      return "0" + m + "." + d.getFullYear();
+    } else {
+      return m + "." + d.getFullYear();
+    }
+  };
+  var fi_lines2 = function(ctx) {
+    return function(boundary) {
+      return function(lines3) {
+        return function() {
+          const y1 = boundary.p1;
+          const y2 = boundary.p2;
+          ctx.strokeStyle = "#000000";
+          ctx.fillStyle = "#000000";
+          ctx.lineWidth = 0.25;
+          ctx.beginPath();
+          for (var i2 = 0; i2 < lines3.length; ++i2) {
+            const x = lines3[i2].p0;
+            ctx.moveTo(x, y1);
+            ctx.lineTo(x, y2);
+            ctx.fillText(lines3[i2].tx, x + 5, y1 + 15);
+          }
+          ctx.stroke();
+        };
+      };
+    };
+  };
+  var fi_startOfNextMonth = function(tm) {
+    const curDate = new Date(tm);
+    return Date.UTC(curDate.getFullYear(), curDate.getMonth() + 1, 1);
+  };
+
+  // output/HarborView.Util.DateUtil/index.js
+  var dateRangeOf = function(v) {
+    return function(lx) {
+      var lo = v + dayInMillis * toNumber(fromMaybe(0)(last(lx)));
+      var hi = v + dayInMillis * toNumber(fromMaybe(0)(head2(lx)));
+      return new Tuple(lo, hi);
+    };
+  };
+
+  // output/HarborView.Maunaloa.HRuler/index.js
+  var map28 = /* @__PURE__ */ map(functorArray);
+  var greaterThanOrEq2 = /* @__PURE__ */ greaterThanOrEq(ordUnixTime);
+  var bind6 = /* @__PURE__ */ bind(bindMaybe);
+  var timeStampToPix = function(v) {
+    return function(v1) {
+      var days = (v1 - v.startTime) / dayInMillis;
+      return v.padding.left + days * v.ppx;
+    };
+  };
+  var startOfNextMonth = function(v) {
+    return fi_startOfNextMonth(v);
+  };
+  var offsetsToPix = function(startOffset) {
+    return function(offsets) {
+      return function(v) {
+        return function(padLeft) {
+          return map28(function(x) {
+            return padLeft + toNumber(x - startOffset | 0) * v;
+          })(offsets);
+        };
+      };
+    };
+  };
+  var incMonths = function(v) {
+    return function(numMonths) {
+      return fi_incMonths(v)(numMonths);
+    };
+  };
+  var dateToString = function(v) {
+    return fi_dateToString(v);
+  };
+  var lines_ = function($copy_timestampFn) {
+    return function($copy_endTime) {
+      return function($copy_numMonths) {
+        return function($copy_curLines) {
+          return function($copy_curTime) {
+            var $tco_var_timestampFn = $copy_timestampFn;
+            var $tco_var_endTime = $copy_endTime;
+            var $tco_var_numMonths = $copy_numMonths;
+            var $tco_var_curLines = $copy_curLines;
+            var $tco_done = false;
+            var $tco_result;
+            function $tco_loop(timestampFn, endTime, numMonths, curLines, curTime) {
+              if (greaterThanOrEq2(curTime)(endTime)) {
+                $tco_done = true;
+                return curLines;
+              }
+              ;
+              if (otherwise) {
+                var nextTime = incMonths(curTime)(numMonths);
+                var newCurLines = cons2({
+                  p0: timestampFn(curTime),
+                  tx: dateToString(curTime)
+                })(curLines);
+                $tco_var_timestampFn = timestampFn;
+                $tco_var_endTime = endTime;
+                $tco_var_numMonths = numMonths;
+                $tco_var_curLines = newCurLines;
+                $copy_curTime = nextTime;
+                return;
+              }
+              ;
+              throw new Error("Failed pattern match at HarborView.Maunaloa.HRuler (line 81, column 1 - line 81, column 108): " + [timestampFn.constructor.name, endTime.constructor.name, numMonths.constructor.name, curLines.constructor.name, curTime.constructor.name]);
+            }
+            ;
+            while (!$tco_done) {
+              $tco_result = $tco_loop($tco_var_timestampFn, $tco_var_endTime, $tco_var_numMonths, $tco_var_curLines, $copy_curTime);
+            }
+            ;
+            return $tco_result;
+          };
+        };
+      };
+    };
+  };
+  var lines2 = function(v) {
+    var timestampFn = timeStampToPix(v);
+    var snm = startOfNextMonth(v.startTime);
+    return lines_(timestampFn)(v.endTime)(v.myIncMonths)([])(snm);
+  };
+  var paint4 = function(hruler) {
+    return function(v) {
+      return function(ctx) {
+        var curLines = lines2(hruler);
+        var linesX = {
+          p1: 0,
+          p2: v
+        };
+        return fi_lines2(ctx)(linesX)(curLines);
+      };
+    };
+  };
+  var create5 = function(w) {
+    return function(minDx) {
+      return function(offsets) {
+        return function(v) {
+          return function(myIncMonths) {
+            return bind6(head2(offsets))(function(offset0) {
+              return bind6(last(offsets))(function(offsetN) {
+                var v1 = dateRangeOf(minDx)(offsets);
+                var offsetBoundary = {
+                  oHead: offset0,
+                  oLast: offsetN
+                };
+                var pix = calcPpx(w)(offsetBoundary)(v);
+                return new Just({
+                  startTime: v1.value0,
+                  endTime: v1.value1,
+                  xaxis: offsetsToPix(offsetN)(offsets)(pix)(v.left),
+                  ppx: pix,
+                  padding: v,
+                  myIncMonths
+                });
+              });
+            });
+          };
+        };
+      };
     };
   };
 
@@ -10710,12 +10881,12 @@ var PS =
   };
 
   // output/HarborView.Maunaloa.Line/index.js
-  var map28 = /* @__PURE__ */ map(functorArray);
+  var map29 = /* @__PURE__ */ map(functorArray);
   var strokes2 = ["#ff0000", "#aa00ff"];
   var lineToPix = function(vr) {
     return function(line) {
       var vfun = valueToPix(vr);
-      return map28(vfun)(line);
+      return map29(vfun)(line);
     };
   };
   var createJsLine = function(xaxis) {
@@ -10747,7 +10918,7 @@ var PS =
   var show43 = /* @__PURE__ */ show(showHtmlId);
   var show52 = /* @__PURE__ */ show(showChartHeight);
   var logShow4 = /* @__PURE__ */ logShow(showString);
-  var applySecond3 = /* @__PURE__ */ applySecond(applyEffect);
+  var applySecond4 = /* @__PURE__ */ applySecond(applyEffect);
   var pure15 = /* @__PURE__ */ pure(applicativeEffect);
   var notEq2 = /* @__PURE__ */ notEq(eqHtmlId);
   var Chart = /* @__PURE__ */ function() {
@@ -10805,7 +10976,7 @@ var PS =
       };
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 115, column 1 - line 115, column 41): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 114, column 1 - line 114, column 41): " + [v.constructor.name]);
   };
   var showChart = {
     show: function(v) {
@@ -10821,7 +10992,7 @@ var PS =
         return "(EmptyChart)";
       }
       ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 81, column 1 - line 96, column 19): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 80, column 1 - line 95, column 19): " + [v.constructor.name]);
     }
   };
   var paintEmpty = function(v) {
@@ -10833,12 +11004,12 @@ var PS =
         }
         ;
         if (canvas2 instanceof Just) {
-          var ctx = applySecond3(logShow4("Drawing canvas: " + v.value0.canvasId.value0))(getContext2D(canvas2.value0))();
+          var ctx = applySecond4(logShow4("Drawing canvas: " + v.value0.canvasId.value0))(getContext2D(canvas2.value0))();
           var r = toRectangle(v);
           return clearRect(ctx)(r)();
         }
         ;
-        throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 158, column 9 - line 167, column 43): " + [canvas2.constructor.name]);
+        throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 157, column 9 - line 166, column 43): " + [canvas2.constructor.name]);
       };
     }
     ;
@@ -10860,9 +11031,9 @@ var PS =
               }
               ;
               if (canvas2 instanceof Just) {
-                var ctx = applySecond3(logShow4("Drawing canvas: " + v2.value0.mapping.canvasId.value0))(getContext2D(canvas2.value0))();
+                var ctx = applySecond4(logShow4("Drawing canvas: " + v2.value0.mapping.canvasId.value0))(getContext2D(canvas2.value0))();
                 var r = toRectangle(v2);
-                return applySecond3(applySecond3(applySecond3(applySecond3(applySecond3(applySecond3(clearRect(ctx)(r))(paint(v2.value0.vruler)(ctx)))(paint4(v)(v2.value0.vruler.h)(ctx)))(paint5(v)(v2.value0.lines)(ctx)))(paint2(v)(v2.value0.bars)(ctx)))(paint3(v)(v2.value0.candlesticks)(ctx)))(function() {
+                return applySecond4(applySecond4(applySecond4(applySecond4(applySecond4(applySecond4(clearRect(ctx)(r))(paint(v2.value0.vruler)(ctx)))(paint4(v)(v2.value0.vruler.h)(ctx)))(paint5(v)(v2.value0.lines)(ctx)))(paint2(v)(v2.value0.bars)(ctx)))(paint3(v)(v2.value0.candlesticks)(ctx)))(function() {
                   var $64 = notEq2(v2.value0.mapping.levelCanvasId)(NoHtmlId.value);
                   if ($64) {
                     return updateVruler(v1)(v2.value0.vruler);
@@ -10872,11 +11043,11 @@ var PS =
                 }())();
               }
               ;
-              throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 133, column 11 - line 151, column 34): " + [canvas2.constructor.name]);
+              throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 132, column 11 - line 150, column 34): " + [canvas2.constructor.name]);
             };
           }
           ;
-          throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 128, column 3 - line 151, column 34): " + [v2.value0.mapping.canvasId.constructor.name]);
+          throw new Error("Failed pattern match at HarborView.Maunaloa.Chart (line 127, column 3 - line 150, column 34): " + [v2.value0.mapping.canvasId.constructor.name]);
         }
         ;
         return pure15(unit);
@@ -10899,17 +11070,17 @@ var PS =
 
   // output/HarborView.Maunaloa.ChartCollection/index.js
   var showArray2 = /* @__PURE__ */ showArray(showChart);
-  var applySecond4 = /* @__PURE__ */ applySecond(applyEffect);
+  var applySecond5 = /* @__PURE__ */ applySecond(applyEffect);
   var logShow5 = /* @__PURE__ */ logShow(showArray2);
-  var traverse_7 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableArray);
+  var traverse_8 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableArray);
   var liftEffect9 = /* @__PURE__ */ liftEffect(monadEffectAff);
   var paintEmpty2 = function(v) {
-    return applySecond4(logShow5(v))(traverse_7(paintEmpty)(v));
+    return applySecond5(logShow5(v))(traverse_8(paintEmpty)(v));
   };
   var paint7 = function(ct) {
     return function(v) {
       var paint_ = paint6(v.hruler)(ct);
-      return traverse_7(paint_)(v.charts);
+      return traverse_8(paint_)(v.charts);
     };
   };
   var paintAff = function(ct) {
@@ -11055,7 +11226,7 @@ var PS =
   };
 
   // output/HarborView.Maunaloa.ChartTransform/index.js
-  var map29 = /* @__PURE__ */ map(functorArray);
+  var map30 = /* @__PURE__ */ map(functorArray);
   var bind8 = /* @__PURE__ */ bind(/* @__PURE__ */ bindReaderT(bindIdentity));
   var ask2 = /* @__PURE__ */ ask(/* @__PURE__ */ monadAskReaderT(monadIdentity));
   var pure17 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeReaderT(applicativeIdentity));
@@ -11083,8 +11254,8 @@ var PS =
       return function(v2) {
         if (v instanceof JsonChartWindow) {
           var vr = vruler(v.value0.valueRange)(v1)(v2.chartHeight);
-          var linesToPix = map29(lineToPix(vr))(v.value0.lines);
-          var cndlToPix = map29(candleToPix(vr))(v.value0.candlesticks);
+          var linesToPix = map30(lineToPix(vr))(v.value0.lines);
+          var cndlToPix = map30(candleToPix(vr))(v.value0.candlesticks);
           return new Chart({
             lines: linesToPix,
             candlesticks: cndlToPix,
@@ -11097,7 +11268,7 @@ var PS =
         ;
         if (v instanceof JsonChartWindowBar) {
           var vr = vruler(valueRangeZeroBased(v.value0.valueRange))(v1)(v2.chartHeight);
-          var barsToPix = map29(barToPix(vr))(v.value0.bars);
+          var barsToPix = map30(barToPix(vr))(v.value0.bars);
           return new Chart({
             lines: [],
             candlesticks: [],
@@ -11112,12 +11283,12 @@ var PS =
           return EmptyChart.value;
         }
         ;
-        throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 226, column 1 - line 226, column 76): " + [v.constructor.name, v1.constructor.name, v2.constructor.name]);
+        throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 223, column 1 - line 223, column 76): " + [v.constructor.name, v1.constructor.name, v2.constructor.name]);
       };
     };
   };
   var transformEmpty = /* @__PURE__ */ bind8(ask2)(function(v) {
-    var charts = map29(transformMappingEmpty(v.globalChartWidth))(v.mappings);
+    var charts = map30(transformMappingEmpty(v.globalChartWidth))(v.mappings);
     return pure17(charts);
   });
   var slice3 = function(v) {
@@ -11138,7 +11309,7 @@ var PS =
   };
   var minMaxRanges = function(v) {
     return function(vals) {
-      var mmas = map29(function(y) {
+      var mmas = map30(function(y) {
         return fromMaybe(nullValueRange)(y);
       })(filter2(function(x) {
         return notEq3(x)(Nothing.value);
@@ -11216,7 +11387,7 @@ var PS =
     var scalingFn = function(x) {
       return x / scalingFactor;
     };
-    return map29(scalingFn)(line);
+    return map30(scalingFn)(line);
   };
   var incMonths2 = function(v) {
     if (v instanceof DayChart) {
@@ -11235,15 +11406,15 @@ var PS =
       return 0;
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 294, column 1 - line 294, column 30): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.ChartTransform (line 291, column 1 - line 291, column 30): " + [v.constructor.name]);
   };
   var chartValueRange = function(lx) {
     return function(bars) {
       return function(cx) {
         return function(scaling) {
-          var minMaxLines = map29(minMaxArray)(lx);
+          var minMaxLines = map30(minMaxArray)(lx);
           var minMaxCandlesticks = minMaxCndl(cx);
-          var minMaxBars = map29(minMaxArray)(bars);
+          var minMaxBars = map30(minMaxArray)(bars);
           var allVr = cons2(minMaxCandlesticks)(concat([minMaxLines, minMaxBars]));
           return minMaxRanges(scaling)(allVr);
         };
@@ -11255,7 +11426,7 @@ var PS =
       return function(c) {
         return function(scaling) {
           return function(numVlines) {
-            var bars_ = map29(slice3(dropAmt)(takeAmt))(c);
+            var bars_ = map30(slice3(dropAmt)(takeAmt))(c);
             var valueRange2 = chartValueRange([])(bars_)([])(scaling);
             return new JsonChartWindowBar({
               bars: bars_,
@@ -11274,17 +11445,16 @@ var PS =
           return function(doNormalizeLines) {
             return function(numVlines) {
               var lines_2 = function() {
-                var tmp = map29(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.lines));
+                var tmp = map30(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.lines));
                 var $73 = doNormalizeLines === true;
                 if ($73) {
-                  return map29(normalizeLine)(tmp);
+                  return map30(normalizeLine)(tmp);
                 }
                 ;
                 return tmp;
               }();
               var cndl_ = slice3(dropAmt)(takeAmt)(fromMaybe([])(c.candlesticks));
               var valueRange2 = chartValueRange(lines_2)([])(cndl_)(scaling);
-              var bars_ = map29(slice3(dropAmt)(takeAmt))(fromMaybe([])(c.bars));
               return new JsonChartWindow({
                 lines: lines_2,
                 candlesticks: cndl_,
@@ -11343,7 +11513,7 @@ var PS =
       var xaxis = slice3(v.dropAmt)(v.takeAmt)(response.xAxis);
       var ruler = create5(v.globalChartWidth)(response.minDx)(xaxis)(padding)(incMonths2(v.chartType));
       var ruler1 = fromJust3(ruler);
-      var charts1 = map29(transformMapping(v)(response))(v.mappings);
+      var charts1 = map30(transformMapping(v)(response))(v.mappings);
       return pure17({
         ticker: response.ticker,
         charts: charts1,
@@ -11374,11 +11544,11 @@ var PS =
   };
 
   // output/HarborView.Maunaloa.Core/index.js
-  var applySecond5 = /* @__PURE__ */ applySecond(applyEffect);
-  var logShow6 = /* @__PURE__ */ logShow(showString);
-  var traverse_8 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableArray);
+  var traverse_9 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableArray);
   var pure18 = /* @__PURE__ */ pure(applicativeEffect);
-  var logShow1 = /* @__PURE__ */ logShow(showStockTicker);
+  var applySecond6 = /* @__PURE__ */ applySecond(applyEffect);
+  var logShow6 = /* @__PURE__ */ logShow(showStockTicker);
+  var logShow1 = /* @__PURE__ */ logShow(showString);
   var bind9 = /* @__PURE__ */ bind(bindAff);
   var applySecond1 = /* @__PURE__ */ applySecond(applyAff);
   var liftEffect10 = /* @__PURE__ */ liftEffect(monadEffectAff);
@@ -11386,8 +11556,16 @@ var PS =
   var resetCharts2 = resetCharts;
   var reposIdFor = function(chartType) {
     return function(v) {
-      return v + (":" + toString(toNumber(chartTypeAsInt(chartType))));
+      return v + (":" + toString2(toNumber(chartTypeAsInt(chartType))));
     };
+  };
+  var fetchLevelLines2 = function(ct) {
+    return function(ticker) {
+      return fetchLevelLines(ct)(ticker);
+    };
+  };
+  var deleteAllLevelLines = function(ct) {
+    return deleteAll(ct);
   };
   var createEnvEmpty = function(mappings) {
     return {
@@ -11419,31 +11597,25 @@ var PS =
       };
     };
   };
-  var clearLevelLines = function(cti) {
-    return applySecond5(logShow6("clearLevelLines"))(clear2(cti));
-  };
   var chartTypeAsMappings = function(v) {
     if (v instanceof DayChart) {
       var volume2 = {
         chartId: "chart3",
         canvasId: new HtmlId("vol-1"),
         chartHeight: 110,
-        levelCanvasId: NoHtmlId.value,
-        fetchLevelId: NoHtmlId.value
+        levelCanvasId: NoHtmlId.value
       };
       var osc = {
         chartId: "chart2",
         canvasId: new HtmlId("osc-1"),
         chartHeight: 200,
-        levelCanvasId: NoHtmlId.value,
-        fetchLevelId: NoHtmlId.value
+        levelCanvasId: NoHtmlId.value
       };
       var mainChart = {
         chartId: "chart",
         canvasId: new HtmlId("chart-1"),
         chartHeight: 600,
-        levelCanvasId: new HtmlId("levellines-1"),
-        fetchLevelId: new HtmlId("btn-persistent-levelline-1")
+        levelCanvasId: new HtmlId("levellines-1")
       };
       return [mainChart, osc, volume2];
     }
@@ -11453,22 +11625,19 @@ var PS =
         chartId: "chart3",
         canvasId: new HtmlId("vol-2"),
         chartHeight: 110,
-        levelCanvasId: NoHtmlId.value,
-        fetchLevelId: NoHtmlId.value
+        levelCanvasId: NoHtmlId.value
       };
       var osc = {
         chartId: "chart2",
         canvasId: new HtmlId("osc-2"),
         chartHeight: 200,
-        levelCanvasId: NoHtmlId.value,
-        fetchLevelId: NoHtmlId.value
+        levelCanvasId: NoHtmlId.value
       };
       var mainChart = {
         chartId: "chart",
         canvasId: new HtmlId("chart-2"),
         chartHeight: 600,
-        levelCanvasId: new HtmlId("levellines-2"),
-        fetchLevelId: new HtmlId("btn-persistent-levelline-2")
+        levelCanvasId: new HtmlId("levellines-2")
       };
       return [mainChart, osc, volume2];
     }
@@ -11478,22 +11647,19 @@ var PS =
         chartId: "chart3",
         canvasId: new HtmlId("vol-3"),
         chartHeight: 110,
-        levelCanvasId: NoHtmlId.value,
-        fetchLevelId: NoHtmlId.value
+        levelCanvasId: NoHtmlId.value
       };
       var osc = {
         chartId: "chart2",
         canvasId: new HtmlId("osc-3"),
         chartHeight: 200,
-        levelCanvasId: NoHtmlId.value,
-        fetchLevelId: NoHtmlId.value
+        levelCanvasId: NoHtmlId.value
       };
       var mainChart = {
         chartId: "chart",
         canvasId: new HtmlId("chart-3"),
         chartHeight: 600,
-        levelCanvasId: new HtmlId("levellines-3"),
-        fetchLevelId: new HtmlId("btn-persistent-levelline-3")
+        levelCanvasId: new HtmlId("levellines-3")
       };
       return [mainChart, osc, volume2];
     }
@@ -11502,11 +11668,11 @@ var PS =
       return [];
     }
     ;
-    throw new Error("Failed pattern match at HarborView.Maunaloa.Core (line 149, column 1 - line 149, column 50): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at HarborView.Maunaloa.Core (line 168, column 1 - line 168, column 50): " + [v.constructor.name]);
   };
   var initEvents2 = function(ct) {
     var mappings = chartTypeAsMappings(ct);
-    return traverse_8(initEvents(ct))(mappings);
+    return traverse_9(initEvents(ct))(mappings);
   };
   var paint8 = function(v) {
     return function(v1) {
@@ -11518,15 +11684,16 @@ var PS =
           ;
           var reposId = reposIdFor(v)(v1);
           var mappings = chartTypeAsMappings(v);
-          var curEnv = createEnv(v)(v1)(v2)(v3)(mappings);
           var cachedResponse = getJsonResponse(reposId);
-          return applySecond5(logShow1(v1))(function() {
+          return applySecond6(logShow6(v1))(function() {
             if (cachedResponse instanceof Just) {
+              var curEnv = createEnv(v)(v1)(v2)(v3)(mappings);
               var collection = runReader(transform2(cachedResponse.value0))(curEnv);
-              return applySecond5(logShow6("Fetched response from repository"))(paint7(v)(collection));
+              return applySecond6(logShow1("Fetched response from repository"))(paint7(v)(collection));
             }
             ;
             if (cachedResponse instanceof Nothing) {
+              var curEnv = createEnv(v)(v1)(v2)(v3)(mappings);
               return launchAff_(bind9(fetchCharts(v1)(v))(function(charts) {
                 if (charts instanceof Left) {
                   return handleErrorAff(charts.value0);
@@ -11537,11 +11704,11 @@ var PS =
                   return applySecond1(liftEffect10(setJsonResponse(reposId)(charts.value0)))(paintAff(v)(collection2));
                 }
                 ;
-                throw new Error("Failed pattern match at HarborView.Maunaloa.Core (line 106, column 11 - line 114, column 60): " + [charts.constructor.name]);
+                throw new Error("Failed pattern match at HarborView.Maunaloa.Core (line 125, column 11 - line 133, column 60): " + [charts.constructor.name]);
               }));
             }
             ;
-            throw new Error("Failed pattern match at HarborView.Maunaloa.Core (line 96, column 3 - line 114, column 60): " + [cachedResponse.constructor.name]);
+            throw new Error("Failed pattern match at HarborView.Maunaloa.Core (line 111, column 3 - line 133, column 60): " + [cachedResponse.constructor.name]);
           }());
         };
       };
@@ -11551,78 +11718,11 @@ var PS =
     var mappings = chartTypeAsMappings(ct);
     var curEnv = createEnvEmpty(mappings);
     var collection = runReader(transformEmpty)(curEnv);
-    return applySecond5(applySecond5(logShow6("__paintEmpty__"))(logShow22(collection)))(paintEmpty2(collection));
+    return applySecond6(applySecond6(logShow1("__paintEmpty__"))(logShow22(collection)))(paintEmpty2(collection));
   };
   var addLevelLine = function(ct) {
     return addLine(ct);
   };
-
-  // output/Foreign.Index/foreign.js
-  function unsafeReadPropImpl(f, s, key, value15) {
-    return value15 == null ? f : s(value15[key]);
-  }
-
-  // output/Foreign.Index/index.js
-  var unsafeReadProp = function(dictMonad) {
-    var fail3 = fail(dictMonad);
-    var pure21 = pure(applicativeExceptT(dictMonad));
-    return function(k) {
-      return function(value15) {
-        return unsafeReadPropImpl(fail3(new TypeMismatch("object", typeOf(value15))), pure21, k, value15);
-      };
-    };
-  };
-  var readProp = function(dictMonad) {
-    return unsafeReadProp(dictMonad);
-  };
-
-  // output/Web.UIEvent.MouseEvent.EventTypes/index.js
-  var click2 = "click";
-
-  // output/Halogen.HTML.Events/index.js
-  var map30 = /* @__PURE__ */ map(functorMaybe);
-  var composeKleisli2 = /* @__PURE__ */ composeKleisli(bindMaybe);
-  var composeKleisliFlipped5 = /* @__PURE__ */ composeKleisliFlipped(/* @__PURE__ */ bindExceptT(monadIdentity));
-  var readProp2 = /* @__PURE__ */ readProp(monadIdentity);
-  var readString2 = /* @__PURE__ */ readString(monadIdentity);
-  var mouseHandler = unsafeCoerce2;
-  var handler$prime = function(et) {
-    return function(f) {
-      return handler(et)(function(ev) {
-        return map30(Action.create)(f(ev));
-      });
-    };
-  };
-  var handler2 = function(et) {
-    return function(f) {
-      return handler(et)(function(ev) {
-        return new Just(new Action(f(ev)));
-      });
-    };
-  };
-  var onClick = /* @__PURE__ */ function() {
-    var $15 = handler2(click2);
-    return function($16) {
-      return $15(mouseHandler($16));
-    };
-  }();
-  var addForeignPropHandler = function(key) {
-    return function(prop3) {
-      return function(reader) {
-        return function(f) {
-          var go2 = function(a2) {
-            return composeKleisliFlipped5(reader)(readProp2(prop3))(unsafeToForeign(a2));
-          };
-          return handler$prime(key)(composeKleisli2(currentTarget)(function(e) {
-            return either($$const(Nothing.value))(function($85) {
-              return Just.create(f($85));
-            })(runExcept(go2(e)));
-          }));
-        };
-      };
-    };
-  };
-  var onValueChange = /* @__PURE__ */ addForeignPropHandler(change)("value")(readString2);
 
   // output/HarborView.UI/index.js
   var value14 = /* @__PURE__ */ value12(isPropString);
@@ -11643,10 +11743,12 @@ var PS =
 
   // output/HarborView.Maunaloa.View/index.js
   var bind10 = /* @__PURE__ */ bind(bindHalogenM);
+  var get4 = /* @__PURE__ */ get(monadStateHalogenM);
+  var applySecond7 = /* @__PURE__ */ applySecond(applyHalogenM);
+  var modify_3 = /* @__PURE__ */ modify_2(monadStateHalogenM);
   var gets2 = /* @__PURE__ */ gets(monadStateHalogenM);
-  var applySecond6 = /* @__PURE__ */ applySecond(applyHalogenM);
-  var pure19 = /* @__PURE__ */ pure(applicativeHalogenM);
   var logShow7 = /* @__PURE__ */ logShow(showInt);
+  var pure19 = /* @__PURE__ */ pure(applicativeHalogenM);
   var SelectChange = /* @__PURE__ */ function() {
     function SelectChange2(value0) {
       this.value0 = value0;
@@ -11664,6 +11766,16 @@ var PS =
     Initialize3.value = new Initialize3();
     return Initialize3;
   }();
+  var ResetChart = /* @__PURE__ */ function() {
+    function ResetChart2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    ResetChart2.create = function(value0) {
+      return new ResetChart2(value0);
+    };
+    return ResetChart2;
+  }();
   var AddLevelLine = /* @__PURE__ */ function() {
     function AddLevelLine2(value0) {
       this.value0 = value0;
@@ -11674,9 +11786,157 @@ var PS =
     };
     return AddLevelLine2;
   }();
+  var FetchRiscLines = /* @__PURE__ */ function() {
+    function FetchRiscLines2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    FetchRiscLines2.create = function(value0) {
+      return new FetchRiscLines2(value0);
+    };
+    return FetchRiscLines2;
+  }();
+  var Previous = /* @__PURE__ */ function() {
+    function Previous2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    Previous2.create = function(value0) {
+      return new Previous2(value0);
+    };
+    return Previous2;
+  }();
+  var Next = /* @__PURE__ */ function() {
+    function Next2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    Next2.create = function(value0) {
+      return new Next2(value0);
+    };
+    return Next2;
+  }();
+  var Last2 = /* @__PURE__ */ function() {
+    function Last3(value0) {
+      this.value0 = value0;
+    }
+    ;
+    Last3.create = function(value0) {
+      return new Last3(value0);
+    };
+    return Last3;
+  }();
+  var DeleteAll = /* @__PURE__ */ function() {
+    function DeleteAll2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    DeleteAll2.create = function(value0) {
+      return new DeleteAll2(value0);
+    };
+    return DeleteAll2;
+  }();
+  var resetChart2 = {
+    iconClass: "fa-ghost",
+    title: "Reset Chart"
+  };
+  var persistentLevelLine = {
+    iconClass: "fa-pen-ruler",
+    title: "Persistent Level Line"
+  };
+  var navigate = function(dictBind) {
+    var bind17 = bind(dictBind);
+    var applySecond12 = applySecond(dictBind.Apply0());
+    return function(dictMonadState) {
+      var get1 = get(dictMonadState);
+      var modify_1 = modify_2(dictMonadState);
+      return function(dictMonadEffect) {
+        var pure110 = pure(dictMonadEffect.Monad0().Applicative0());
+        var liftEffect12 = liftEffect(dictMonadEffect);
+        return function(dropAmt) {
+          return bind17(get1)(function(st) {
+            var $42 = st.selectedTicker === "0";
+            if ($42) {
+              return pure110(unit);
+            }
+            ;
+            var newDropAmt = function() {
+              var $43 = dropAmt === 0;
+              if ($43) {
+                return 0;
+              }
+              ;
+              return st.dropAmt + dropAmt | 0;
+            }();
+            return applySecond12(liftEffect12(paint8(st.ct)(st.selectedTicker)(newDropAmt)(st.takeAmt)))(modify_1(function(stx) {
+              var $44 = {};
+              for (var $45 in stx) {
+                if ({}.hasOwnProperty.call(stx, $45)) {
+                  $44[$45] = stx[$45];
+                }
+                ;
+              }
+              ;
+              $44.dropAmt = newDropAmt;
+              return $44;
+            }));
+          });
+        };
+      };
+    };
+  };
+  var navigate1 = /* @__PURE__ */ navigate(bindHalogenM)(monadStateHalogenM);
   var mkTickers = [{
     v: "18",
     t: "AKSO - Aker Solutions"
+  }, {
+    v: "27",
+    t: "BAKKA - Bakkafrost"
+  }, {
+    v: "26",
+    t: "BWLPG - BW LPG"
+  }, {
+    v: "19",
+    t: "DNB - DNB"
+  }, {
+    v: "20",
+    t: "DNO - DNO International"
+  }, {
+    v: "2",
+    t: "EQNR - Equinor"
+  }, {
+    v: "21",
+    t: "GJF - Gjensidige Forsikr"
+  }, {
+    v: "28",
+    t: "GOGL - Golden Ocean Group"
+  }, {
+    v: "29",
+    t: "NAS - Norw. Air Shuttle"
+  }, {
+    v: "1",
+    t: "NHY - Norsk hydro"
+  }, {
+    v: "9",
+    t: "ORK - Orkla"
+  }, {
+    v: "12",
+    t: "PGS - Petroleum Geo-Serv"
+  }, {
+    v: "14",
+    t: "STB - Storebrand"
+  }, {
+    v: "23",
+    t: "SUBC - Subsea 7"
+  }, {
+    v: "6",
+    t: "TEL - Telenor"
+  }, {
+    v: "16",
+    t: "TGS - TGS-NOPEC Geophysica"
+  }, {
+    v: "17",
+    t: "TOM - Tomra"
   }, {
     v: "3",
     t: "YAR - Yara"
@@ -11685,7 +11945,6 @@ var PS =
   var mainClass = "grid-menu-bar-ps";
   var levelLine = {
     iconClass: "fa-ruler-vertical",
-    htmlId: "",
     title: "Level Line"
   };
   var icon = function(v) {
@@ -11694,23 +11953,32 @@ var PS =
       return span3([classes(["scrap-span"])])([i([onClick(evt), classes([cn]), title2(v.title)])([])]);
     };
   };
-  var render = function(st) {
-    var tickers = mkSelect_(st.tickers)(SelectChange.create);
-    return div2([classes([mainClass])])([div2([classes([menuBarClass])])([tickers]), div2([classes([menuBarClass])])([icon(levelLine)(AddLevelLine.create)])]);
-  };
   var handleAction = function(dictMonadAff) {
-    var liftEffect12 = liftEffect(monadEffectHalogenM(dictMonadAff.MonadEffect0()));
+    var monadEffectHalogenM2 = monadEffectHalogenM(dictMonadAff.MonadEffect0());
+    var liftEffect12 = liftEffect(monadEffectHalogenM2);
+    var navigate2 = navigate1(monadEffectHalogenM2);
     return function(v) {
       if (v instanceof SelectChange) {
-        return bind10(gets2(function(v1) {
-          return v1.ct;
-        }))(function(ct1) {
-          var $26 = v.value0 === "0";
-          if ($26) {
-            return applySecond6(liftEffect12(paintEmpty3(ct1)))(pure19(unit));
-          }
-          ;
-          return applySecond6(liftEffect12(paint8(ct1)(v.value0)(0)(90)))(pure19(unit));
+        return bind10(get4)(function(st) {
+          return applySecond7(function() {
+            var $52 = v.value0 === "0";
+            if ($52) {
+              return liftEffect12(paintEmpty3(st.ct));
+            }
+            ;
+            return liftEffect12(paint8(st.ct)(v.value0)(st.dropAmt)(st.takeAmt));
+          }())(modify_3(function(stx) {
+            var $53 = {};
+            for (var $54 in stx) {
+              if ({}.hasOwnProperty.call(stx, $54)) {
+                $53[$54] = stx[$54];
+              }
+              ;
+            }
+            ;
+            $53.selectedTicker = v.value0;
+            return $53;
+          }));
         });
       }
       ;
@@ -11718,7 +11986,29 @@ var PS =
         return bind10(gets2(function(v1) {
           return v1.ct;
         }))(function(ct1) {
-          return applySecond6(applySecond6(liftEffect12(logShow7(chartTypeAsInt(ct1))))(liftEffect12(initEvents2(ct1))))(pure19(unit));
+          return applySecond7(liftEffect12(logShow7(chartTypeAsInt(ct1))))(liftEffect12(initEvents2(ct1)));
+        });
+      }
+      ;
+      if (v instanceof ResetChart) {
+        return bind10(get4)(function(st) {
+          var $57 = st.selectedTicker === "0";
+          if ($57) {
+            return pure19(unit);
+          }
+          ;
+          return applySecond7(applySecond7(liftEffect12(resetCharts2))(liftEffect12(paint8(st.ct)(st.selectedTicker)(0)(st.takeAmt))))(modify_3(function(stx) {
+            var $58 = {};
+            for (var $59 in stx) {
+              if ({}.hasOwnProperty.call(stx, $59)) {
+                $58[$59] = stx[$59];
+              }
+              ;
+            }
+            ;
+            $58.dropAmt = 0;
+            return $58;
+          }));
         });
       }
       ;
@@ -11730,8 +12020,57 @@ var PS =
         });
       }
       ;
-      throw new Error("Failed pattern match at HarborView.Maunaloa.View (line 171, column 16 - line 190, column 41): " + [v.constructor.name]);
+      if (v instanceof FetchRiscLines) {
+        return bind10(get4)(function(st) {
+          return liftEffect12(fetchLevelLines2(st.ct)(st.selectedTicker));
+        });
+      }
+      ;
+      if (v instanceof Previous) {
+        return navigate2(90);
+      }
+      ;
+      if (v instanceof Next) {
+        return navigate2(-90 | 0);
+      }
+      ;
+      if (v instanceof Last2) {
+        return navigate2(0);
+      }
+      ;
+      if (v instanceof DeleteAll) {
+        return bind10(get4)(function(st) {
+          var $67 = st.selectedTicker === "0";
+          if ($67) {
+            return pure19(unit);
+          }
+          ;
+          return liftEffect12(deleteAllLevelLines(st.ct));
+        });
+      }
+      ;
+      throw new Error("Failed pattern match at HarborView.Maunaloa.View (line 212, column 16 - line 283, column 52): " + [v.constructor.name]);
     };
+  };
+  var deleteLevelLines = {
+    iconClass: "fa-ruler-combined",
+    title: "Delete all Level Lines"
+  };
+  var arrowRight = {
+    iconClass: "fa-arrow-right",
+    title: "Next"
+  };
+  var arrowLeft = {
+    iconClass: "fa-arrow-left",
+    title: "Previous"
+  };
+  var arrowLast = {
+    iconClass: "fa-arrow-right-to-bracket",
+    title: "Last"
+  };
+  var render = function(st) {
+    var tickers = mkSelect_(st.tickers)(SelectChange.create);
+    return div2([classes([mainClass])])([div2([classes([menuBarClass])])([tickers]), div2([classes([menuBarClass])])([icon(resetChart2)(ResetChart.create), icon(arrowLeft)(Previous.create), icon(arrowRight)(Next.create), icon(arrowLast)(Last2.create), icon(levelLine)(AddLevelLine.create), icon(persistentLevelLine)(FetchRiscLines.create), icon(deleteLevelLines)(DeleteAll.create)])]);
   };
   var component = function(dictMonadAff) {
     var handleAction1 = handleAction(dictMonadAff);
@@ -11741,7 +12080,9 @@ var PS =
           return {
             tickers: mkTickers,
             ct: c,
-            selectedTicker: emptySelectItem
+            selectedTicker: "0",
+            takeAmt: 90,
+            dropAmt: 0
           };
         },
         render,
@@ -11759,10 +12100,9 @@ var PS =
   // output/Main/index.js
   var liftEffect11 = /* @__PURE__ */ liftEffect(monadEffectAff);
   var logShow8 = /* @__PURE__ */ logShow(showString);
-  var applySecond7 = /* @__PURE__ */ applySecond(applyAff);
+  var applySecond8 = /* @__PURE__ */ applySecond(applyAff);
   var component2 = /* @__PURE__ */ component(monadAffAff);
   var pure20 = /* @__PURE__ */ pure(applicativeAff);
-  var applySecond12 = /* @__PURE__ */ applySecond(applyEffect);
   var bind11 = /* @__PURE__ */ bind(bindAff);
   var run3 = function(node) {
     return function(qs) {
@@ -11772,22 +12112,20 @@ var PS =
         }
         ;
         if (node instanceof Just) {
-          return applySecond7(runUI2(component2(c))(unit)(node.value0))(pure20(unit));
+          return applySecond8(runUI2(component2(c))(unit)(node.value0))(pure20(unit));
         }
         ;
-        throw new Error("Failed pattern match at Main (line 46, column 3 - line 54, column 16): " + [node.constructor.name]);
+        throw new Error("Failed pattern match at Main (line 39, column 3 - line 47, column 16): " + [node.constructor.name]);
       };
     };
   };
-  var main2 = /* @__PURE__ */ function() {
-    return runHalogenAff(applySecond7(applySecond7(liftEffect11(applySecond12(applySecond12(applySecond12(paint8(EmptyChartType.value)("-")(0)(0))(paintEmpty3(EmptyChartType.value)))(clearLevelLines(1)))(resetCharts2)))(awaitLoad))(bind11(selectElement("#ps-menubar-1"))(function(node) {
-      return bind11(applySecond7(run3(node)("#ps-menubar-1")(DayChart.value))(selectElement("#ps-menubar-2")))(function(node1) {
-        return bind11(applySecond7(run3(node1)("#ps-menubar-2")(WeekChart.value))(selectElement("#ps-menubar-3")))(function(node2) {
-          return run3(node2)("#ps-menubar-3")(MonthChart.value);
-        });
+  var main2 = /* @__PURE__ */ runHalogenAff(/* @__PURE__ */ applySecond8(awaitLoad)(/* @__PURE__ */ bind11(/* @__PURE__ */ selectElement("#ps-menubar-1"))(function(node) {
+    return bind11(applySecond8(run3(node)("#ps-menubar-1")(DayChart.value))(selectElement("#ps-menubar-2")))(function(node2) {
+      return bind11(applySecond8(run3(node2)("#ps-menubar-2")(WeekChart.value))(selectElement("#ps-menubar-3")))(function(node3) {
+        return run3(node3)("#ps-menubar-3")(MonthChart.value);
       });
-    })));
-  }();
+    });
+  })));
 
   // <stdin>
   main2();

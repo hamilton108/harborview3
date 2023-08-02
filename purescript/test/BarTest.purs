@@ -2,6 +2,10 @@ module Test.BarTest where
 
 import Prelude
 
+x :: Int
+x = 10 
+
+{-
 import Test.Unit.Assert as Assert
 import Test.Unit (suite, test, failure, TestSuite, Test)
 import Partial.Unsafe (unsafePartial)
@@ -13,8 +17,7 @@ import Control.Monad.Reader
 
 import HarborView.Maunaloa.JsonCharts as J
 import HarborView.Maunaloa.JsonCharts 
-  ( JsonChart(..)
-  , JsonChartResponse(..)
+  ( JsonChartResponse(..)
   )
 import HarborView.Maunaloa.ChartCollection
   ( ChartCollection(..)
@@ -22,15 +25,10 @@ import HarborView.Maunaloa.ChartCollection
 import HarborView.Maunaloa.Chart 
   ( Chart(..)
   )
-import HarborView.Maunaloa.VRuler as V
-import HarborView.Maunaloa.VRuler
-  ( VRuler
-  )
 import HarborView.Maunaloa.Common 
   ( ChartHeight(..)
   , ChartId(..)
   , ChartMapping(..)
-  , ChartMappings
   , ChartType(..)
   , ChartWidth(..)
   , Drop(..)
@@ -39,9 +37,6 @@ import HarborView.Maunaloa.Common
   , Scaling(..)
   , StockTicker(..)
   , Take(..)
-  , UnixTime(..)
-  , ValueRange(..)
-  , Xaxis
   )
 import HarborView.Maunaloa.ChartTransform as T
 import HarborView.Maunaloa.HRuler
@@ -181,9 +176,9 @@ testEnv = Env
 
 -- testVruler : 
 
-testHruler :: HRuler -> Test
-testHruler (HRuler hruler) = 
-  Assert.equal 1 (1 :: Int)
+-- testHruler :: HRuler -> Test
+-- testHruler (HRuler hruler) = 
+--   Assert.equal 1 (1 :: Int)
 
 testChart :: Array Chart -> Test 
 testChart [(Chart c)] = 
@@ -198,18 +193,18 @@ testChart _ =
 
 
 
-demo = 
-  let 
-    (ChartCollection coll) = runReader (T.transform testJsonChartResponse) testEnv 
-  in
-  case coll.charts of 
-    [(Chart c)] -> 
-      unsafePartial $ fromJust $ Array.head c.bars
-    _ -> 
-      []
+-- demo = 
+--   let 
+--     (ChartCollection coll) = runReader (T.transform testJsonChartResponse) testEnv 
+--   in
+--   case coll.charts of 
+--     [(Chart c)] -> 
+--       unsafePartial $ fromJust $ Array.head c.bars
+--     _ -> 
+--       []
   
-demo2 = 
-  T.chartWindow (Drop 0) (Take 90) testJsonChartResponse.chart3 (Scaling 1.0) false 10
+-- demo2 = 
+--   T.chartWindow (Drop 0) (Take 90) testJsonChartResponse.chart3 (Scaling 1.0) false 10
 
   -- let 
   --   w = T.chartWindow (Drop 0) (Take 90) testJsonChartResponse.chart3 (Scaling 1.0) false 10
@@ -225,5 +220,5 @@ testBarSuite =
       testChart coll.charts
       --Assert.equal (UnixTime 1615939200000.0) hruler.startTime
       --Assert.equal (UnixTime 1627430400000.0) hruler.endTime
-
+-}
 

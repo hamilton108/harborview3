@@ -125,7 +125,9 @@ a.href-td {
   display: flex;
   margin-top: 1rem;
   margin-left: 3rem;
+  /*
   margin-right: 3rem;
+   */
   grid-column: 1; }
 
 .grid-menu-bar {

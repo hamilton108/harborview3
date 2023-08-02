@@ -6,26 +6,15 @@ import Effect.Aff (Aff)
 import Effect (Effect)
 import Effect.Class (liftEffect)
 import Effect.Console (logShow)
-import Data.Maybe 
-  ( Maybe(..)
-  , fromJust
-  )
-import Data.String (length)
 import Data.Traversable (traverse_)
-import Partial.Unsafe (unsafePartial)
-import Data.Array as Array
 
 import HarborView.Maunaloa.Chart as C
-import HarborView.Maunaloa.Chart (Chart(..))
+import HarborView.Maunaloa.Chart (Chart)
 import HarborView.Maunaloa.HRuler as H
 import HarborView.Maunaloa.Common 
-  ( HtmlId(..)
-  , ChartMapping(..)
-  , ChartType
-  , OptionTicker
+  ( ChartType
   , StockTicker
   )
-import HarborView.Maunaloa.LevelLine as LevelLine
 
 
 newtype ChartCollection = ChartCollection 

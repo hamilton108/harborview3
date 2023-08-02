@@ -205,7 +205,6 @@ newtype ChartMapping = ChartMapping
     , canvasId :: HtmlId
     , chartHeight :: ChartHeight 
     , levelCanvasId :: HtmlId
-    , fetchLevelId :: HtmlId
     }
 
 derive instance eqChartMapping :: Eq ChartMapping 
