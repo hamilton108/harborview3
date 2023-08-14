@@ -145,7 +145,7 @@ paint hruler ct chart@(Chart {vruler: vrobj@(V.VRuler vr), mapping : (ChartMappi
                       Bar.paint hruler bars ctx *>
                       CNDL.paint hruler candlesticks ctx *>
                       if m.levelCanvasId /= NoHtmlId then
-                        LevelLine.updateVruler ct vrobj
+                        LevelLine.updateRulers ct vrobj hruler
                       else
                         pure unit
 paint _ _ _ = 

@@ -35,28 +35,6 @@ import Effect.Console (logShow)
 
 import Prelude
 
-{- <select class="form-control" id="tickers-1">
-  <option>-</option>
-  <option value="18">AKSO - Aker Solutions</option>
-  <option value="27">BAKKA - Bakkafrost</option>
-  <option value="26">BWLPG - BW LPG</option>
-  <option value="19">DNB - DNB</option>
-  <option value="20">DNO - DNO International</option>
-  <option value="2">EQNR - Equinor</option>
-  <option value="21">GJF - Gjensidige Forsikr</option>
-  <option value="28">GOGL - Golden Ocean Group</option>
-  <option value="29">NAS - Norw. Air Shuttle</option>
-  <option value="1">NHY - Norsk hydro</option>
-  <option value="9">ORK - Orkla</option>
-  <option value="12">PGS - Petroleum Geo-Serv</option>
-  <option value="14">STB - Storebrand</option>
-  <option value="23">SUBC - Subsea 7</option>
-  <option value="6">TEL - Telenor</option>
-  <option value="16">TGS - TGS-NOPEC Geophysica</option>
-  <option value="17">TOM - Tomra</option>
-  <option value="3">YAR - Yara</option>
-</select>-}
- 
 type State = 
   { tickers :: SelectItems
   , ct :: ChartType
@@ -97,6 +75,7 @@ data Action
   | Next MouseEvent
   | Last MouseEvent
   | DeleteAll MouseEvent
+  | FetchSpot MouseEvent
 
 component :: forall q i o m. MonadAff m => ChartType -> H.Component q i o m
 component c =
@@ -162,10 +141,17 @@ persistentLevelLine :: Icon
 persistentLevelLine = 
   { iconClass: "fa-pen-ruler", title: "Persistent Level Line" }
 
-deleteLevelLines :: Icon
-deleteLevelLines = 
+-- deleteLevelLine :: Icon
+-- deleteLevelLine = 
+--   { iconClass: "fa-ruler-combined", title: "Delete Level Lines" }
+
+deleteAllLevelLines :: Icon
+deleteAllLevelLines = 
   { iconClass: "fa-ruler-combined", title: "Delete all Level Lines" }
 
+fetchSpot :: Icon
+fetchSpot = 
+  { iconClass: "fa-ruler-combined", title: "Fetch Spot" }
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
@@ -187,7 +173,8 @@ render st =
     , icon arrowLast Last
     , icon levelLine AddLevelLine
     , icon persistentLevelLine FetchRiscLines
-    , icon deleteLevelLines DeleteAll
+    , icon deleteAllLevelLines DeleteAll
+    , icon fetchSpot FetchSpot
     ]
   ]
 
@@ -245,9 +232,23 @@ handleAction = case _ of
     navigate (-90)
   Last _ -> 
     navigate 0
+  {-
+  DeleteLine _ -> 
+    H.get >>= \st -> 
+      if st.selectedTicker == "0" then
+        pure unit
+      else
+        pure unit
+  -}
   DeleteAll _ -> 
     H.get >>= \st -> 
       if st.selectedTicker == "0" then
         pure unit
       else
-        liftEffect (Core.deleteAllLevelLines st.ct)
+        liftEffect (Core.deleteAllLevelLines st.ct (StockTicker st.selectedTicker))
+  FetchSpot _ -> 
+    H.get >>= \st -> 
+      if st.selectedTicker == "0" then
+        pure unit
+      else
+        liftEffect (Core.fetchSpot st.ct (StockTicker st.selectedTicker))

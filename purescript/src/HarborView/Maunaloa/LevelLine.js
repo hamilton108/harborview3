@@ -70,6 +70,7 @@ class LevelLineInternal {
     constructor() {
         this.ctx = null;
         this.v = null;
+        this.hr = null;
         this.lines = initLines();
     }
 
@@ -167,6 +168,9 @@ class LevelLineInternal {
     getVruler() {
         return this.v;
     }
+    getHruler() {
+        return this.hr;
+    }
     onMouseDown(evt) {
         const items = this.lines.items;
         if (items.length === 0) {
@@ -233,8 +237,9 @@ class LevelLineInternal {
         }
         this.draw();
     }
-    updateVruler(vruler) {
+    updateRulers(vruler, hruler) {
         this.v = vruler;
+        this.hr = hruler;
     };
     updateCtx(ctx) {
         this.ctx = ctx;
@@ -273,6 +278,11 @@ export const currentVruler = chartType => () => {
     return lin.getVruler();
 }
 
+export const currentHruler = chartType => () => {
+    const lin = getLin(chartType);
+    return lin.getHruler();
+}
+
 export const onMouseDown = chartType => evt => () => {
     const lin = getLin(chartType);
     lin.onMouseDown(evt);
@@ -293,9 +303,9 @@ export const updateRiscLine = chartType => riscLine => newValue => () => {
     lin.updateRiscLine(riscLine, newValue);
 }
 
-export const updateVrulerImpl = chartType => vruler => () => {
+export const updateRulersImpl = chartType => vruler => hruler => () => {
     const lin = getLin(chartType);
-    lin.updateVruler(vruler);
+    lin.updateRulers(vruler, hruler);
 };
 export const updateCtxImpl = chartType => ctx => () => {
     const lin = getLin(chartType);

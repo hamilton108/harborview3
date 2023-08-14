@@ -3,12 +3,10 @@ package harborview.controller.maunaloa;
 import harborview.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.RLine;
 import harborview.domain.stockmarket.StockTicker;
+import harborview.dto.StatusDTO;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,5 +26,19 @@ public class RiscLineController {
     public List<RLine> riscLines(@PathVariable("ticker") int ticker) {
         var stockTicker = new StockTicker(ticker);
         return maunaloaCore.getRiscLines(stockTicker);
+    }
+
+    @ResponseBody
+    @DeleteMapping(value = "/{ticker}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public StatusDTO deleteAllRiscLines(@PathVariable("ticker") int ticker) {
+        var stockTicker = new StockTicker(ticker);
+        return maunaloaCore.deleteAllRiscLines(stockTicker);
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/spot/{ticker}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String spot(@PathVariable("ticker") int ticker) {
+        var stockTicker = new StockTicker(ticker);
+        return maunaloaCore.spot(stockTicker);
     }
 }

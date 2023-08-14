@@ -21,7 +21,6 @@ import java.net.http.HttpResponse;
 //@Component("comp2")
 
 @Component()
-@Profile({"prod","demo"})
 public class NordnetAdapterImpl implements NordnetAdapter  {
     private final Logger logger = LoggerFactory.getLogger(NordnetAdapterImpl.class);
 
@@ -54,7 +53,7 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
         }
     }
 
-    private String putsOrCalls(String uri) {
+    private String getResponseFor(String uri) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(uri))
@@ -62,7 +61,7 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            logger.info(String.format("Found puts or calls for %s", uri));
+            logger.info(String.format("Response for %s", uri));
             return response.body();
         } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -71,18 +70,35 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
     @Override
     public String calls(StockTicker ticker) {
         var uri = optionUri(ticker, true);
-        return putsOrCalls(uri);
+        return getResponseFor(uri);
     }
 
     @Override
     public String puts(StockTicker ticker) {
         var uri = optionUri(ticker, false);
-        return putsOrCalls(uri);
+        return getResponseFor(uri);
     }
 
     @Override
-    public String demo(StockOptionTicker ticker) {
+    public String spot(StockTicker ticker) {
+        var uri = spotUri(ticker);
+        return getResponseFor(uri);
+    }
+
+    private String spotUri(StockTicker ticker) {
+        return String.format("%s/spot/%d", nordnetHost, ticker.oid());
+    }
+    private String optionUri(StockOptionTicker ticker) {
+        return String.format("%s/option/%s", nordnetHost, ticker.ticker());
+    }
+    private String optionUri(StockTicker ticker, boolean isCalls) {
+        var ot = isCalls ? "calls" : "puts";
+        return String.format("%s/%s/%d", nordnetHost, ot, ticker.oid());
+    }
+
         /*
+    @Override
+    public String demo(StockOptionTicker ticker) {
         //String uri = String.format("%s/option/YAR3A528.02X", nordnetHost);
 
         //var uri = optionUri(ticker);
@@ -105,18 +121,11 @@ public class NordnetAdapterImpl implements NordnetAdapter  {
         } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-             */
        return  "" ;
 
     }
+             */
 
-    private String optionUri(StockOptionTicker ticker) {
-        return String.format("%s/option/%s", nordnetHost, ticker.ticker());
-    }
-    private String optionUri(StockTicker ticker, boolean isCalls) {
-        var ot = isCalls ? "calls" : "puts";
-        return String.format("%s/%s/%d", nordnetHost, ot, ticker.oid());
-    }
 
         /*
     {

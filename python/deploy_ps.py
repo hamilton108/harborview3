@@ -5,6 +5,20 @@ from optparse import OptionParser
 from os.path import (isfile, getmtime)
 import subprocess as proc
 from shutil import copyfile
+import hashlib
+
+"""
+# initializing string
+str2hash = "GeeksforGeeks"
+ 
+# encoding GeeksforGeeks using encode()
+# then sending to md5()
+result = hashlib.md5(str2hash.encode())
+ 
+# printing the equivalent hexadecimal value.
+print("The hexadecimal equivalent of hash is : ", end ="")
+print(result.hexdigest())
+"""
 
 PROJ = "/home/rcs/opt/java/harborview3"
 
@@ -27,14 +41,11 @@ PS_EXP = "%s/dist/ps-charts.exp.js" % PS_HOME
 PS_MIN = "%s/dist/ps-charts.min.js" % PS_HOME
 
 
-def build():
-    proc.run(["spago", "bundle-app", "--main", "Main", "--to", PS_SRC])
 
 
-def minify():
-    proc.run(["esbuild", PS_EXP, "--minify", "--outfile=%s" % PS_MIN])
 
 
+"""
 def export():
     f = open(JS_SRC)
 
@@ -58,11 +69,6 @@ def export():
             result.write(l)
 
     result.close()
-
-
-def copy():
-    copyfile(JS_MIN, TARGET)
-
 
 def get_fexist():
     result = 0
@@ -115,7 +121,21 @@ def preprocess():
         export()
     else:
         print("No action for [%d,%.2f,%.2f,%.2f]" % (fex, t1, t2, t3))
+"""
 
+def build():
+    proc.run(["spago", "bundle-app", "--main", "Main", "--to", PS_SRC])
+
+def minify():
+    proc.run(["esbuild", PS_SRC, "--minify", "--outfile=%s" % PS_MIN])
+
+def target_js(src_file):
+    pass
+
+"""
+def copy():
+    copyfile(JS_MIN, TARGET)
+"""
 
 MODULES = {
     "1": "ps-charts",
@@ -130,16 +150,18 @@ if __name__ == '__main__':
                       help="Module: 1 -> Charts, 2 -> Option purchases. Default: 1")
     parser.add_option("--build", action="store_true", default=False,
                       help="Build module")
+    """
     parser.add_option("--exp", action="store_true", default=False,
                       help="Export main etc to PS (if --copy is not set)")
+    """
     parser.add_option("--min", action="store_true", default=False,
                       help="Minify js file (if --copy is not set)")
     parser.add_option("--copy", action="store_true", default=False,
                       help="Copy exp.js or min.js to src/public/js/maunaloa")
     parser.add_option("--all", action="store_true", default=False,
-                      help="Export, minify and copy")
+                      help="Build, minify and copy")
     parser.add_option("--bec", action="store_true", default=False,
-                      help="Build, export, and copy")
+                      help="Build and copy")
     (opts, args) = parser.parse_args()
 
     if not opts.module:
@@ -150,9 +172,11 @@ if __name__ == '__main__':
     if opts.build:
         build()
 
+    """
     if opts.exp:
         print("Exporting...")
         export()
+    """
 
     if opts.min:
         print("Minifying...")
@@ -161,7 +185,6 @@ if __name__ == '__main__':
     TARGET_JS = "%s/ps-charts.js" % TARGET
 
     if opts.copy:
-        # preprocess()
         if opts.min:
             print("Copying %s to %s ..." % (JS_MIN, TARGET_JS))
             copyfile(JS_MIN, TARGET_JS)
@@ -170,14 +193,12 @@ if __name__ == '__main__':
             copyfile(JS_EXP, TARGET_JS)
 
     if opts.bec:
-        print("Build, exporting, and copy...")
+        print("Build and copy...")
         build()
-        export()
-        copyfile(JS_EXP, TARGET_JS)
+        copyfile(JS_SRC, TARGET_JS)
 
     if opts.all:
-        print("Building, exporting, minifying, and copy ...")
+        print("Building, minifying, and copy ...")
         build()
-        export()
         minify()
         copyfile(JS_MIN, TARGET_JS)

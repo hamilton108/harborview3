@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Component()
-@Profile("prod")
+@Profile({"prod","hilo"})
 public class StockMarketAdapterImpl implements StockMarketAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(StockMarketAdapterImpl.class);

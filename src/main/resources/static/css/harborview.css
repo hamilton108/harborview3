@@ -124,16 +124,11 @@ a.href-td {
 .grid-menu-bar-ps {
   display: flex;
   margin-top: 1rem;
-  margin-left: 3rem;
-  /*
-  margin-right: 3rem;
-   */
   grid-column: 1; }
 
 .grid-menu-bar {
   display: flex;
   margin-top: 1rem;
-  margin-left: 3rem;
   margin-right: 3rem;
   grid-column: 2; }
 

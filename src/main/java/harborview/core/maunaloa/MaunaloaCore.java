@@ -99,7 +99,7 @@ public class MaunaloaCore {
     }
 
 
-    //----------------------------- Puts, Calls--------------------------------
+    //----------------------------- Puts, Calls, Spot --------------------------------
     public String calls(StockTicker stockTicker) {
         return nordnetAdapter.calls(stockTicker);
     }
@@ -108,6 +108,9 @@ public class MaunaloaCore {
         return nordnetAdapter.puts(stockTicker);
     }
 
+    public String spot(StockTicker stockTicker) {
+        return nordnetAdapter.spot(stockTicker);
+    }
     //----------------------------- Risc Lines --------------------------------
     void saveRiscResult(int oid,
                         String ticker,
@@ -207,6 +210,10 @@ public class MaunaloaCore {
         else {
             return lines;
         }
+    }
+    public StatusDTO deleteAllRiscLines(StockTicker ticker) {
+        rlineCache.invalidate(ticker.oid());
+        return new StatusDTO(true, String.format("Deleted risc lines for %s ok", ticker.ticker()), StatusCode.OK.getStatus());
     }
 
     public void invalidateRiscLineCache() {

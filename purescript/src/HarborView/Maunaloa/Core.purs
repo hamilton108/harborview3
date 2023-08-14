@@ -161,10 +161,14 @@ fetchLevelLines :: ChartType -> StockTicker -> Effect Unit
 fetchLevelLines ct ticker =  
   LevelLine.fetchLevelLines ct ticker
 
-deleteAllLevelLines :: ChartType -> Effect Unit
-deleteAllLevelLines ct = 
-  LevelLine.deleteAll ct
+deleteAllLevelLines :: ChartType -> StockTicker -> Effect Unit
+deleteAllLevelLines ct ticker = 
+  LevelLine.deleteAll ct ticker
 
+fetchSpot :: ChartType -> StockTicker -> Effect Unit
+fetchSpot ct ticker = 
+  LevelLine.fetchSpot ct ticker
+ 
 chartTypeAsMappings :: ChartType -> ChartMappings
 chartTypeAsMappings DayChart = 
   let 

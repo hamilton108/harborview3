@@ -2,9 +2,10 @@ module HarborView.Maunaloa.LevelLine
   ( addLine
   , deleteAll 
   , fetchLevelLines 
+  , fetchSpot
   , initEvents
   , Line(..)
-  , updateVruler
+  , updateRulers
   ) where
 
 import Prelude
@@ -54,6 +55,7 @@ import HarborView.Maunaloa.Common
   , mainURL
   , alert)
 import HarborView.Maunaloa.VRuler (VRuler,valueToPix,pixToValue)
+import HarborView.Maunaloa.HRuler (HRuler)
 
 {-
 import Data.IORef (newIORef,modifyIORef,readIORef)
@@ -91,13 +93,15 @@ foreign import onMouseUpImpl :: Int -> (Line -> Maybe Line) -> (Maybe Line) -> E
 
 foreign import updateRiscLine :: Int -> Line -> Number -> Effect Unit
 
-foreign import updateVrulerImpl :: Int -> VRuler -> Effect Unit 
+foreign import updateRulersImpl :: Int -> VRuler -> HRuler -> Effect Unit 
 
 foreign import updateCtxImpl :: Int -> Context2D -> Effect Unit 
 
 foreign import randomRgb :: Effect String
 
 foreign import currentVruler :: Int -> Effect VRuler
+
+foreign import currentHruler :: Int -> Effect HRuler
 
 --foreign import showJson :: Json -> Effect Unit
 
@@ -146,50 +150,12 @@ ltBREAK_EVEN= 3
 onMouseUp :: ChartType -> Event.Event -> Effect (Maybe Line)
 onMouseUp ct _ = onMouseUpImpl (chartTypeAsInt ct) Just Nothing 
 
-{-
-const STD_LINE = 1;
-const RISC_LINE = 2;
-const BREAK_EVEN_LINE = 3;
--}
-
-{-}
-newtype PilotLine = 
-    PilotLine 
-    { y :: Number
-    , strokeStyle :: String
-    } 
-
-derive instance eqPilotLine :: Eq PilotLine 
-
-instance showPilotLine :: Show PilotLine where
-    show (PilotLine v) = "PilotLine : " <> show v 
-
-newtype Lines = 
-    Lines
-    { lines :: Array Line
-    , pilotLine :: Maybe PilotLine 
-    }
-
-instance showLines :: Show Lines where
-    show (Lines { lines, pilotLine }) = "Lines, " <> show lines <> ", pilotLine: " <> show pilotLine
--}
 
 getDoc :: Effect NonElementParentNode
 getDoc = 
   HTML.window >>= \win ->
     Window.document win >>= \doc ->
       pure $ HTMLDocument.toNonElementParentNode doc
-
-newtype EventListenerInfo =
-  EventListenerInfo 
-  { target :: Element 
-  , listener :: EventTarget.EventListener
-  , eventType :: EventType
-  }
-
--- type EventListeners = Array EventListenerInfo -- List.List EventListenerInfo 
-
--- type EventListenerRef = Ref.Ref EventListeners
 
 type HtmlContext = 
   { canvasContext :: CanvasElement --Canvas.Context2D
@@ -218,35 +184,44 @@ type UpdatedOptionPriceJson =
 updOptionPriceFromJson :: Json -> Either JsonDecodeError UpdatedOptionPriceJson 
 updOptionPriceFromJson = Decode.decodeJson
 
--- unlisten :: EventListenerInfo -> Effect Unit
--- unlisten (EventListenerInfo {target,listener,eventType}) = 
---   EventTarget.removeEventListener eventType listener false (toEventTarget target)
+type StatusJson = 
+  { ok :: Boolean
+  , msg :: String 
+  , statusCode :: Int
+  }
 
--- unlistenEvents :: ChartType -> Effect Unit
--- unlistenEvents ct = 
---   let 
---     cti = chartTypeAsInt ct
---   in
---   getListeners cti >>= \listeners ->
---   Traversable.traverse_ unlisten listeners *>
---   resetListeners cti
+statusFromJson :: Json -> Either JsonDecodeError StatusJson
+statusFromJson = Decode.decodeJson
 
-{-
-unlistener :: EventListenerRef -> Int -> Effect Unit
-unlistener elr dummy =
-    Ref.read elr >>= \elrx -> 
-        Traversable.traverse_ unlisten elrx
+type SpotJson = 
+  { h :: Number 
+  , l :: Number 
+  , o :: Number 
+  , c :: Number 
+  , unixtime :: Number
+  }
 
-remButtonClick :: Event -> Effect Unit
-remButtonClick evt =
-    getListeners >>= \listeners ->
-    Traversable.traverse_ unlisten listeners *>
-    resetListeners 
--}
+spotFromJson :: Json -> Either JsonDecodeError SpotJson
+spotFromJson = Decode.decodeJson
 
-deleteAll :: ChartType -> Effect Unit
-deleteAll ct =
-  clearLines (chartTypeAsInt ct)
+----------------------------- BEGIN URLs ----------------------------- 
+
+levelLinesURL :: StockTicker -> String
+levelLinesURL (StockTicker ticker) =
+    -- "http://localhost:6346/maunaloa/risclines/" <> ticker
+  mainURL <>  "/risclines/" <> ticker
+
+optionPriceURL :: OptionTicker -> Number -> String
+optionPriceURL (OptionTicker ticker) curStockPrice =
+  mainURL <> "/stockoption/price/" <> ticker <> "/" <> toStringWith (fixed 2) curStockPrice
+
+spotURL :: StockTicker -> String
+spotURL (StockTicker ticker) = 
+  mainURL <>  "/risclines/spot/" <> ticker
+
+----------------------------- END URLs ----------------------------- 
+
+----------------------------- BEGIN Fetch level lines ----------------------------- 
 
 addLine :: ChartType -> Effect Unit
 addLine ct =
@@ -255,16 +230,6 @@ addLine ct =
     line = StdLine { y: 200.0, selected: false, lt: ltSTD, color: curColor }
   in
   addLineImpl (chartTypeAsInt ct) line
-
-fetchLevelLinesURL :: StockTicker -> String
-fetchLevelLinesURL (StockTicker ticker) =
-    -- "http://localhost:6346/maunaloa/risclines/" <> ticker
-  mainURL <>  "/risclines/" <> ticker
-
-optionPriceURL :: OptionTicker -> Number -> String
-optionPriceURL (OptionTicker ticker) curStockPrice =
-  mainURL <> "/stockoption/price/" <> ticker <> "/" <> toStringWith (fixed 2) curStockPrice
-
 
 addRiscLine :: ChartType -> RiscLineJson -> Effect Unit
 addRiscLine ct line = 
@@ -306,7 +271,7 @@ addRiscLines ct lines =
 
 fetchLevelLines_ :: StockTicker -> Aff (Either MaunaloaError RiscLinesJson)
 fetchLevelLines_ ticker = 
-  Affjax.get ResponseFormat.json (fetchLevelLinesURL ticker) >>= \res ->
+  Affjax.get ResponseFormat.json (levelLinesURL ticker) >>= \res ->
     let 
       result :: Either MaunaloaError RiscLinesJson 
       result = 
@@ -341,6 +306,90 @@ fetchLevelLines ct ticker =
             addRiscLines ct lines1
           )
   )
+----------------------------- END Fetch level lines ----------------------------- 
+
+----------------------------- BEGIN Delete all level lines ----------------------------- 
+
+ 
+deleteAll_ :: StockTicker -> Aff (Either MaunaloaError StatusJson)
+deleteAll_ ticker = 
+  Affjax.delete ResponseFormat.json (levelLinesURL ticker) >>= \res ->
+    let 
+      result :: Either MaunaloaError StatusJson 
+      result = 
+        case res of  
+          Left err -> 
+            Left $ AffjaxError (Affjax.printError err)
+          Right response ->
+            let 
+              status = statusFromJson response.body
+            in
+            case status of
+              Left err ->
+                Left $ JsonError (show err)
+              Right status1 ->
+                Right status1 
+    in
+    pure result
+
+deleteAll :: ChartType -> StockTicker -> Effect Unit
+deleteAll ct ticker =
+  clearLines (chartTypeAsInt ct) *>
+  launchAff_ 
+  (
+    deleteAll_ ticker >>= \status -> 
+      case status of
+        Left err ->
+          handleErrorAff err
+        Right _ ->
+          pure unit
+  )
+
+----------------------------- END Delete all level lines ----------------------------- 
+
+----------------------------- BEGIN Fetch Spot ----------------------------- 
+
+fetchSpot_ :: StockTicker -> Aff (Either MaunaloaError SpotJson)
+fetchSpot_ ticker = 
+  Affjax.get ResponseFormat.json (spotURL ticker) >>= \res ->
+    let 
+      result :: Either MaunaloaError SpotJson 
+      result = 
+        case res of  
+          Left err -> 
+            Left $ AffjaxError (Affjax.printError err)
+          Right response ->
+            let 
+              spot = spotFromJson response.body
+            in
+            case spot of
+              Left err ->
+                Left $ JsonError (show err)
+              Right spot1 ->
+                Right spot1 
+    in
+    pure result
+
+addSpot :: ChartType -> SpotJson -> Effect Unit
+addSpot ct spot = 
+  liftEffect (logShow spot) *>
+  pure unit
+
+fetchSpot :: ChartType -> StockTicker -> Effect Unit
+fetchSpot ct ticker =
+  logShow "Fetch Spot 6" *>
+  launchAff_ 
+  (
+    fetchSpot_ ticker >>= \spot -> 
+      case spot of
+        Left err ->
+          handleErrorAff err
+        Right spot1 ->
+          -- liftEffect (addSpot ct spot1)
+          pure unit
+  )
+
+----------------------------- END Fetch Spot ----------------------------- 
 
 mouseEventDown :: ChartType -> Event.Event -> Effect Unit
 mouseEventDown ct evt = 
@@ -473,6 +522,6 @@ initEvents ct (ChartMapping cm) =
             initEvent (mouseEventDrag ct) context1.canvasElement (EventType "mousemove") *>
             initEvent (mouseEventUp ct) context1.canvasElement (EventType "mouseup") 
 
-updateVruler :: ChartType -> VRuler -> Effect Unit
-updateVruler ct vr = 
-  updateVrulerImpl (chartTypeAsInt ct) vr
+updateRulers :: ChartType -> VRuler -> HRuler -> Effect Unit
+updateRulers ct vr hr = 
+  updateRulersImpl (chartTypeAsInt ct) vr hr
