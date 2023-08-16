@@ -50,12 +50,16 @@ import HarborView.Maunaloa.Common
   , HtmlId(..)
   , OptionTicker(..)
   , StockTicker(..)
+  , UnixTime(..)
+  , Pix(..)
   , ChartType
+  , JsonSpot
   , chartTypeAsInt
   , mainURL
   , alert)
 import HarborView.Maunaloa.VRuler (VRuler,valueToPix,pixToValue)
-import HarborView.Maunaloa.HRuler (HRuler)
+import HarborView.Maunaloa.HRuler (HRuler,timeStampToPix)
+import HarborView.Maunaloa.Candlestick as Candlestick
 
 {-
 import Data.IORef (newIORef,modifyIORef,readIORef)
@@ -102,6 +106,8 @@ foreign import randomRgb :: Effect String
 foreign import currentVruler :: Int -> Effect VRuler
 
 foreign import currentHruler :: Int -> Effect HRuler
+
+foreign import currentCtx :: Int -> Effect Context2D
 
 --foreign import showJson :: Json -> Effect Unit
 
@@ -193,15 +199,7 @@ type StatusJson =
 statusFromJson :: Json -> Either JsonDecodeError StatusJson
 statusFromJson = Decode.decodeJson
 
-type SpotJson = 
-  { h :: Number 
-  , l :: Number 
-  , o :: Number 
-  , c :: Number 
-  , unixtime :: Number
-  }
-
-spotFromJson :: Json -> Either JsonDecodeError SpotJson
+spotFromJson :: Json -> Either JsonDecodeError JsonSpot
 spotFromJson = Decode.decodeJson
 
 ----------------------------- BEGIN URLs ----------------------------- 
@@ -349,11 +347,11 @@ deleteAll ct ticker =
 
 ----------------------------- BEGIN Fetch Spot ----------------------------- 
 
-fetchSpot_ :: StockTicker -> Aff (Either MaunaloaError SpotJson)
+fetchSpot_ :: StockTicker -> Aff (Either MaunaloaError JsonSpot)
 fetchSpot_ ticker = 
   Affjax.get ResponseFormat.json (spotURL ticker) >>= \res ->
     let 
-      result :: Either MaunaloaError SpotJson 
+      result :: Either MaunaloaError JsonSpot
       result = 
         case res of  
           Left err -> 
@@ -370,14 +368,23 @@ fetchSpot_ ticker =
     in
     pure result
 
-addSpot :: ChartType -> SpotJson -> Effect Unit
+addSpot :: ChartType -> JsonSpot -> Effect Unit
 addSpot ct spot = 
-  liftEffect (logShow spot) *>
-  pure unit
+  logShow spot *>
+  let 
+    cti = chartTypeAsInt ct
+  in
+  currentVruler cti >>= \vr ->
+    currentHruler cti >>= \hr ->
+      currentCtx cti >>= \ctx ->
+      let 
+        cndl = Candlestick.candleToPix vr spot
+        px = timeStampToPix hr (UnixTime spot.unixtime)
+      in
+      Candlestick.paintSingle (Pix px) cndl ctx
 
 fetchSpot :: ChartType -> StockTicker -> Effect Unit
 fetchSpot ct ticker =
-  logShow "Fetch Spot 6" *>
   launchAff_ 
   (
     fetchSpot_ ticker >>= \spot -> 
@@ -385,8 +392,7 @@ fetchSpot ct ticker =
         Left err ->
           handleErrorAff err
         Right spot1 ->
-          -- liftEffect (addSpot ct spot1)
-          pure unit
+          liftEffect (addSpot ct spot1)
   )
 
 ----------------------------- END Fetch Spot ----------------------------- 

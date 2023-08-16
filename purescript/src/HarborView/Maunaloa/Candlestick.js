@@ -17,6 +17,19 @@ export const fi_paint_candlestix = function (xaxis) {
   }
 }
 
+export const fi_paint_candlestick_single = function (px) {
+  return function (candlestick) {
+    return function (ctx) {
+      return function () {
+        ctx.strokeStyle = "#000000";
+        ctx.fillStyle = "#ffaa00";
+        ctx.lineWidth = 0.5;
+        paintCandlestick(px, candlestick, ctx);
+      }
+    }
+  }
+}
+
 const paintCandlestick = function (x, cndl, ctx) {
   const x0 = x - 4;
   ctx.beginPath();

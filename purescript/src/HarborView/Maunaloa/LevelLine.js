@@ -171,6 +171,9 @@ class LevelLineInternal {
     getHruler() {
         return this.hr;
     }
+    getCtx() {
+        return this.ctx;
+    }
     onMouseDown(evt) {
         const items = this.lines.items;
         if (items.length === 0) {
@@ -281,6 +284,11 @@ export const currentVruler = chartType => () => {
 export const currentHruler = chartType => () => {
     const lin = getLin(chartType);
     return lin.getHruler();
+}
+
+export const currentCtx = chartType => () => {
+    const lin = getLin(chartType);
+    return lin.getCtx();
 }
 
 export const onMouseDown = chartType => evt => () => {

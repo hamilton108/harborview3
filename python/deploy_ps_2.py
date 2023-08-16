@@ -34,6 +34,8 @@ JS_SRC = "%s/ps-charts.js" % SRC
 
 JS_MIN = "%s/ps-charts.min.js" % SRC
 
+JS_TARGET = "%s/ps-charts.js" % TARGET
+
 PS_HOME = "/home/pureuser"
 
 PS_SRC = "%s/dist/ps-charts.js" % PS_HOME
@@ -57,7 +59,7 @@ def md5_sum(src_file):
     result = tmp.hexdigest() # [0:10]
     return result
     
-def md5_file_name(src_file):
+def md5_file_name_(src_file):
     #stem = os.path.basename(src_file).split(".")
     return "ps-charts-%s.js" %  md5_sum(src_file)
 
@@ -79,7 +81,7 @@ def versioning(do_build):
 def md5_file_name(do_build):
     if do_build == True:
         build()    
-    mfn = md5_file_name(JS_SRC)
+    mfn = md5_file_name_(JS_SRC)
     print(mfn)
     copyfile(JS_SRC,"%s/%s" % (TARGET,mfn))
     render_charts(mfn)
@@ -92,10 +94,16 @@ if __name__ == '__main__':
                       help="Minify js file. Default: False")
     parser.add_option("--md5file", action="store_true", default=False,
                       help="Save md5 sum in filename (instead of versioning). Default: False")
+    parser.add_option("--md5", action="store_true", default=False,
+                      help="Check md5 sum of dist/ps-charts.js. Default: False")
     (opts, args) = parser.parse_args()
 
-    if opts.md5file == True:
-        md5_file_name(opts.build)
+    if opts.md5 == True:
+        print (md5_sum(JS_SRC))
+        print (md5_sum(JS_TARGET))
     else:
-        versioning(opts.build)
+        if opts.md5file == True:
+            md5_file_name(opts.build)
+        else:
+            versioning(opts.build)
     

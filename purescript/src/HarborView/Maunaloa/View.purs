@@ -147,11 +147,11 @@ persistentLevelLine =
 
 deleteAllLevelLines :: Icon
 deleteAllLevelLines = 
-  { iconClass: "fa-ruler-combined", title: "Delete all Level Lines" }
+  { iconClass: "fa-trash-can", title: "Delete all Level Lines" }
 
 fetchSpot :: Icon
 fetchSpot = 
-  { iconClass: "fa-ruler-combined", title: "Fetch Spot" }
+  { iconClass: "fa-bullseye", title: "Fetch Spot" }
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =

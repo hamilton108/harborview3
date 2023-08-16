@@ -5,7 +5,7 @@ import Prelude
 import Effect (Effect)
 import Graphics.Canvas (Context2D)
 
-import HarborView.Maunaloa.Common (Xaxis)
+import HarborView.Maunaloa.Common (Pix(..),Xaxis)
 
 import HarborView.Maunaloa.VRuler as V
 import HarborView.Maunaloa.HRuler as H
@@ -14,6 +14,8 @@ import HarborView.Maunaloa.JsonCharts
   )
 
 foreign import fi_paint_candlestix :: Xaxis -> Candlesticks -> Context2D -> Effect Unit 
+
+foreign import fi_paint_candlestick_single :: Pix -> Candlestick -> Context2D -> Effect Unit 
 
 newtype Candlestick = Candlestick 
   { o :: Number
@@ -29,7 +31,13 @@ derive instance eqCandlestick :: Eq Candlestick
 
 type Candlesticks = Array Candlestick
 
-candleToPix :: V.VRuler -> JsonCandlestick -> Candlestick 
+candleToPix :: forall r.
+  V.VRuler -> 
+  { h :: Number 
+  , l :: Number 
+  , o :: Number 
+  , c :: Number | r }
+  -> Candlestick
 candleToPix vr {o,h,l,c} =  
     let 
         po = V.valueToPix vr o
@@ -42,3 +50,7 @@ candleToPix vr {o,h,l,c} =
 paint :: H.HRuler -> Candlesticks -> Context2D -> Effect Unit
 paint (H.HRuler {xaxis: xaxis}) cndls ctx = 
   fi_paint_candlestix xaxis cndls ctx
+
+paintSingle :: Pix -> Candlestick -> Context2D -> Effect Unit
+paintSingle px cndl ctx = 
+  fi_paint_candlestick_single px cndl ctx

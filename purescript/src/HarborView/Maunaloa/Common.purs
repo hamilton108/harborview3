@@ -54,6 +54,15 @@ instance showChartDim :: Show ChartDim where
   show (ChartDim dim) = "(ChartDim w: " <> show dim.w <> ", h: " <> show dim.h <> ")"
 -}
 
+------------------------- Json ------------------------- 
+type JsonSpot = 
+  { h :: Number 
+  , l :: Number 
+  , o :: Number 
+  , c :: Number 
+  , unixtime :: Number
+  }
+
 ------------------------- ChartWidth ------------------------- 
 newtype ChartWidth = ChartWidth Number
 
