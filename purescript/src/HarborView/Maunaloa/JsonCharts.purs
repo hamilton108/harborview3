@@ -17,7 +17,7 @@ import Effect.Aff
     ( Aff
     )
 import Affjax.Web as Affjax
-import Affjax
+import Affjax.Web
     ( URL
     )
 import Affjax.ResponseFormat as ResponseFormat

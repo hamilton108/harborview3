@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 
-from cmath import exp
+#from cmath import exp
 from optparse import OptionParser
-from os.path import (isfile, getmtime)
+#from os.path import (isfile, getmtime, basename)
+import os.path 
+
+from mako.template import Template
+
 import subprocess as proc
 from shutil import copyfile
 import hashlib
@@ -28,177 +32,72 @@ TARGET = "%s/src/main/resources/static/js/maunaloa" % PROJ
 
 JS_SRC = "%s/ps-charts.js" % SRC
 
-JS_EXP = "%s/ps-charts.exp.js" % SRC
-
 JS_MIN = "%s/ps-charts.min.js" % SRC
 
-PS_HOME = "/home/pureuser"
+JS_TARGET = "%s/ps-charts.js" % TARGET
 
-PS_SRC = "%s/dist/ps-charts.js" % PS_HOME
+TPL_SRC = "%s/python/templates" % PROJ
 
-PS_EXP = "%s/dist/ps-charts.exp.js" % PS_HOME
-
-PS_MIN = "%s/dist/ps-charts.min.js" % PS_HOME
-
-
-
-
-
-
-"""
-def export():
-    f = open(JS_SRC)
-
-    lx = f.readlines()
-
-    f.close()
-
-    result = open(JS_EXP, "w")
-
-    result.write("var PS =\n")
-
-    for l in lx:
-        if "main()" in l:
-            result.write("  return {\n")
-            result.write("           paint: paint8,\n")
-            result.write("           paintEmpty: paintEmpty3,\n")
-            result.write("           resetCharts: resetCharts2,\n")
-            result.write(
-                "           clearLevelLines:  clearLevelLines }\n")
-        else:
-            result.write(l)
-
-    result.close()
-
-def get_fexist():
-    result = 0
-    if isfile(JS_SRC) == True:
-        result += 1
-    if isfile(JS_EXP) == True:
-        result += 2
-    if isfile(JS_MIN) == True:
-        result += 4
-    return result
-
-
-def get_fstats():
-    fex = get_fexist()
-    if fex == 0:
-        return [0, 0, 0, 0]
-    elif fex == 1:
-        return [1, 0, 0, 0]
-    elif fex == 2:
-        return [0, 0, 0, 0]
-    elif fex == 3:
-        return [3, getmtime(JS_SRC), getmtime(JS_EXP), 0]
-    elif fex == 4:
-        return [0, 0, 0, 0]
-    elif fex == 5:
-        return [5, getmtime(JS_SRC), 0, getmtime(JS_MIN)]
-    elif fex == 6:
-        return [0, 0, 0, 0]
-    elif fex == 7:
-        return [7, getmtime(JS_SRC), getmtime(JS_EXP), getmtime(JS_MIN)]
-
-
-def preprocess():
-    [fex, t1, t2, t3] = get_fstats()
-    print("Preprocessing [%d,%.2f,%.2f,%.2f]" % (fex, t1, t2, t3))
-    if fex in [0, 2, 4, 6]:
-        build()
-        export()
-    elif fex == 1:
-        export()
-    elif fex == 3:
-        if t2 > t1:
-            print("Building...")
-            build()
-        export()
-    elif fex == 7:
-        if t2 > t1:
-            print("Building...")
-            build()
-        export()
-    else:
-        print("No action for [%d,%.2f,%.2f,%.2f]" % (fex, t1, t2, t3))
-"""
+TPL_DIST = "%s/src/main/resources/templates/maunaloa" % PROJ
 
 def build():
-    proc.run(["spago", "bundle-app", "--main", "Main", "--to", PS_SRC])
+    proc.run(["spago", "bundle-app", "--main", "Main", "--to", JS_SRC])
 
 def minify():
-    proc.run(["esbuild", PS_SRC, "--minify", "--outfile=%s" % PS_MIN])
+    proc.run(["esbuild", JS_SRC, "--minify", "--outfile=%s" % JS_MIN])
 
-def target_js(src_file):
-    pass
+def md5_sum(src_file):
+    with open(src_file, "r") as fx:
+        content = fx.read()
+    tmp = hashlib.md5(content.encode())
+    result = tmp.hexdigest() # [0:10]
+    return result
+    
+def md5_file_name_(src_file):
+    #stem = os.path.basename(src_file).split(".")
+    return "ps-charts-%s.js" %  md5_sum(src_file)
 
-"""
-def copy():
-    copyfile(JS_MIN, TARGET)
-"""
+def render_charts(mfn):
+    tpl = Template(filename="%s/charts.html.tpl" % TPL_SRC)
+    result = tpl.render(pscharts=mfn)
+    dist = "%s/charts.html" % TPL_DIST
+    with(open(dist, "w")) as f:
+        f.write(result)
 
-MODULES = {
-    "1": "ps-charts",
-    "2": "ps-optionpurchase",
-}
+def versioning(do_build):
+    if do_build == True:
+        build()    
+    mfn = md5_sum(JS_SRC)
+    print(mfn)
+    copyfile(JS_SRC,"%s/%s" % (TARGET,"ps-charts.js"))
+    render_charts(mfn)
+
+def md5_file_name(do_build):
+    if do_build == True:
+        build()    
+    mfn = md5_file_name_(JS_SRC)
+    print(mfn)
+    copyfile(JS_SRC,"%s/%s" % (TARGET,mfn))
+    render_charts(mfn)
 
 if __name__ == '__main__':
     parser = OptionParser()
-    # parser.add_option("--exp", dest="export",
-    #                  help="Export main etc to PS")
-    parser.add_option("--module", dest="module",
-                      help="Module: 1 -> Charts, 2 -> Option purchases. Default: 1")
     parser.add_option("--build", action="store_true", default=False,
-                      help="Build module")
-    """
-    parser.add_option("--exp", action="store_true", default=False,
-                      help="Export main etc to PS (if --copy is not set)")
-    """
+                      help="Build module. Default: False")
     parser.add_option("--min", action="store_true", default=False,
-                      help="Minify js file (if --copy is not set)")
-    parser.add_option("--copy", action="store_true", default=False,
-                      help="Copy exp.js or min.js to src/public/js/maunaloa")
-    parser.add_option("--all", action="store_true", default=False,
-                      help="Build, minify and copy")
-    parser.add_option("--bec", action="store_true", default=False,
-                      help="Build and copy")
+                      help="Minify js file. Default: False")
+    parser.add_option("--md5file", action="store_true", default=False,
+                      help="Save md5 sum in filename (instead of versioning). Default: False")
+    parser.add_option("--md5", action="store_true", default=False,
+                      help="Check md5 sum of dist/ps-charts.js. Default: False")
     (opts, args) = parser.parse_args()
 
-    if not opts.module:
-        MODULE = "ps-charts"
+    if opts.md5 == True:
+        print (md5_sum(JS_SRC))
+        print (md5_sum(JS_TARGET))
     else:
-        MODULE = MODULES[opts.module]
-
-    if opts.build:
-        build()
-
-    """
-    if opts.exp:
-        print("Exporting...")
-        export()
-    """
-
-    if opts.min:
-        print("Minifying...")
-        minify()
-
-    TARGET_JS = "%s/ps-charts.js" % TARGET
-
-    if opts.copy:
-        if opts.min:
-            print("Copying %s to %s ..." % (JS_MIN, TARGET_JS))
-            copyfile(JS_MIN, TARGET_JS)
+        if opts.md5file == True:
+            md5_file_name(opts.build)
         else:
-            print("Copying %s to %s ..." % (JS_EXP, TARGET_JS))
-            copyfile(JS_EXP, TARGET_JS)
-
-    if opts.bec:
-        print("Build and copy...")
-        build()
-        copyfile(JS_SRC, TARGET_JS)
-
-    if opts.all:
-        print("Building, minifying, and copy ...")
-        build()
-        minify()
-        copyfile(JS_MIN, TARGET_JS)
+            versioning(opts.build)
+    
