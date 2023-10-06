@@ -2,7 +2,8 @@ package harborview.core.maunaloa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import harborview.adapter.NordnetAdapter;
+import harborview.domain.nordnet.NordnetRepository;
+import harborview.domain.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.*;
 import harborview.domain.stockmarket.StockOptionTicker;
 import harborview.domain.stockmarket.StockTicker;
@@ -32,7 +33,7 @@ public class MaunaloaCoreTest {
     private final OptionCalculator calculaotor = new BlackScholes();
 
     @MockBean
-    NordnetAdapter nordnetAdapter;
+    NordnetRepository nordnetAdapter;
 
     MaunaloaCore maunaloaCore;
 

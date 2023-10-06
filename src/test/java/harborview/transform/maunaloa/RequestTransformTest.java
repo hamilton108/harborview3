@@ -1,6 +1,6 @@
 package harborview.transform.maunaloa;
 
-import harborview.adapter.StockMarketAdapter;
+import harborview.domain.stockmarket.StockMarketRepository;
 import harborview.domain.stockmarket.StockOption;
 import harborview.domain.stockmarket.StockOptionPurchase;
 import harborview.domain.stockmarket.request.PurchaseOptionRequest;
@@ -24,7 +24,7 @@ public class RequestTransformTest {
     private final String ticker = "YAR4F480";
 
     @MockBean
-    StockMarketAdapter stockMarketAdapter;
+    StockMarketRepository stockMarketAdapter;
 
     RequestTransform requestTransform;
 

@@ -1,6 +1,6 @@
 package harborview.controller.maunaloa;
 
-import harborview.core.maunaloa.MaunaloaCore;
+import harborview.domain.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.RLine;
 import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.StatusDTO;

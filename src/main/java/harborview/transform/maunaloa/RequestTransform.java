@@ -1,6 +1,6 @@
 package harborview.transform.maunaloa;
 
-import harborview.adapter.StockMarketAdapter;
+import harborview.domain.stockmarket.StockMarketRepository;
 import harborview.domain.stockmarket.*;
 import harborview.domain.stockmarket.request.PurchaseOptionAble;
 import harborview.domain.stockmarket.request.RegpurRequest;
@@ -11,9 +11,9 @@ import java.time.LocalDate;
 
 @Component
 public class RequestTransform {
-    private final StockMarketAdapter stockMarketAdapter;
+    private final StockMarketRepository stockMarketAdapter;
 
-    public RequestTransform(StockMarketAdapter stockMarketAdapter) {
+    public RequestTransform(StockMarketRepository stockMarketAdapter) {
         this.stockMarketAdapter = stockMarketAdapter;
     }
 

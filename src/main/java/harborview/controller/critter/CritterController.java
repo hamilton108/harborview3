@@ -1,6 +1,6 @@
 package harborview.controller.critter;
 
-import harborview.core.critter.CritterCore;
+import harborview.domain.core.critter.CritterCore;
 import harborview.dto.StatusDTO;
 import harborview.dto.critter.OptionPurchaseDTO;
 import org.springframework.http.MediaType;

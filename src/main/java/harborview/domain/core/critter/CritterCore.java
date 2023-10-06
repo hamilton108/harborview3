@@ -1,6 +1,6 @@
-package harborview.core.critter;
+package harborview.domain.core.critter;
 
-import harborview.adapter.StockMarketAdapter;
+import harborview.domain.stockmarket.StockMarketRepository;
 import harborview.dto.critter.OptionPurchaseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 public class CritterCore {
     private Logger logger = LoggerFactory.getLogger(CritterCore.class);
 
-    private final StockMarketAdapter stockMarketAdapter;
+    private final StockMarketRepository stockMarketAdapter;
 
-    public CritterCore(StockMarketAdapter stockMarketAdapter) {
+    public CritterCore(StockMarketRepository stockMarketAdapter) {
         this.stockMarketAdapter = stockMarketAdapter;
     }
 

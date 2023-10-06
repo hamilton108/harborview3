@@ -1,11 +1,8 @@
 package harborview.controller;
 
-import harborview.adapter.NordnetAdapter;
-import harborview.adapter.StockMarketAdapter;
-import harborview.core.critter.CritterCore;
-import harborview.core.maunaloa.MaunaloaCore;
+import harborview.domain.nordnet.NordnetRepository;
+import harborview.domain.stockmarket.StockMarketRepository;
 import harborview.mybatis.MyBatisUtil;
-import harborview.transform.maunaloa.RequestTransform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,10 +15,10 @@ public abstract class ControllerTestBase {
     protected MockMvc mockMvc;
 
     @MockBean
-    protected NordnetAdapter nordnetAdapter;
+    protected NordnetRepository nordnetAdapter;
 
     @MockBean
-    protected StockMarketAdapter stockMarketAdapter;
+    protected StockMarketRepository stockMarketAdapter;
 
     @MockBean
     protected MyBatisUtil myBatisUtil;

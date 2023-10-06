@@ -1,12 +1,10 @@
-package harborview.adapter;
-
-import harborview.domain.stockmarket.*;
+package harborview.domain.stockmarket;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface StockMarketAdapter {
+public interface StockMarketRepository {
     List<Stock> getStocks();
     Stock findStock(int oid);
     List<StockPrice> getStockPrices(StockTicker ticker, LocalDate fromDx);

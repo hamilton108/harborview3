@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan({
 		  "harborview.controller"
-		, "harborview.core"
+		, "harborview.domain"
 		, "harborview.adapter"
 		, "harborview.mybatis"
 		, "harborview.transform"

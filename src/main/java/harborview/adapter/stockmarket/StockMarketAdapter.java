@@ -1,6 +1,6 @@
-package harborview.adapter.impl;
+package harborview.adapter.stockmarket;
 
-import harborview.adapter.StockMarketAdapter;
+import harborview.domain.stockmarket.StockMarketRepository;
 import harborview.domain.stockmarket.*;
 import harborview.mybatis.CritterMapper;
 import harborview.mybatis.MyBatisUtil;
@@ -19,17 +19,17 @@ import java.util.function.Consumer;
 
 @Component()
 @Profile({"prod","hilo"})
-public class StockMarketAdapterImpl implements StockMarketAdapter {
+public class StockMarketAdapter implements StockMarketRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(StockMarketAdapterImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(StockMarketAdapter.class);
 
     private final MyBatisUtil myBatisUtil;
     private final Date fromDate;
 
     private List<Stock> stocks;
 
-    public StockMarketAdapterImpl(MyBatisUtil myBatisUtil,
-                                  @Value("${adapter.stockmarket.from-date}") String fromDate) {
+    public StockMarketAdapter(MyBatisUtil myBatisUtil,
+                              @Value("${adapter.stockmarket.from-date}") String fromDate) {
         this.myBatisUtil = myBatisUtil;
         this.fromDate =  java.sql.Date.valueOf(fromDate);
         logger.info(String.format("From date: %s", this.fromDate.toString()));

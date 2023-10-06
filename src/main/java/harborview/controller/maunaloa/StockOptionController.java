@@ -1,6 +1,6 @@
 package harborview.controller.maunaloa;
 
-import harborview.core.maunaloa.MaunaloaCore;
+import harborview.domain.core.maunaloa.MaunaloaCore;
 import harborview.domain.stockmarket.request.PurchaseOptionRequest;
 import harborview.domain.stockmarket.request.RegpurRequest;
 import harborview.domain.stockmarket.StockOptionTicker;

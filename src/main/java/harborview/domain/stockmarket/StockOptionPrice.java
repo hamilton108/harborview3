@@ -10,8 +10,8 @@ public class StockOptionPrice implements vega.financial.StockOptionPrice {
     private static boolean DEBUG = false;
     private StockOption stockOption;
     private StockPrice stockPrice;
-    private double buy;
-    private double sell;
+    private double bid;
+    private double ask;
     private int oid;
     private OptionCalculator calculator;
 
@@ -20,35 +20,38 @@ public class StockOptionPrice implements vega.financial.StockOptionPrice {
 
     public StockOptionPrice(StockPrice stockPrice,
                             StockOption stockOption,
-                            double buy,
-                            double sell,
+                            double bid,
+                            double ask,
                             OptionCalculator calculator) {
         this.stockPrice = stockPrice;
         this.stockOption = stockOption;
-        this.buy = buy;
-        this.sell = sell;
+        this.bid = bid;
+        this.ask = ask;
         this.calculator = calculator;
     }
 
     public StockOptionPrice(StockOption stockOption,
-                            double buy,
-                            double sell,
+                            double bid,
+                            double ask,
                             OptionCalculator calculator) {
         this.stockOption = stockOption;
-        this.buy = buy;
-        this.sell = sell;
+        this.bid = bid;
+        this.ask = ask;
         this.calculator = calculator;
-    }
-    public double getBuy() {
-        return buy;
-    }
-
-    public double getSell() {
-        return sell;
     }
 
     @Override
-    public Optional<Double> ivBuy() {
+    public double getBid() {
+        return bid;
+    }
+
+    @Override
+    public double getAsk() {
+        return ask;
+    }
+
+    @Override
+    public Optional<Double> ivBid() {
         return getIvBuy();
     }
 
@@ -57,7 +60,7 @@ public class StockOptionPrice implements vega.financial.StockOptionPrice {
     public Optional<Double> getBreakEven() {
         try {
             if (_breakEven == null) {
-                _breakEven = Optional.of(calculator.stockPriceFor(getSell(), this));
+                _breakEven = Optional.of(calculator.stockPriceFor(getAsk(), this));
             }
         }
         catch (BinarySearchException ex) {
@@ -159,6 +162,7 @@ public class StockOptionPrice implements vega.financial.StockOptionPrice {
         return stockPrice;
     }
 
+
     public void setStockPrice(StockPrice stockPrice) {
         this.stockPrice = stockPrice;
     }
@@ -213,12 +217,12 @@ public class StockOptionPrice implements vega.financial.StockOptionPrice {
         return _ivSell;
     }
 
-    public void setBuy(double buy) {
-        this.buy = buy;
+    public void setBid(double bid) {
+        this.bid = bid;
     }
 
-    public void setSell(double sell) {
-        this.sell = sell;
+    public void setAsk(double ask) {
+        this.ask = ask;
     }
 
     public void setCalculator(OptionCalculator calculator) {

@@ -1,9 +1,9 @@
-package harborview.core.maunaloa;
+package harborview.domain.core.maunaloa;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import harborview.adapter.NordnetAdapter;
-import harborview.adapter.StockMarketAdapter;
+import harborview.domain.nordnet.NordnetRepository;
+import harborview.domain.stockmarket.StockMarketRepository;
 import harborview.chart.ChartFactory;
 import harborview.chart.ChartMonthFactory;
 import harborview.chart.ChartWeekFactory;
@@ -39,8 +39,8 @@ import static vega.financial.StockOptionType.CALL;
 public class MaunaloaCore {
 
     private Logger logger = LoggerFactory.getLogger(MaunaloaCore.class);
-    private final NordnetAdapter nordnetAdapter;
-    private final StockMarketAdapter stockMarketAdapter;
+    private final NordnetRepository nordnetAdapter;
+    private final StockMarketRepository stockMarketAdapter;
     private final OptionCalculator optionCalculator;
     private final ChartFactory chartFactory = new ChartFactory();
     private final ChartWeekFactory chartWeekFactory = new ChartWeekFactory();
@@ -55,8 +55,8 @@ public class MaunaloaCore {
 
     private List<SelectItem> stockTickers;
 
-    public MaunaloaCore(NordnetAdapter nordnetAdapter,
-                        StockMarketAdapter stockMarketAdapter,
+    public MaunaloaCore(NordnetRepository nordnetAdapter,
+                        StockMarketRepository stockMarketAdapter,
                         OptionCalculator optionCalculator) {
         this.nordnetAdapter = nordnetAdapter;
         this.stockMarketAdapter = stockMarketAdapter;

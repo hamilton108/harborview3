@@ -1,21 +1,18 @@
-package harborview.adapter.impl;
+package harborview.adapter.stockmarket;
 
-import harborview.adapter.StockMarketAdapter;
 import harborview.domain.stockmarket.*;
 import harborview.mybatis.MyBatisUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.function.Consumer;
 
 @Component()
-@Profile("demo")
-public class StockMarketAdapterDemo extends StockMarketAdapterImpl {
+@Profile({"demo","test"})
+public class StockMarketAdapterDemo extends StockMarketAdapter {
 
-    public StockMarketAdapterDemo (MyBatisUtil myBatisUtil,
+    public StockMarketAdapterDemo(MyBatisUtil myBatisUtil,
                                   @Value("${adapter.stockmarket.from-date}") String fromDate) {
         super(myBatisUtil, fromDate);
     }

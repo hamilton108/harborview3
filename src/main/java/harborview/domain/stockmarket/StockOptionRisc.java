@@ -36,12 +36,12 @@ public class StockOptionRisc {
         return price.getBreakEven();
     }
     public double getBuy() {
-        return price.getBuy();
+        return price.getBid();
     }
     public double getSell() {
-        return price.getSell();
+        return price.getAsk();
     }
     public double getRisc() {
-        return price.getSell() - optionPrice;
+        return price.getAsk() - optionPrice;
     }
 }
