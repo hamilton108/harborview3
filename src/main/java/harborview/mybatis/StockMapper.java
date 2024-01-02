@@ -2,11 +2,13 @@ package harborview.mybatis;
 
 import harborview.domain.stockmarket.Stock;
 import harborview.domain.stockmarket.StockPrice;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.sql.Date;
 import java.util.List;
 
+@Mapper
 public interface StockMapper {
     List<Stock> selectStocks();
 

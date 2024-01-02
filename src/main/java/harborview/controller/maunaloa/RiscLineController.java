@@ -5,6 +5,7 @@ import harborview.domain.nordnet.RLine;
 import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.StatusDTO;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,24 +22,21 @@ public class RiscLineController {
     }
 
     //public List<RLine> riscLines(@PathVariable("ticker") String ticker) {
-    @ResponseBody
     @GetMapping(value = "/{ticker}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RLine> riscLines(@PathVariable("ticker") int ticker) {
+    public ResponseEntity<List<RLine>> riscLines(@PathVariable("ticker") int ticker) {
         var stockTicker = new StockTicker(ticker);
-        return maunaloaCore.getRiscLines(stockTicker);
+        return ResponseEntity.ok(maunaloaCore.getRiscLines(stockTicker));
     }
 
-    @ResponseBody
     @DeleteMapping(value = "/{ticker}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StatusDTO deleteAllRiscLines(@PathVariable("ticker") int ticker) {
+    public ResponseEntity<StatusDTO> deleteAllRiscLines(@PathVariable("ticker") int ticker) {
         var stockTicker = new StockTicker(ticker);
-        return maunaloaCore.deleteAllRiscLines(stockTicker);
+        return ResponseEntity.ok(maunaloaCore.deleteAllRiscLines(stockTicker));
     }
 
-    @ResponseBody
     @GetMapping(value = "/spot/{ticker}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String spot(@PathVariable("ticker") int ticker) {
+    public ResponseEntity<String> spot(@PathVariable("ticker") int ticker) {
         var stockTicker = new StockTicker(ticker);
-        return maunaloaCore.spot(stockTicker);
+        return ResponseEntity.ok(maunaloaCore.spot(stockTicker));
     }
 }

@@ -11,6 +11,7 @@ import harborview.transform.maunaloa.RequestTransform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,28 +33,24 @@ public class StockOptionController {
         this.requestTransform = requestTransform;
     }
 
-    @ResponseBody
     @GetMapping(value = "/calls/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String calls(@PathVariable("oid") int oid) {
-        return maunaloaCore.calls(new StockTicker(oid));
+    public ResponseEntity<String> calls(@PathVariable("oid") int oid) {
+        return ResponseEntity.ok(maunaloaCore.calls(new StockTicker(oid)));
     }
 
-    @ResponseBody
     @GetMapping(value = "/puts/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String puts(@PathVariable("oid") int oid) {
-        return maunaloaCore.puts(new StockTicker(oid));
+    public ResponseEntity<String> puts(@PathVariable("oid") int oid) {
+        return ResponseEntity.ok(maunaloaCore.puts(new StockTicker(oid)));
     }
 
-    @ResponseBody
     @GetMapping(value = "/price/{ticker}/{stockPrice}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ValueDTO<Double> calcOptionPrice(@PathVariable("ticker") String ticker, @PathVariable("stockPrice") double stockPrice) {
+    public ResponseEntity<ValueDTO<Double>> calcOptionPrice(@PathVariable("ticker") String ticker, @PathVariable("stockPrice") double stockPrice) {
         var price = maunaloaCore.optionPriceFor(new StockOptionTicker(ticker), stockPrice);
-        return new ValueDTO<>(price);
+        return ResponseEntity.ok(new ValueDTO<>(price));
     }
 
-    @ResponseBody
     @PostMapping(value = "/purchase", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StatusDTO purchaseOption(@RequestBody PurchaseOptionRequest request) {
+    public ResponseEntity<StatusDTO> purchaseOption(@RequestBody PurchaseOptionRequest request) {
         /*
         if (result.hasErrors()) {
             List<String> errorMessages = result.getAllErrors().stream()
@@ -71,43 +68,41 @@ public class StockOptionController {
         }
         catch (Exception ex) {
             logger.error(String.format("Request validation error, ticker: %s", request.ticker()));
-            return new StatusDTO(false, ex.getMessage(), REQUEST_VALIDATION_ERROR.getStatus());
+            return ResponseEntity.ok(new StatusDTO(false, ex.getMessage(), REQUEST_VALIDATION_ERROR.getStatus()));
         }
 
         logger.info(String.format("Purchasing option, ticker: %s", request.ticker()));
         var purchase = requestTransform.mapPurchaseOptionRequest(request);
         if (purchase == null) {
-            return new StatusDTO(false, "Option was null", RETRY.getStatus());
+            return ResponseEntity.ok(new StatusDTO(false, "Option was null", RETRY.getStatus()));
         }
-        return maunaloaCore.purchaseOption(purchase);
+        return ResponseEntity.ok(maunaloaCore.purchaseOption(purchase));
     }
 
-    @ResponseBody
     @PostMapping(value = "/regpur", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StatusDTO registerPurchasedOption(@RequestBody RegpurRequest request) {
+    public ResponseEntity<StatusDTO> registerPurchasedOption(@RequestBody RegpurRequest request) {
         logger.info(String.format("Registering and purchasing option, ticker: %s", request.ticker()));
         try {
             request.validate();
         }
         catch (Exception ex) {
             logger.error(String.format("Request validation error, ticker: %s", request.ticker()));
-            return new StatusDTO(false, ex.getMessage(), REQUEST_VALIDATION_ERROR.getStatus());
+            return ResponseEntity.ok(new StatusDTO(false, ex.getMessage(), REQUEST_VALIDATION_ERROR.getStatus()));
         }
 
         var purchase = requestTransform.mapRegPurRequest(request);
 
         if (purchase.first() == null || purchase.second() == null) {
-            return new StatusDTO(false, "Could not transform RegpurRequest", ERROR.getStatus());
+            return ResponseEntity.ok(new StatusDTO(false, "Could not transform RegpurRequest", ERROR.getStatus()));
         }
 
-        return maunaloaCore.registerAndPurchaseOption(purchase);
+        return ResponseEntity.ok(maunaloaCore.registerAndPurchaseOption(purchase));
     }
 
-    @ResponseBody
     @PostMapping(value = "/sell", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StatusDTO sellOption() {
+    public ResponseEntity<StatusDTO> sellOption() {
 
-        return new StatusDTO(true, "demo", OK.getStatus());
+        return ResponseEntity.ok(new StatusDTO(true, "demo", OK.getStatus()));
     }
 
     /*

@@ -21,6 +21,7 @@ import oahu.dto.Tuple2;
 import oahu.exceptions.BinarySearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import vega.financial.calculator.OptionCalculator;
 
@@ -57,7 +58,7 @@ public class MaunaloaCore {
 
     public MaunaloaCore(NordnetRepository nordnetAdapter,
                         StockMarketRepository stockMarketAdapter,
-                        OptionCalculator optionCalculator) {
+                        @Qualifier("blackScholes") OptionCalculator optionCalculator) {
         this.nordnetAdapter = nordnetAdapter;
         this.stockMarketAdapter = stockMarketAdapter;
         this.optionCalculator = optionCalculator;

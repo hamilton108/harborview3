@@ -85,14 +85,14 @@ public class NordnetAdapter implements NordnetRepository {
     }
 
     private String spotUri(StockTicker ticker) {
-        return String.format("%s/spot/%d", nordnetHost, ticker.oid());
+        return String.format("%s/nordnet/spot/%d", nordnetHost, ticker.oid());
     }
     private String optionUri(StockOptionTicker ticker) {
-        return String.format("%s/option/%s", nordnetHost, ticker.ticker());
+        return String.format("%s/rapanui/option/%s", nordnetHost, ticker.ticker());
     }
     private String optionUri(StockTicker ticker, boolean isCalls) {
         var ot = isCalls ? "calls" : "puts";
-        return String.format("%s/%s/%d", nordnetHost, ot, ticker.oid());
+        return String.format("%s/nordnet/%s/%d", nordnetHost, ot, ticker.oid());
     }
 
         /*

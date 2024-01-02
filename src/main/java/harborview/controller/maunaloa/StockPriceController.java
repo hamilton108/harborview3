@@ -7,6 +7,7 @@ import harborview.domain.stockmarket.StockTicker;
 import harborview.dto.html.Charts;
 import harborview.dto.html.SelectItem;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,34 +24,29 @@ public class StockPriceController {
         this.maunaloaCore = maunaloaCore;
     }
 
-    @ResponseBody
     @GetMapping(value = "/tickers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<SelectItem> tickers() {
-        return maunaloaCore.getStockTickers();
+    public ResponseEntity<Collection<SelectItem>> tickers() {
+        return ResponseEntity.ok(maunaloaCore.getStockTickers());
     }
 
-    @ResponseBody
     @GetMapping(value = "/days/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Charts days(@PathVariable("oid") int oid) {
-        return maunaloaCore.days(new StockTicker(oid));
+    public ResponseEntity<Charts> days(@PathVariable("oid") int oid) {
+        return ResponseEntity.ok(maunaloaCore.days(new StockTicker(oid)));
     }
 
-    @ResponseBody
     @GetMapping(value = "/weeks/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Charts weeks(@PathVariable("oid") int oid) {
-        return maunaloaCore.weeks(new StockTicker(oid));
+    public ResponseEntity<Charts> weeks(@PathVariable("oid") int oid) {
+        return ResponseEntity.ok(maunaloaCore.weeks(new StockTicker(oid)));
     }
 
-    @ResponseBody
     @GetMapping(value = "/months/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Charts months(@PathVariable("oid") int oid) {
-        return maunaloaCore.months(new StockTicker(oid));
+    public ResponseEntity<Charts> months(@PathVariable("oid") int oid) {
+        return ResponseEntity.ok(maunaloaCore.months(new StockTicker(oid)));
     }
 
-    @ResponseBody
     @PostMapping(value = "/calculate/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RiscResponse> calcRiscStockPrices(@PathVariable("oid") int oid, @RequestBody List<RiscRequest> riscs) {
-        return maunaloaCore.calcRiscStockPrices(riscs);
+    public ResponseEntity<List<RiscResponse>> calcRiscStockPrices(@PathVariable("oid") int oid, @RequestBody List<RiscRequest> riscs) {
+        return ResponseEntity.ok(maunaloaCore.calcRiscStockPrices(riscs));
     }
 
 }
