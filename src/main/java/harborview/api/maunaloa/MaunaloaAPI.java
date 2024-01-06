@@ -1,4 +1,4 @@
-package harborview.controller.maunaloa;
+package harborview.api.maunaloa;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/maunaloa")
-public class MaunaloaController {
+public class MaunaloaAPI {
 
-    public MaunaloaController() {
+    public MaunaloaAPI() {
     }
 
     @GetMapping(value = "/charts")

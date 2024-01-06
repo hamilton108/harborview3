@@ -1,6 +1,5 @@
 package harborview.domain.stockmarket;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import harborview.domain.critter.Critter;
 
 import java.sql.Date;
@@ -34,7 +33,6 @@ public class StockOptionPurchase {
     //endregion Init
 
     //region Properties
-    @JsonGetter("oid")
     public int getOid() {
         return oid;
     }

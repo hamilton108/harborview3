@@ -127,4 +127,12 @@ public class StockMarketAdapter implements StockMarketRepository {
                 mapper.insertStockOption(option);
             }, errorHandler);
     }
+
+    @Override
+    public List<StockOptionPurchase> stockOptionPurchases(int purchaseType, int status, String opType) {
+        return (myBatisUtil.withSession(session -> {
+            var mapper = session.getMapper(StockOptionMapper.class);
+            return mapper.purchasesWithSalesAll(purchaseType, status, opType);
+        }));
+    }
 }

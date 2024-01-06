@@ -1,5 +1,7 @@
-package harborview.controller.maunaloa;
+package harborview.api.maunaloa;
 
+import harborview.api.response.stockmarket.StockOptionPurchaseResponse;
+import harborview.api.transform.stockmarket.ResponseTransform;
 import harborview.domain.core.maunaloa.MaunaloaCore;
 import harborview.domain.stockmarket.request.PurchaseOptionRequest;
 import harborview.domain.stockmarket.request.RegpurRequest;
@@ -14,23 +16,26 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import static harborview.dto.StatusCode.*;
 
 @Controller
 @RequestMapping("/maunaloa/stockoption")
-public class StockOptionController {
+public class StockOptionAPI {
 
-    private final Logger logger = LoggerFactory.getLogger(StockOptionController.class);
+    private final Logger logger = LoggerFactory.getLogger(StockOptionAPI.class);
 
     private final MaunaloaCore maunaloaCore;
-
     private final RequestTransform requestTransform;
+    private final ResponseTransform responseTransform;
 
-    public StockOptionController(MaunaloaCore maunaloaCore,
-                                 RequestTransform requestTransform) {
+    public StockOptionAPI(MaunaloaCore maunaloaCore,
+                          RequestTransform requestTransform,
+                          ResponseTransform responseTransform) {
         this.maunaloaCore = maunaloaCore;
         this.requestTransform = requestTransform;
+        this.responseTransform = responseTransform;
     }
 
     @GetMapping(value = "/calls/{oid}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,6 +53,14 @@ public class StockOptionController {
         var price = maunaloaCore.optionPriceFor(new StockOptionTicker(ticker), stockPrice);
         return ResponseEntity.ok(new ValueDTO<>(price));
     }
+
+    @GetMapping(value = "/purchases/{purchaseType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<StockOptionPurchaseResponse>> fetchOptionPurchases(@PathVariable("purchaseType") int purchaseType) {
+        var purchases = maunaloaCore.stockOptionPurchases(purchaseType, 0, null);
+        var response = responseTransform.mapStockOptionPurchases(purchases);
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping(value = "/purchase", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StatusDTO> purchaseOption(@RequestBody PurchaseOptionRequest request) {

@@ -1,4 +1,4 @@
-package harborview.controller.maunaloa;
+package harborview.api.maunaloa;
 
 import harborview.domain.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.RLine;
@@ -13,11 +13,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/maunaloa/risclines")
-public class RiscLineController {
+public class RiscLineAPI {
 
     private final MaunaloaCore maunaloaCore;
 
-    public RiscLineController(MaunaloaCore maunaloaCore) {
+    public RiscLineAPI(MaunaloaCore maunaloaCore) {
         this.maunaloaCore = maunaloaCore;
     }
 

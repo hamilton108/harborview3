@@ -1,4 +1,4 @@
-package harborview.controller;
+package harborview.api;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

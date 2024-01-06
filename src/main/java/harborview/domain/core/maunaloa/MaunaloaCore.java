@@ -85,6 +85,11 @@ public class MaunaloaCore {
         return cached;
     }
 
+    public List<StockOptionPurchase> stockOptionPurchases(int purchaseType, int status, String opType) {
+        List<StockOptionPurchase> result = stockMarketAdapter.stockOptionPurchases(purchaseType, status, opType);
+        return result;
+    }
+
     private Charts charts(StockTicker ticker, ChartFactory factory) {
         var prices = getPrices(ticker);
         return factory.elmCharts(ticker, prices);

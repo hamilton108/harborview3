@@ -14,4 +14,19 @@ public interface CritterMapper {
 
     List<RuleType> ruleTypes();
     List<StockOptionPurchase> activePurchasesWithCritters(@Param("purchaseType") int purchaseType);
+
+    /*
+    void insertCritter(Critter critter);
+
+    void insertGradientRule(GradientRule rule);
+
+    void insertAcceptRule(AcceptRule rule);
+
+    void insertDenyRule(DenyRule rule);
+
+    List<RuleType> ruleTypes();
+
+    void registerCritterClosedWithSale(Critter critter);
+
+     */
 }

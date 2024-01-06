@@ -15,4 +15,5 @@ public interface StockMarketRepository {
     void insertSale(StockOptionSale sale, Consumer<Exception> errorHandler);
     void insertStockOption(StockOption option, Consumer<Exception> errorHandler);
 
+    List<StockOptionPurchase> stockOptionPurchases(int purchaseType, int status, String opType);
 }

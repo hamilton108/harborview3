@@ -1,4 +1,4 @@
-package harborview.controller.critter;
+package harborview.api.critter;
 
 import harborview.domain.core.critter.CritterCore;
 import harborview.dto.StatusDTO;
@@ -17,11 +17,11 @@ import static harborview.dto.StatusCode.ERROR;
 
 @Controller
 @RequestMapping("/critter")
-public class CritterController {
+public class CritterAPI {
 
     private final CritterCore critterCore;
 
-    public CritterController(CritterCore critterCore) {
+    public CritterAPI(CritterCore critterCore) {
         this.critterCore = critterCore;
     }
 

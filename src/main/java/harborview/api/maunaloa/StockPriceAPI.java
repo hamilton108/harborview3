@@ -1,4 +1,4 @@
-package harborview.controller.maunaloa;
+package harborview.api.maunaloa;
 
 import harborview.domain.core.maunaloa.MaunaloaCore;
 import harborview.domain.nordnet.RiscRequest;
@@ -16,11 +16,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/maunaloa/stockprice")
-public class StockPriceController {
+public class StockPriceAPI {
 
     private final MaunaloaCore maunaloaCore;
 
-    public StockPriceController(MaunaloaCore maunaloaCore) {
+    public StockPriceAPI(MaunaloaCore maunaloaCore) {
         this.maunaloaCore = maunaloaCore;
     }
 
