@@ -10,24 +10,24 @@ import Web.UIEvent.MouseEvent (MouseEvent)
 
 import Halogen.HTML.Properties as HP
 import Halogen.HTML as HH
-import Halogen.HTML ( HTML
-                    , ClassName(..)
-                    )
+import Halogen.HTML
+  ( HTML
+  , ClassName(..)
+  )
 import Halogen.HTML.Events as HE
 
-
-newtype GridPosition = 
+newtype GridPosition =
   GridPosition String
 
-newtype Title = 
+newtype Title =
   Title String
 
-newtype InputVal = 
+newtype InputVal =
   InputVal String
 
-type SelectItem = 
+type SelectItem =
   { v :: String
-  , t :: String 
+  , t :: String
   }
 
 type SelectItems = Array SelectItem
@@ -37,7 +37,7 @@ emptySelectItem = { v: "0", t: "-" }
 
 gridItem :: forall w i. GridPosition -> HTML w i -> HTML w i
 gridItem (GridPosition clazz) item =
-  HH.div [ HP.classes [ ClassName clazz ]] [item ]
+  HH.div [ HP.classes [ ClassName clazz ] ] [ item ]
 
 {-
 defaultEventHandling :: Event.Event -> Effect Unit
@@ -47,108 +47,117 @@ defaultEventHandling event =
 -}
 
 mkOption :: forall w i. SelectItem -> HTML w i
-mkOption item = 
-  HH.option 
-    [ HP.value item.v ] 
+mkOption item =
+  HH.option
+    [ HP.value item.v ]
     [ HH.text item.t ]
 
 mkSelect_ :: forall w i. SelectItems -> (String -> i) -> HTML w i
-mkSelect_ items evt = 
-  let 
+mkSelect_ items evt =
+  let
     opts = map mkOption (emptySelectItem : items)
   in
-  HH.select
-    [ HP.classes [ ClassName "form-control" ]
-    , HE.onValueChange evt
-    ]
-    opts
+    HH.select
+      [ HP.classes [ ClassName "form-control" ]
+      , HE.onValueChange evt
+      ]
+      opts
 
 mkSelect :: forall w i. Title -> SelectItems -> (String -> i) -> HTML w i
-mkSelect (Title title) items evt = 
-  let 
+mkSelect (Title title) items evt =
+  let
     sel = mkSelect_ items evt
   in
-  HH.span [ HP.classes [ ClassName "form-group form-group--menu-bar" ]]
-    [ HH.label [] [ HH.text title ]
-    , sel
-    ]
-
+    HH.span [ HP.classes [ ClassName "form-group form-group--menu-bar" ] ]
+      [ HH.label [] [ HH.text title ]
+      , sel
+      ]
 
 --mkSelectSimple :: forall w i. SelectItems -> (String -> i) -> HTML w i
 --mkSelectSimple items evt = 
 --  mkSelect_ items evt
 
 mkInput_ :: forall w i. InputType -> (String -> i) -> Maybe InputVal -> HTML w i
-mkInput_ inpType evt val = 
+mkInput_ inpType evt val =
   case val of
     Nothing ->
-      HH.input 
-        [ HP.type_ inpType 
-        , HP.classes 
-          [ ClassName "form-control"
-          ]
+      HH.input
+        [ HP.type_ inpType
+        , HP.classes
+            [ ClassName "form-control"
+            ]
         , HE.onValueChange evt
         ]
-    Just (InputVal val1) -> 
-      HH.input 
-        [ HP.type_ inpType 
-        , HP.classes 
-          [ ClassName "form-control"
-          ]
+    Just (InputVal val1) ->
+      HH.input
+        [ HP.type_ inpType
+        , HP.classes
+            [ ClassName "form-control"
+            ]
         , HP.value val1
         , HE.onValueChange evt
         ]
 
 mkInput :: forall w i. Title -> InputType -> (String -> i) -> Maybe InputVal -> HTML w i
-mkInput (Title title) inpType evt val = 
-  let 
+mkInput (Title title) inpType evt val =
+  let
     inp = mkInput_ inpType evt val
   in
-  HH.span [ HP.classes [ ClassName "form-group" ]]
-    [ HH.label [] [ HH.text title ]
-    , inp
-    ]
-
-mkCheckbox :: forall w i. Title -> (Boolean -> i) -> HTML w i 
-mkCheckbox (Title title) evt = 
-  HH.div 
-    [ HP.classes 
-      [ ClassName "form-group"
+    HH.span [ HP.classes [ ClassName "form-group" ] ]
+      [ HH.label [] [ HH.text title ]
+      , inp
       ]
-    ]
-    [ HH.div [ HP.classes [ ClassName "checkbox" ]]
-      [ HH.label_
-        [ HH.input
-          [ HP.type_ InputCheckbox
-          , HP.classes [ ClassName "fake-cb" ]
-          , HE.onChecked evt
-          ]
-        , HH.span [ HP.classes [ ClassName "fake-input" ] ]
-          []
-        , HH.span [ HP.classes [ ClassName "fake-label" ] ]
-          [ HH.text title
-          ]
+
+mkCheckbox :: forall w i. Title -> (Boolean -> i) -> HTML w i
+mkCheckbox (Title title) evt =
+  HH.div
+    [ HP.classes
+        [ ClassName "form-group"
         ]
-      ]
     ]
-
+    [ HH.div [ HP.classes [ ClassName "checkbox" ] ]
+        [ HH.label_
+            [ HH.input
+                [ HP.type_ InputCheckbox
+                , HP.classes [ ClassName "fake-cb" ]
+                , HE.onChecked evt
+                ]
+            , HH.span [ HP.classes [ ClassName "fake-input" ] ]
+                []
+            , HH.span [ HP.classes [ ClassName "fake-label" ] ]
+                [ HH.text title
+                ]
+            ]
+        ]
+    ]
 
 mkButton :: forall w i. Title -> (MouseEvent -> i) -> HTML w i
-mkButton (Title title) evt = 
-  HH.div 
-    [ HP.classes 
-      [ ClassName "form-group"
-      , ClassName "form-group--menu-bar" 
-      ]
+mkButton (Title title) evt =
+  HH.div
+    [ HP.classes
+        [ ClassName "form-group"
+        , ClassName "form-group--menu-bar"
+        ]
     ]
     [ HH.button
-      [ HE.onClick evt
-      , HP.classes 
-        [ ClassName "btn"
-        , ClassName "btn-outline-success" 
+        [ HE.onClick evt
+        , HP.classes
+            [ ClassName "btn"
+            , ClassName "btn-outline-success"
+            ]
         ]
-      ]
-      [ HH.text title 
-      ]
+        [ HH.text title
+        ]
     ]
-      
+
+mkButton2 :: forall w i. Title -> (MouseEvent -> i) -> HTML w i
+mkButton2 (Title title) evt =
+  HH.button
+    [ HE.onClick evt
+    , HP.classes
+        [ ClassName "btn"
+        , ClassName "btn-outline-success"
+        ]
+    ]
+    [ HH.text title
+    ]

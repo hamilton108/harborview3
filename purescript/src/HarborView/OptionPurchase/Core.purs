@@ -1,71 +1,41 @@
 module HarborView.OptionPurchase.Core
   ( component
+  , demoPurchase
   ) where
 
 import Prelude
 
-import Data.Either (Either(..))
-import Effect.Class (class MonadEffect)
-import Effect.Aff.Class (class MonadAff)
-import Affjax.RequestBody as REQB
 import Affjax.RequestBody (RequestBody)
-
-import Halogen as H
-import Halogen.HTML.Properties as HP
-import Halogen.HTML as HH
-import Halogen.HTML
-  ( HTML
-  , ClassName(..)
-  )
-import Web.UIEvent.MouseEvent (MouseEvent)
-import Web.UIEvent.MouseEvent as ME
-import Web.Event.Event as E
+import Affjax.RequestBody as REQB
 import DOM.HTML.Indexed.InputType (InputType(..))
-
 import Data.Argonaut.Core (Json)
 import Data.Argonaut.Core as AC
 import Data.Argonaut.Decode as Decode
 import Data.Argonaut.Decode.Error (JsonDecodeError)
-
-import Data.Number as NUM
-import Data.Number.Format as Format
+import Data.Either (Either(..))
 import Data.Int as DI
 import Data.Maybe (Maybe(..))
-
-import HarborView.UI as UI
-import HarborView.UI
-  ( Title(..)
-  , InputVal(..)
-  )
-import HarborView.Common
-  ( HarborViewError
-  , Oid(..)
-  , Amount(..)
-  , Price(..)
-  , Url(..)
-  , JsonResult
-  )
-import HarborView.Util.HttpUtil as HttpUtil
+import Data.Number as NUM
+--import Data.Number.Format as Format
+import Effect.Aff.Class (class MonadAff)
+import Effect.Class (class MonadEffect)
+import Halogen as H
+import Halogen.HTML (HTML, ClassName(..))
+import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
+import HarborView.Common (HarborViewError, Oid(..), Amount(..), Price(..), Url(..), JsonResult)
 import HarborView.Common as Common
-import HarborView.ModalDialog as DLG
 import HarborView.ModalDialog (DialogState(..))
-
-type Purchase =
-  { oid :: Int
-  , stock :: String
-  , ot :: String -- option type
-  , ticker :: String
-  , pdate :: String -- purchase date
-  , exp :: String
-  , days :: Int
-  , price :: Number
-  , bid :: Number
-  , spot :: Number
-  , pvol :: Int -- purchase volume
-  , svol :: Int -- sales volume
-  }
-
-type Purchases = Array Purchase
+import HarborView.ModalDialog as DLG
+import HarborView.OptionPurchase.Types (Purchase, Purchases)
+import HarborView.OptionPurchase.View.Table as Table
+import HarborView.UI (Title(..), InputVal(..))
+import HarborView.UI as UI
+import HarborView.Util.HttpUtil as HttpUtil
+import HarborView.OptionPurchase.Command (Action(..), Field(..))
+import Web.Event.Event as E
+import Web.UIEvent.MouseEvent (MouseEvent)
+import Web.UIEvent.MouseEvent as ME
 
 demoPurchase :: Purchase
 demoPurchase =
@@ -87,37 +57,37 @@ demoPurchase =
 -- purchase_type | spot  |  buy  | ticker | d_oid | opname  |  exp_date  | 
 -- optype | strike | s_oid | s_dx | s_price | s_volume 
 
-tableHeader :: forall w i. HTML w i
-tableHeader =
-  HH.thead_
-    [ HH.tr_
-        [ HH.th_ [ HH.text "Sell" ]
-        , HH.th_ [ HH.text "Oid" ]
-        , HH.th_ [ HH.text "Stock" ]
-        , HH.th_ [ HH.text "Option Type" ]
-        , HH.th_ [ HH.text "Ticker" ]
-        , HH.th_ [ HH.text "Purchase Date" ]
-        , HH.th_ [ HH.text "Expiry" ]
-        , HH.th_ [ HH.text "Days" ]
-        , HH.th_ [ HH.text "Purchase Price" ]
-        , HH.th_ [ HH.text "Bid" ]
-        , HH.th_ [ HH.text "Spot" ]
-        , HH.th_ [ HH.text "Purchase vol." ]
-        , HH.th_ [ HH.text "Sales vol." ]
-        ]
-    ]
+-- tableHeader :: forall w i. HTML w i
+-- tableHeader =
+--   HH.thead_
+--     [ HH.tr_
+--         [ HH.th_ [ HH.text "Sell" ]
+--         , HH.th_ [ HH.text "Oid" ]
+--         , HH.th_ [ HH.text "Stock" ]
+--         , HH.th_ [ HH.text "Option Type" ]
+--         , HH.th_ [ HH.text "Ticker" ]
+--         , HH.th_ [ HH.text "Purchase Date" ]
+--         , HH.th_ [ HH.text "Expiry" ]
+--         , HH.th_ [ HH.text "Days" ]
+--         , HH.th_ [ HH.text "Purchase Price" ]
+--         , HH.th_ [ HH.text "Bid" ]
+--         , HH.th_ [ HH.text "Spot" ]
+--         , HH.th_ [ HH.text "Purchase vol." ]
+--         , HH.th_ [ HH.text "Sales vol." ]
+--         ]
+--     ]
 
-data Field
-  = SellAmount
-  | SellPrice
+-- data Field
+--   = SellAmount
+--   | SellPrice
 
-data Action
-  = FetchPaper MouseEvent
-  | FetchReal MouseEvent
-  | SellDlgShow Purchase MouseEvent
-  | SellDlgOk MouseEvent
-  | SellDlgCancel MouseEvent
-  | ValueChanged Field String
+-- data Action
+--   = FetchPaper MouseEvent
+--   | FetchReal MouseEvent
+--   | SellDlgShow Purchase MouseEvent
+--   | SellDlgOk MouseEvent
+--   | SellDlgCancel MouseEvent
+--   | ValueChanged Field String
 
 {- type SellPrm = 
   { price :: String
@@ -187,59 +157,52 @@ component =
     , eval: H.mkEval H.defaultEval { handleAction = handleAction }
     }
 
-toRow :: forall w. Purchase -> HTML w Action
-toRow p =
-  let
-    oid = Format.toString $ DI.toNumber p.oid
-    days = Format.toString $ DI.toNumber p.days
-    price = Common.numToString p.price
-    bid = Common.numToString p.bid
-    spot = Common.numToString p.spot
-    pvol = Format.toString $ DI.toNumber p.pvol
-    svol = Format.toString $ DI.toNumber p.svol
-  in
-    HH.tr_
-      [ UI.mkButton (Title "Sell") (SellDlgShow p)
-      , HH.td_ [ HH.text oid ]
-      , HH.td_ [ HH.text p.stock ]
-      , HH.td_ [ HH.text p.ot ]
-      , HH.td_ [ HH.text p.ticker ]
-      , HH.td_ [ HH.text p.pdate ]
-      , HH.td_ [ HH.text p.exp ]
-      , HH.td_ [ HH.text days ]
-      , HH.td_ [ HH.text price ]
-      , HH.td_ [ HH.text bid ]
-      , HH.td_ [ HH.text spot ]
-      , HH.td_ [ HH.text pvol ]
-      , HH.td_ [ HH.text svol ]
-      ]
+-- toRow :: forall w. Purchase -> HTML w Action
+-- toRow p =
+--   let
+--     oid = Format.toString $ DI.toNumber p.oid
+--     days = Format.toString $ DI.toNumber p.days
+--     price = Common.numToString p.price
+--     bid = Common.numToString p.bid
+--     spot = Common.numToString p.spot
+--     pvol = Format.toString $ DI.toNumber p.pvol
+--     svol = Format.toString $ DI.toNumber p.svol
+--   in
+--     HH.tr_
+--       [ UI.mkButton (Title "Sell") (SellDlgShow p)
+--       , HH.td_ [ HH.text oid ]
+--       , HH.td_ [ HH.text p.stock ]
+--       , HH.td_ [ HH.text p.ot ]
+--       , HH.td_ [ HH.text p.ticker ]
+--       , HH.td_ [ HH.text p.pdate ]
+--       , HH.td_ [ HH.text p.exp ]
+--       , HH.td_ [ HH.text days ]
+--       , HH.td_ [ HH.text price ]
+--       , HH.td_ [ HH.text bid ]
+--       , HH.td_ [ HH.text spot ]
+--       , HH.td_ [ HH.text pvol ]
+--       , HH.td_ [ HH.text svol ]
+--       ]
 
 render :: forall cs m. State -> H.ComponentHTML Action cs m
 render st =
   let
     purchaseTable =
-      let
-        rows = map toRow st.purchases
-      in
-        HH.div [ HP.classes [ ClassName "row" ] ]
-          [ HH.table [ HP.classes [ ClassName "table", ClassName "table-hoover" ] ]
-              [ tableHeader
-              , HH.tbody_
-                  rows
-              ]
-          ]
+      HH.div [ HP.classes [ ClassName "row" ] ]
+        [ Table.purchaseTable SellDlgShow st.purchases
+        ]
   in
-    HH.div_
-      [ HH.div [ HP.classes [ ClassName "grid-menu-bar" ] ]
+    HH.div [ HP.classes [ ClassName "op-grid-main" ] ]
+      [ HH.div [ HP.classes [ ClassName "op-grid-menu-bar" ] ]
           [ UI.mkButton (Title "Fetch paper purchases") FetchPaper
           , UI.mkButton (Title "Fetch real purchases") FetchReal
           , HH.p_
-              [ HH.h5_ [ HH.text st.header ]
-              , HH.text st.msg
+              [ HH.h5 [ HP.classes [ ClassName "op-header" ] ] [ HH.text (st.header <> " " <> st.msg) ]
+              -- , HH.text st.msg
               ]
           ]
       , HH.div
-          [ HP.classes [ ClassName "grid-table" ] ]
+          [ HP.classes [ ClassName "op-grid-table" ] ]
           [ HH.div
               [ HP.classes [ ClassName "main-table" ] ]
               [ purchaseTable

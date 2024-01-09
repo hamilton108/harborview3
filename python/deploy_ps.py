@@ -34,6 +34,14 @@ TARGET = "%s/src/main/resources/static/js/maunaloa" % PROJ
 
 SRC = "%s/purescript/dist" % PROJ
 
+TPL_DIST = "%s/src/main/resources/templates" % PROJ
+
+TPL_SRC = "%s/python/templates" % PROJ
+
+CSS_HOME = "%s/src/main/resources/static/css" % PROJ
+
+CSS_SRC = "%s/harborview.css" % CSS_HOME 
+
 def md5_sum(src_file):
     with open(src_file, "r") as fx:
         content = fx.read()
@@ -90,36 +98,27 @@ class Application:
         copyfile("%s/%s" % (SRC,self.map_file_name), "%s/%s" % (TARGET,self.map_file_name))
 
     def minify(self):
-        pass
+        proc.run(["esbuild", JS_SRC, "--minify", "--outfile=%s" % JS_MIN])
 
     def render(self):
         tpl = Template(filename="%s/%s" % (TPL_SRC,self.tpl))
         result = tpl.render(psname=self.md5_file_name)
-        dist = "%s/%s" % (TPL_DIST,self.html)
+        dist = "%s/maunaloa/%s" % (TPL_DIST,self.html)
         with(open(dist, "w")) as f:
             f.write(result)
 
-JS_SRC = "%s/ps-charts.js" % SRC
+def sass():
+    proc.run(["sass", "../sass-src/harborview.scss", CSS_SRC])
+    tpl = Template(filename="%s/%s" % (TPL_SRC,"head.html.tpl"))
+    md5 = md5_sum(CSS_SRC)[:8]
+    md5_fname = "harborview-%s.css" % md5
+    print (md5_fname)
+    result = tpl.render(psname=md5_fname)
+    dist = "%s/%s" % (TPL_DIST, "head.html")
+    with(open(dist, "w")) as f:
+        f.write(result)
+    copyfile(CSS_SRC, "%s/%s" % (CSS_HOME,md5_fname))
 
-JS_MIN = "%s/ps-charts.min.js" % SRC
-
-JS_TARGET = "%s/ps-charts.js" % TARGET
-
-TPL_SRC = "%s/python/templates" % PROJ
-
-TPL_DIST = "%s/src/main/resources/templates/maunaloa" % PROJ
-
-def build():
-    # proc.run(["spago", "bundle-app", "--main", "Main", "--to", JS_SRC])
-    proc.run(["spago", "bundle", "--source-maps", "--module", "Main", "--outfile", JS_SRC])
-
-def minify():
-    proc.run(["esbuild", JS_SRC, "--minify", "--outfile=%s" % JS_MIN])
-
-    
-def md5_file_name_(src_file):
-    #stem = os.path.basename(src_file).split(".")
-    return "ps-charts-%s.js" %  md5_sum(src_file)
 
 # def render(mfn):
 #     tpl = Template(filename="%s/charts.html.tpl" % TPL_SRC)
@@ -146,8 +145,12 @@ def md5_file_name_(src_file):
 
 if __name__ == '__main__':
     parser = OptionParser()
+    parser.add_option("--sass", action="store_true", default=False,
+                      help="Sass. Default: False")
     parser.add_option("--build", action="store_true", default=False,
                       help="Build module. Default: False")
+    parser.add_option("--render", action="store_true", default=False,
+                      help="Render html templates. Default: False")
     parser.add_option("--min", action="store_true", default=False,
                       help="Minify js file. Default: False")
     parser.add_option("--md5file", action="store_true", default=False,
@@ -158,18 +161,24 @@ if __name__ == '__main__':
                       metavar="APP", help="App name: 1: Maunaloa, 2: OptionPurchase")
     (opts, args) = parser.parse_args()
 
-    if opts.app == 1:
-        cur_app = Application(1,"Main") 
+    if opts.sass == True:
+        sass()
     else:
-        cur_app = Application(2,"OptionPurchaseMain") 
+        if opts.app == 1:
+            cur_app = Application(1,"Main") 
+        else:
+            cur_app = Application(2,"OptionPurchaseMain") 
 
-    if opts.build == True:
-        #cur_app.build()
-        #cur_app.render()
-        cur_app.copy()
+        if opts.build == True:
+            cur_app.build()
+            cur_app.render()
+            cur_app.copy()
+            print (cur_app.src)
+            print (cur_app.md5_file_name)
+        elif opts.render == True:
+            cur_app.render()
+            cur_app.copy()
 
-    print (cur_app.src)
-    print (cur_app.md5_file_name)
 
 
     # if opts.md5 == True:

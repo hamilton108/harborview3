@@ -1,6 +1,7 @@
 package harborview.controller.maunaloa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import harborview.api.maunaloa.StockOptionAPI;
 import harborview.controller.ControllerTestBase;
 import harborview.domain.nordnet.FindOptionResponse;
 import harborview.domain.stockmarket.*;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import static harborview.dto.StatusCode.OK;
-import static harborview.dto.StatusCode.RETRY;
 //import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import vega.financial.StockOptionType;
 
 
-@WebMvcTest(StockOptionController.class)
+@WebMvcTest(StockOptionAPI.class)
 public class StockOptionControllerTest extends ControllerTestBase {
     private static ObjectMapper mapper = new ObjectMapper();
 
