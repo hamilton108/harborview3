@@ -49,4 +49,64 @@
         insert into stockmarket.optionsale (purchase_id, price, volume)
         values (#{purchaseOid}, #{price}, #{volume})
     </insert>
+
+    <resultMap id="purchaseWithSalesMap" type="harborview.domain.stockmarket.StockOptionPurchase">
+        <id column="oid" property="oid"/>
+        <result column="dx" property="dx"/>
+        <result column="price" property="price"/>
+        <result column="buy" property="buyAtPurchase"/>
+        <result column="spot" property="spotAtPurchase"/>
+        <result column="volume" property="volume"/>
+        <result column="status" property="status"/>
+        <result column="ticker" property="ticker"/>
+        <result column="opid" property="optionId"/>
+        <result column="opname" property="optionName"/>
+        <result column="optype" property="optionType"/>
+        <result column="exp_date" property="expirySql"/>
+        <result column="strike" property="x"/>
+        <!--
+	    <association property="myDerivative" column="oid" javaType="critter.beans.options.DerivativeBean">
+	    	<id property="oid" column="d_oid"/>
+			<result property="expirySql" column="exp_date"/>
+			<result property="x" column="strike"/>
+	    </association>
+	    -->
+        <collection property="sales"
+                    column="oid"
+                    javaType="ArrayList"
+                    ofType="harborview.domain.stockmarket.StockOptionSale">
+            <id property="oid" column="s_oid"/>
+            <result property="dx" column="s_dx"/>
+            <result property="price" column="s_price"/>
+            <result property="volume" column="s_volume"/>
+        </collection>
+    </resultMap>
+    <!--
+    <select id="purchasesWithSales" resultMap="purchaseWithSalesMap">
+        select o.*,s.ticker,d.oid as d_oid,d.opname,d.exp_date,d.optype,d.strike,
+        x.oid as s_oid,x.dx as s_dx,x.price as s_price,x.volume as s_volume
+        from stockmarket.optionpurchase o
+        join stockmarket.optionx d on d.oid=o.opid
+        join stockmarket.stocktickers s on s.oid=d.stock_id
+        left outer join stockmarket.optionsale x on x.purchase_id=o.oid
+        where d.stock_id=#{stockId} and o.status=#{status} and o.purchase_type=#{purchaseType}
+        <if test="optype != null">
+            and d.optype=#{optype}
+        </if>
+        order by s.oid,o.dx
+    </select>
+    -->
+    <select id="purchasesWithSalesAll" resultMap="purchaseWithSalesMap">
+        select o.*,s.ticker,d.oid as d_oid,d.opname,d.exp_date,d.optype,d.strike,
+        x.oid as s_oid,x.dx as s_dx,x.price as s_price,x.volume as s_volume
+        from stockmarket.optionpurchase o
+        join stockmarket.optionx d on d.oid=o.opid
+        join stockmarket.stocktickers s on s.oid=d.stock_id
+        left outer join stockmarket.optionsale x on x.purchase_id=o.oid
+        where o.status=#{status} and o.purchase_type=#{purchaseType}
+        <if test="optype != null">
+            and d.optype=#{optype}
+        </if>
+        order by s.oid,o.dx
+    </select>
 </mapper>

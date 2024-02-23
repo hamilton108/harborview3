@@ -42,4 +42,4 @@ package:
 workspace:
   extra_packages: {}
   package_set:
-    registry: 46.3.0
+    registry: 50.11.0
