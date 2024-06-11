@@ -2,6 +2,7 @@ module HarborView.Maunaloa.LevelLine
   ( Line(..)
   , addLine
   , deleteAll
+  , fetchLevelLines
   , fetchSpot
   , initEvents
   , updateRulers

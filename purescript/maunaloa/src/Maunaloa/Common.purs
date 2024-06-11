@@ -1,5 +1,5 @@
 module HarborView.Maunaloa.Common where
-  
+
 import Prelude
 
 --import Graphics.Canvas (Context2D)
@@ -15,9 +15,9 @@ foreign import showJson :: Json -> Effect Unit
 foreign import alert :: String -> Effect Unit
 
 mainURL :: String
-mainURL = 
-    --"http://localhost:8082/maunaloa"
-    "/maunaloa"
+mainURL =
+  --"http://localhost:8082/maunaloa"
+  "/maunaloa"
 
 ------------------------- Graph ------------------------- 
 --class Graph a where
@@ -31,7 +31,6 @@ instance showChartWidth :: Show ChartWidth where
     -}
 
 type Xaxis = Array Number
-
 
 dayInMillis :: Number
 dayInMillis = 86400000.0
@@ -55,11 +54,11 @@ instance showChartDim :: Show ChartDim where
 -}
 
 ------------------------- Json ------------------------- 
-type JsonSpot = 
-  { h :: Number 
-  , l :: Number 
-  , o :: Number 
-  , c :: Number 
+type JsonSpot =
+  { h :: Number
+  , l :: Number
+  , o :: Number
+  , c :: Number
   , unixtime :: Number
   }
 
@@ -80,31 +79,31 @@ instance showChartHeight :: Show ChartHeight where
 derive instance eqChartHeight :: Eq ChartHeight
 
 ------------------------- Ticker ------------------------- 
-newtype OptionTicker = OptionTicker String 
+newtype OptionTicker = OptionTicker String
 
 instance showOptionTicker :: Show OptionTicker where
   show (OptionTicker x) = "(OptionTicker : " <> x <> ")"
 
-newtype StockTicker = StockTicker String 
+newtype StockTicker = StockTicker String
 
 instance showStockTicker :: Show StockTicker where
   show (StockTicker x) = "(StockTicker: " <> x <> ")"
 
 ------------------------- HtmlId ------------------------- 
-data HtmlId = 
-  HtmlId String 
+data HtmlId
+  = HtmlId String
   | NoHtmlId
 
 instance showHtmlId :: Show HtmlId where
   show (HtmlId x) = "(HtmlId : " <> x <> ")"
   show (NoHtmlId) = "(NoHtmlId)"
 
-derive instance eqHtmlId :: Eq HtmlId 
+derive instance eqHtmlId :: Eq HtmlId
 
 ------------------------- UnixTime ------------------------- 
 newtype UnixTime = UnixTime Number
 
-derive instance eqUnixTime :: Eq UnixTime 
+derive instance eqUnixTime :: Eq UnixTime
 
 instance showUnixTime :: Show UnixTime where
   show (UnixTime v) = "(UnixTime " <> show v <> ")"
@@ -113,43 +112,43 @@ instance ordUnixTime :: Ord UnixTime where
   compare (UnixTime u1) (UnixTime u2) = compare u1 u2
 
 ------------------------- ValueRange ------------------------- 
-newtype ValueRange = ValueRange 
+newtype ValueRange = ValueRange
   { minVal :: Number
-  ,  maxVal :: Number 
+  , maxVal :: Number
   }
 
-derive instance eqValueRange :: Eq ValueRange 
+derive instance eqValueRange :: Eq ValueRange
 
 instance showValueRange :: Show ValueRange where
   show (ValueRange v) = "(ValueRange " <> show v <> ")"
 
 valueRange :: Number -> Number -> ValueRange
-valueRange minv maxv = 
+valueRange minv maxv =
   ValueRange { minVal: minv, maxVal: maxv }
 
 valueRangeZeroBased :: ValueRange -> ValueRange
-valueRangeZeroBased (ValueRange {maxVal}) = 
+valueRangeZeroBased (ValueRange { maxVal }) =
   ValueRange { minVal: 0.0, maxVal: maxVal }
 
 ------------------------- Padding ------------------------- 
-newtype Padding = Padding 
+newtype Padding = Padding
   { left :: Number
   , top :: Number
   , right :: Number
-  , bottom :: Number 
+  , bottom :: Number
   }
 
-derive instance eqPadding :: Eq Padding 
+derive instance eqPadding :: Eq Padding
 
 instance showPadding :: Show Padding where
   show (Padding v) = "(Padding " <> show v <> ")"
 
 ------------------------- RulerLine ------------------------- 
-type RulerLineBoundary = { p1:: Number, p2 :: Number }
+type RulerLineBoundary = { p1 :: Number, p2 :: Number }
 
-newtype RulerLineInfo = RulerLineInfo 
+newtype RulerLineInfo = RulerLineInfo
   { p0 :: Number
-  , tx :: String 
+  , tx :: String
   }
 
 instance showRulerLineInfo :: Show RulerLineInfo where
@@ -157,26 +156,26 @@ instance showRulerLineInfo :: Show RulerLineInfo where
 
 ------------------------- Offset ------------------------- 
 
-newtype OffsetBoundary = OffsetBoundary 
+newtype OffsetBoundary = OffsetBoundary
   { oHead :: Int
-  , oLast :: Int 
+  , oLast :: Int
   }
 
 instance showOffsetBoundary :: Show OffsetBoundary where
   show (OffsetBoundary v) = "(OffsetBoundary " <> show v <> ")"
-    
+
 ------------------------- Scaling ------------------------- 
 newtype Scaling = Scaling Number
 
 ------------------------- Util ------------------------- 
 
 calcPpx :: ChartWidth -> OffsetBoundary -> Padding -> Number
-calcPpx (ChartWidth w) (OffsetBoundary b) (Padding p) = 
+calcPpx (ChartWidth w) (OffsetBoundary b) (Padding p) =
   let
     diffDays = toNumber $ b.oHead - b.oLast + 1
     padding_w = w - p.left - p.right
-  in 
-  padding_w / diffDays
+  in
+    padding_w / diffDays
 
 {-
 calcPpx_ :: ChartDim -> Array Int -> Padding -> Maybe Number
@@ -194,11 +193,11 @@ calcPpx_ (ChartDim dim) offsets (Padding p) =
 -}
 
 calcPpy :: ChartHeight -> ValueRange -> Padding -> Number
-calcPpy (ChartHeight dim) (ValueRange {minVal,maxVal}) (Padding p) = 
+calcPpy (ChartHeight dim) (ValueRange { minVal, maxVal }) (Padding p) =
   let
     padding_justified_h = dim - p.top - p.bottom
   in
-  padding_justified_h / (maxVal - minVal)
+    padding_justified_h / (maxVal - minVal)
 
 ---------------------------- Env ------------------------------
 
@@ -209,39 +208,39 @@ derive instance eqChartId :: Eq ChartId
 instance showChartId :: Show ChartId where
   show (ChartId c) = "(ChartId " <> c <> ")"
 
-newtype ChartMapping = ChartMapping 
-    { chartId :: ChartId
-    , canvasId :: HtmlId
-    , chartHeight :: ChartHeight 
-    , levelCanvasId :: HtmlId
-    }
+newtype ChartMapping = ChartMapping
+  { chartId :: ChartId
+  , canvasId :: HtmlId
+  , chartHeight :: ChartHeight
+  , levelCanvasId :: HtmlId
+  }
 
-derive instance eqChartMapping :: Eq ChartMapping 
+derive instance eqChartMapping :: Eq ChartMapping
 
 instance showChartMapping :: Show ChartMapping where
-    show (ChartMapping x) = "(ChartMapping " <> show x <> ")"
+  show (ChartMapping x) = "(ChartMapping " <> show x <> ")"
 
 type ChartMappings = Array ChartMapping
 
 data ChartType
-    = DayChart
-    | WeekChart
-    | MonthChart
-    | EmptyChartType
+  = DayChart
+  | WeekChart
+  | MonthChart
+  | EmptyChartType
 
 asChartType :: Int -> ChartType
-asChartType 1 = 
-    DayChart
-asChartType 2 = 
-    WeekChart
-asChartType 3 = 
-    MonthChart
-asChartType _ = 
-    DayChart
+asChartType 1 =
+  DayChart
+asChartType 2 =
+  WeekChart
+asChartType 3 =
+  MonthChart
+asChartType _ =
+  DayChart
 
-chartTypeAsInt  :: ChartType -> Int
-chartTypeAsInt DayChart   = 1 
-chartTypeAsInt WeekChart  = 2
+chartTypeAsInt :: ChartType -> Int
+chartTypeAsInt DayChart = 1
+chartTypeAsInt WeekChart = 2
 chartTypeAsInt MonthChart = 3
 chartTypeAsInt EmptyChartType = 4
 
@@ -249,13 +248,13 @@ newtype Drop = Drop Int
 
 newtype Take = Take Int
 
-newtype Env = 
-    Env
+newtype Env =
+  Env
     { ticker :: StockTicker
     , dropAmt :: Drop
     , takeAmt :: Take
     , chartType :: ChartType
-    , mappings :: ChartMappings 
+    , mappings :: ChartMappings
     , globalChartWidth :: ChartWidth
     , scaling :: Scaling
     }

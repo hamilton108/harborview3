@@ -24,13 +24,9 @@ print("The hexadecimal equivalent of hash is : ", end ="")
 print(result.hexdigest())
 """
 
-APPS = { 1: "charts",
-         2: "optionpurchase"
-    }
-
 PROJ = "/home/rcs/opt/java/harborview3"
 
-TARGET = "%s/src/main/resources/static/js/maunaloa" % PROJ
+TARGET = "%s/src/main/resources/static/js" % PROJ
 
 SRC = "%s/purescript/dist" % PROJ
 
@@ -49,24 +45,29 @@ def md5_sum(src_file):
     result = tmp.hexdigest() # [0:10]
     return result
 
+PKG = 1
+TPL = 2
+HTML = 3
+MAIN = 4
+JS = 5
+
+APPS = { 1: { PKG: "maunaloa", TPL: "charts.html.tpl", HTML: "charts.html", MAIN: "Main", JS: "charts" },
+         2: {} 
+}
+
 class Application:
-    def __init__(self, app_id, main_module) -> None:
-        self.main_module = main_module 
-        self.app_id = app_id
-        self.app_name = APPS[app_id]
+    def __init__(self, app_id) -> None:
+        app_info = APPS[app_id]
+        self.main_module = app_info[MAIN]
+        self.pkg = app_info[PKG]
+        self.tpl = app_info[TPL]
+        self.html = app_info[HTML]
+        self.js = app_info[JS]
         self._md5sum = None
-
-        if app_id == 1:
-            self.tpl = "charts.html.tpl"
-            self.html = "charts.html"
-        else:
-            self.tpl = "optionpurchase.html.tpl"
-            self.html = "optionpurchases.html"
-
 
     @property
     def src_file(self):
-        return "ps-%s.js" % self.app_name
+        return "ps-%s.js" % self.js
 
     @property 
     def build_target(self):
@@ -88,22 +89,23 @@ class Application:
 
     @property
     def md5_file_name(self):
-        return "ps-%s-%s.js" %  (self.app_name,self.md5sum)
+        return "ps-%s-%s.js" %  (self.js,self.md5sum)
        
     def build(self):
-        proc.run(["spago", "bundle", "--source-maps", "--module", self.main_module, "--outfile", self.build_target])
+        proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", self.build_target])
 
     def copy(self):
-        copyfile(self.src,"%s/%s" % (TARGET,self.md5_file_name))
-        copyfile("%s/%s" % (SRC,self.map_file_name), "%s/%s" % (TARGET,self.map_file_name))
+        copyfile(self.src,"%s/%s/%s" % (TARGET,self.pkg,self.md5_file_name))
+        copyfile("%s/%s" % (SRC,self.map_file_name), "%s/%s/%s" % (TARGET,self.pkg,self.map_file_name))
 
     def minify(self):
-        proc.run(["esbuild", JS_SRC, "--minify", "--outfile=%s" % JS_MIN])
+        #proc.run(["esbuild", JS_SRC, "--minify", "--outfile=%s" % JS_MIN])
+        pass
 
     def render(self):
-        tpl = Template(filename="%s/%s" % (TPL_SRC,self.tpl))
+        tpl = Template(filename="%s/%s/%s" % (TPL_SRC,self.pkg,self.tpl))
         result = tpl.render(psname=self.md5_file_name)
-        dist = "%s/maunaloa/%s" % (TPL_DIST,self.html)
+        dist = "%s/%s/%s" % (TPL_DIST,self.pkg,self.html)
         with(open(dist, "w")) as f:
             f.write(result)
 
@@ -153,10 +155,6 @@ if __name__ == '__main__':
                       help="Render html templates. Default: False")
     parser.add_option("--min", action="store_true", default=False,
                       help="Minify js file. Default: False")
-    parser.add_option("--md5file", action="store_true", default=False,
-                      help="Save md5 sum in filename (instead of versioning). Default: False")
-    parser.add_option("--md5", action="store_true", default=False,
-                      help="Check md5 sum of dist/ps-charts.js. Default: False")
     parser.add_option("--app", dest="app", action="store", type="int",
                       metavar="APP", help="App name: 1: Maunaloa, 2: OptionPurchase")
     (opts, args) = parser.parse_args()
@@ -165,9 +163,9 @@ if __name__ == '__main__':
         sass()
     else:
         if opts.app == 1:
-            cur_app = Application(1,"Main") 
+            cur_app = Application(1) 
         else:
-            cur_app = Application(2,"OptionPurchaseMain") 
+            cur_app = Application(2) 
 
         if opts.build == True:
             cur_app.build()
