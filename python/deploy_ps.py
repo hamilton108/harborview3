@@ -52,7 +52,7 @@ MAIN = 4
 JS = 5
 
 APPS = { 1: { PKG: "maunaloa", TPL: "charts.html.tpl", HTML: "charts.html", MAIN: "Main", JS: "charts" },
-         2: {} 
+         2: { PKG: "optionpurchase", TPL: "optionpurchase.html.tpl", HTML: "optionpurchases.html", MAIN: "OptionPurchaseMain", JS: "optionpurchase" },
 }
 
 class Application:
