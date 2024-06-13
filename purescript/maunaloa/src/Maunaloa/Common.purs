@@ -32,9 +32,6 @@ instance showChartWidth :: Show ChartWidth where
 
 type Xaxis = Array Number
 
-dayInMillis :: Number
-dayInMillis = 86400000.0
-
 ------------------------- Pix ------------------------- 
 newtype Pix = Pix Number
 
@@ -99,17 +96,6 @@ instance showHtmlId :: Show HtmlId where
   show (NoHtmlId) = "(NoHtmlId)"
 
 derive instance eqHtmlId :: Eq HtmlId
-
-------------------------- UnixTime ------------------------- 
-newtype UnixTime = UnixTime Number
-
-derive instance eqUnixTime :: Eq UnixTime
-
-instance showUnixTime :: Show UnixTime where
-  show (UnixTime v) = "(UnixTime " <> show v <> ")"
-
-instance ordUnixTime :: Ord UnixTime where
-  compare (UnixTime u1) (UnixTime u2) = compare u1 u2
 
 ------------------------- ValueRange ------------------------- 
 newtype ValueRange = ValueRange

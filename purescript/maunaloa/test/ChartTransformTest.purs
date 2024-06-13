@@ -4,40 +4,40 @@ import Prelude
 
 import Test.Unit.Assert as Assert
 --import Test.Unit.Console (log)
-import Test.Unit 
+import Test.Unit
   ( suite
   , test
   , failure
   , TestSuite
   , Test
   )
-import Control.Monad.Reader 
-  ( runReader 
+import Control.Monad.Reader
+  ( runReader
   )
-import Data.Maybe 
+import Data.Maybe
   ( Maybe(..)
   , fromMaybe
   )
-import Data.Array 
+import Data.Array
   ( length
   , take
   , head
-  ) 
-import Data.Either 
+  )
+import Data.Either
   ( Either
   , fromRight
   )
 --import Partial.Unsafe (unsafePartial)
 
 import Data.Argonaut.Parser as Parser
-import Data.Argonaut.Core 
+import Data.Argonaut.Core
   ( Json
   , fromString
   )
 --import Data.Argonaut.Decode as Decode
 --import Data.Argonaut.Decode.Error (JsonDecodeError)
 
-import HarborView.Maunaloa.JsonCharts 
+import HarborView.Maunaloa.JsonCharts
   ( JsonChart
   , JsonChartResponse
   , JsonChartWindow(..)
@@ -48,14 +48,14 @@ import HarborView.Maunaloa.ChartCollection
   ( ChartCollection(..)
   , EmptyChartCollection(..)
   )
-import HarborView.Maunaloa.Common 
+import HarborView.Common (UnixTime(..))
+import HarborView.Maunaloa.Common
   ( HtmlId(..)
   , StockTicker(..)
   , ChartHeight(..)
   , ChartWidth(..)
   , Scaling(..)
   , ValueRange
-  , UnixTime(..)
   , Pix(..)
   , Padding(..)
   , ChartId(..)
@@ -74,8 +74,8 @@ import HarborView.Maunaloa.Chart
   , emptyChart
   )
 import HarborView.Maunaloa.ChartTransform
-  ( minMaxRanges 
-  , normalizeLine 
+  ( minMaxRanges
+  , normalizeLine
   , transform
   , transformEmpty
   , chartWindow
@@ -95,7 +95,7 @@ import HarborView.Maunaloa.Candlestick
 
 testJsonStr :: String
 testJsonStr =
-    """{"ticker":"NHY","chart":
+  """{"ticker":"NHY","chart":
             {"lines":[
                 [57.4,57.0,56.5,56.2,56.1,55.8,55.8,56.4,57.2,57.2,56.8,56.4,56.2,55.9,56.1,56.4,56.2,55.7,55.1,54.7,
                 54.4,54.0,53.5,52.8,51.9,51.1,50.8,50.9,51.4,52.3,53.2,53.8,54.0,53.9,54.0,54.3,54.7,55.0,55.0,55.0,
@@ -197,39 +197,39 @@ testJson = Parser.jsonParser testJsonStr
 defaultJsonChartInfo :: JsonChartResponse
 defaultJsonChartInfo =
   { ticker: "NHY"
-  , chart: emptyJsonChart 
-  , chart2: emptyJsonChart 
-  , chart3: emptyJsonChart 
+  , chart: emptyJsonChart
+  , chart2: emptyJsonChart
+  , chart3: emptyJsonChart
   , xAxis: []
   , minDx: 0.0
   }
 
 chartMapping :: HtmlId -> ChartMapping
-chartMapping levelCanvasId = 
-  ChartMapping 
-  { chartId: ChartId "chart"
-  , canvasId: HtmlId "test-canvasId"
-  , chartHeight: ChartHeight 500.0
-  , levelCanvasId: levelCanvasId 
-  }
+chartMapping levelCanvasId =
+  ChartMapping
+    { chartId: ChartId "chart"
+    , canvasId: HtmlId "test-canvasId"
+    , chartHeight: ChartHeight 500.0
+    , levelCanvasId: levelCanvasId
+    }
 
 defaultChartMappings :: ChartMappings
 defaultChartMappings =
-  let 
-    mapping1 = chartMapping (HtmlId "level-id") 
+  let
+    mapping1 = chartMapping (HtmlId "level-id")
   in
-  [mapping1]
+    [ mapping1 ]
 
 testJsonChartResponse :: JsonChartResponse
 testJsonChartResponse =
-  let 
+  let
     json = fromRight (fromString "") testJson
     result = chartsFromJson json
   in
-  fromRight defaultJsonChartInfo result
+    fromRight defaultJsonChartInfo result
 
 testValueRanges :: Array (Maybe ValueRange)
-testValueRanges = 
+testValueRanges =
   [ Nothing
   , Nothing
   , Just (valueRange 1.0 7.5)
@@ -240,15 +240,15 @@ testValueRanges =
   ]
 
 expectedValueRange :: ValueRange
-expectedValueRange = 
+expectedValueRange =
   valueRange 1.0 10.5
 
 expectedValueRangeWithScale :: ValueRange
-expectedValueRangeWithScale = 
+expectedValueRangeWithScale =
   valueRange 0.5 21.0
 
 testLine :: Array Number
-testLine = 
+testLine =
   [ (-7.0)
   , (-10.0)
   , (-6.0)
@@ -272,7 +272,7 @@ testLine =
   ]
 
 expectedLine :: Array Number
-expectedLine = 
+expectedLine =
   [ (-0.7)
   , (-1.0)
   , (-0.6)
@@ -296,7 +296,7 @@ expectedLine =
   ]
 
 expectedXaxis10 :: Array Number
-expectedXaxis10 = 
+expectedXaxis10 =
   [ 1250.9701492537315
   , 1241.9402985074628
   , 1232.910447761194
@@ -310,7 +310,7 @@ expectedXaxis10 =
   ]
 
 expectedChartLines10 :: Array Number
-expectedChartLines10 = 
+expectedChartLines10 =
   [ 128.24635528573714
   , 140.3593522430676
   , 155.50059843973077
@@ -324,34 +324,34 @@ expectedChartLines10 =
   ]
 
 expectedCandlesticks10 :: Array Candlestick
-expectedCandlesticks10 = 
-  [ (Candlestick { c: 113.71075893694038, h: 95.54126350094477, l: 128.85200513360354, o: 116.73900817627305})
-  , (Candlestick { c: 107.04861061040862, h: 107.04861061040862, l: 143.9932513302667, o: 134.30285376440227})
-  , (Candlestick { c: 130.06330482933657, h: 124.61245619853783, l: 191.83958931172242, o: 171.24749448426053})
-  , (Candlestick { c: 165.79664585346183, h: 110.0768598497413, l: 185.7830908330571, o: 110.0768598497413})
-  , (Candlestick { c: 151.26104950466507, h: 146.41585072173297, l: 167.00794554919483, o: 155.50059843973077})
-  , (Candlestick { c: 162.76839661412913, h: 156.7118981354638, l: 215.45993337851678, o: 188.20569022452312})
-  , (Candlestick { c: 189.41698992025616, h: 189.41698992025616, l: 229.9955297273135, o: 229.3898798794469})
-  , (Candlestick { c: 245.74242577184307, h: 185.7830908330571, l: 253.01022394624144, o: 185.7830908330571})
-  , (Candlestick { c: 188.81134007238975, h: 88.87911517441279, l: 190.0226397681228, o: 94.93561365307814})
-  , (Candlestick { c: 110.0768598497413, h: 104.02036137107595, l: 131.2746045250698, o: 127.0350555900041})
+expectedCandlesticks10 =
+  [ (Candlestick { c: 113.71075893694038, h: 95.54126350094477, l: 128.85200513360354, o: 116.73900817627305 })
+  , (Candlestick { c: 107.04861061040862, h: 107.04861061040862, l: 143.9932513302667, o: 134.30285376440227 })
+  , (Candlestick { c: 130.06330482933657, h: 124.61245619853783, l: 191.83958931172242, o: 171.24749448426053 })
+  , (Candlestick { c: 165.79664585346183, h: 110.0768598497413, l: 185.7830908330571, o: 110.0768598497413 })
+  , (Candlestick { c: 151.26104950466507, h: 146.41585072173297, l: 167.00794554919483, o: 155.50059843973077 })
+  , (Candlestick { c: 162.76839661412913, h: 156.7118981354638, l: 215.45993337851678, o: 188.20569022452312 })
+  , (Candlestick { c: 189.41698992025616, h: 189.41698992025616, l: 229.9955297273135, o: 229.3898798794469 })
+  , (Candlestick { c: 245.74242577184307, h: 185.7830908330571, l: 253.01022394624144, o: 185.7830908330571 })
+  , (Candlestick { c: 188.81134007238975, h: 88.87911517441279, l: 190.0226397681228, o: 94.93561365307814 })
+  , (Candlestick { c: 110.0768598497413, h: 104.02036137107595, l: 131.2746045250698, o: 127.0350555900041 })
   ]
 
 expectedVruler :: VRuler
-expectedVruler = 
-  VRuler 
-  { h: ChartHeight 500.0
-  , maxVal: 61.635000000000005
-  , padding: 
-      Padding 
-      { bottom: 0.0
-      , left: 50.0
-      , right: 50.0
-      , top: 0.0
-      }
-  , ppy: Pix 30.28249239332631
-  , w: ChartWidth 1310.0
-  }
+expectedVruler =
+  VRuler
+    { h: ChartHeight 500.0
+    , maxVal: 61.635000000000005
+    , padding:
+        Padding
+          { bottom: 0.0
+          , left: 50.0
+          , right: 50.0
+          , top: 0.0
+          }
+    , ppy: Pix 30.28249239332631
+    , w: ChartWidth 1310.0
+    }
 
 testEnv :: Env
 testEnv = Env
@@ -359,7 +359,7 @@ testEnv = Env
   , dropAmt: Drop 0
   , takeAmt: Take 90
   , chartType: DayChart
-  , mappings: defaultChartMappings 
+  , mappings: defaultChartMappings
   , globalChartWidth: ChartWidth 1310.0
   , scaling: Scaling 1.05
   }
@@ -367,72 +367,71 @@ testEnv = Env
 getFirstChartFromColl :: Array Chart -> ChartContent
 getFirstChartFromColl charts =
   case take 1 charts of
-    [c] -> 
-      case c of 
-        (Chart cx) -> 
+    [ c ] ->
+      case c of
+        (Chart cx) ->
           cx
         _ ->
           emptyChart
     _ -> emptyChart
 
-emptyChart2 :: ChartContent2 
-emptyChart2 = 
+emptyChart2 :: ChartContent2
+emptyChart2 =
   { canvasId: HtmlId "empty chart"
   , w: ChartWidth 0.0
   , h: ChartHeight 0.0
   }
 
 getFirstChartFromColl2 :: Array Chart -> ChartContent2
-getFirstChartFromColl2 [c] = 
-  case c of 
-    (ChartWithoutTicker cx) -> 
+getFirstChartFromColl2 [ c ] =
+  case c of
+    (ChartWithoutTicker cx) ->
       cx
     _ ->
       emptyChart2
-getFirstChartFromColl2 _ = 
+getFirstChartFromColl2 _ =
   emptyChart2
 
 testTransformChartMain :: JsonChart -> Test
 testTransformChartMain chart =
-  let 
+  let
     cw = chartWindow (Drop 0) (Take 90) chart (Scaling 1.0) false 10
   in
-  case cw of 
-    (JsonChartWindow cw1) ->
-      Assert.equal 90 (length cw1.candlesticks) *>
-      Assert.equal 90 (length $ fromMaybe [] $ head cw1.lines)
-    (JsonChartWindowBar _) ->
-      failure "JsonChartWindowBar"
-    JsonChartWindowEmpty ->
-      failure "JsonChartWindowEmpty"
+    case cw of
+      (JsonChartWindow cw1) ->
+        Assert.equal 90 (length cw1.candlesticks) *>
+          Assert.equal 90 (length $ fromMaybe [] $ head cw1.lines)
+      (JsonChartWindowBar _) ->
+        failure "JsonChartWindowBar"
+      JsonChartWindowEmpty ->
+        failure "JsonChartWindowEmpty"
 
 testTransformChartBar :: JsonChart -> Test
 testTransformChartBar chart =
-  let 
+  let
     cw = chartWindow (Drop 0) (Take 90) chart (Scaling 1.0) false 10
   in
-  case cw of 
-    (JsonChartWindow _) ->
-      failure "JsonChartWindow"
-    (JsonChartWindowBar cw1) ->
-      Assert.equal 90 (length $ fromMaybe [] $ head cw1.bars)
-    JsonChartWindowEmpty ->
-      failure "JsonChartWindowEmpty"
+    case cw of
+      (JsonChartWindow _) ->
+        failure "JsonChartWindow"
+      (JsonChartWindowBar cw1) ->
+        Assert.equal 90 (length $ fromMaybe [] $ head cw1.bars)
+      JsonChartWindowEmpty ->
+        failure "JsonChartWindowEmpty"
 
 testTransformEmpty :: Test
 testTransformEmpty =
   Assert.equal 1 (1 :: Int)
 
-
 testChartTransformSuite :: TestSuite
-testChartTransformSuite = 
+testChartTransformSuite =
   suite "TestChartsSuite" do
     test "minMaxRanges no scaling" do
       let actual = minMaxRanges (Scaling 1.0) testValueRanges
-      Assert.equal expectedValueRange actual 
+      Assert.equal expectedValueRange actual
     test "minMaxRanges with scaling" do
       let actual = minMaxRanges (Scaling 2.0) testValueRanges
-      Assert.equal expectedValueRangeWithScale actual 
+      Assert.equal expectedValueRangeWithScale actual
     test "normalizeLine" do
       let actual = normalizeLine testLine
       Assert.equal expectedLine actual
@@ -441,13 +440,13 @@ testChartTransformSuite =
       testTransformChartMain testResponse.chart
       testTransformChartBar testResponse.chart3
 
-      let (ChartCollection coll) = runReader (transform testResponse) testEnv 
+      let (ChartCollection coll) = runReader (transform testResponse) testEnv
       let (HRuler hruler) = coll.hruler
       Assert.equal 1 (length coll.charts)
       Assert.equal (UnixTime 1615939200000.0) hruler.startTime
       Assert.equal (UnixTime 1627430400000.0) hruler.endTime
       let (StockTicker tkr) = coll.ticker
-      Assert.equal "NHY" tkr 
+      Assert.equal "NHY" tkr
       Assert.equal (Pix 9.029850746268657) hruler.ppx
       let actualXaxis10 = take 10 hruler.xaxis
       Assert.equal expectedXaxis10 actualXaxis10
@@ -456,24 +455,23 @@ testChartTransformSuite =
       let line1_1 = fromMaybe [] (head chart1.lines)
       Assert.equal 90 (length line1_1)
       Assert.equal 90 (length chart1.candlesticks)
-      let actualChartLines10 = take 10 line1_1 
+      let actualChartLines10 = take 10 line1_1
       Assert.equal expectedChartLines10 actualChartLines10
-      let actualCandlesticks10 = take 10 chart1.candlesticks 
-      Assert.equal expectedCandlesticks10 actualCandlesticks10 
-      {-
-      Assert.equal (HtmlId "test-canvasId") chart1.canvasId
-      Assert.equal expectedChartLevel chart1.chartLevel
-      Assert.equal (ChartWidth 1310.0) chart1.w
-      Assert.equal (ChartHeight 500.0) chart1.h
-      -}
+      let actualCandlesticks10 = take 10 chart1.candlesticks
+      Assert.equal expectedCandlesticks10 actualCandlesticks10
+    {-
+    Assert.equal (HtmlId "test-canvasId") chart1.canvasId
+    Assert.equal expectedChartLevel chart1.chartLevel
+    Assert.equal (ChartWidth 1310.0) chart1.w
+    Assert.equal (ChartHeight 500.0) chart1.h
+    -}
     test "transformEmpty" do
       testTransformEmpty
-      let (EmptyChartCollection coll) = runReader transformEmpty testEnv 
+      let (EmptyChartCollection coll) = runReader transformEmpty testEnv
       Assert.equal 1 (length coll)
       let chart1 = getFirstChartFromColl2 coll
       --log (show chart1)
       Assert.equal (HtmlId "test-canvasId") chart1.canvasId
       Assert.equal (ChartWidth 1310.0) chart1.w
       Assert.equal (ChartHeight 500.0) chart1.h
-
 

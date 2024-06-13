@@ -42,15 +42,17 @@ import HarborView.Maunaloa.MaunaloaError
   , handleErrorAff
   )
 
-import HarborView.Common (defaultEventHandling)
+import HarborView.Common
+  ( UnixTime(..)
+  , defaultEventHandling
+  )
+
 import HarborView.Maunaloa.Common
   ( Pix(..)
   , ChartMapping(..)
   , HtmlId(..)
   , OptionTicker(..)
   , StockTicker(..)
-  , UnixTime(..)
-  , Pix(..)
   , ChartType
   , JsonSpot
   , chartTypeAsInt
