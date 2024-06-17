@@ -24,7 +24,8 @@
 
 
     <!-- Local stuff -->
-    <link rel="stylesheet" href="/css/${psname}">
+    <!-- <link rel="stylesheet" href="/css/${psname}"> -->
+
     <link rel="stylesheet" href="/css/sortable.min.css">
 </head>
 
