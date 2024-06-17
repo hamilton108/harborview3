@@ -45,15 +45,43 @@ def md5_sum(src_file):
     result = tmp.hexdigest() # [0:10]
     return result
 
-PKG = 1
-TPL = 2
-HTML = 3
-MAIN = 4
-JS = 5
+PKG     = 1
+TPL     = 2
+HTML    = 3
+MAIN    = 4
+JS      = 5
+SCSS    = 6
+OUT     = 7
 
-APPS = { 1: { PKG: "maunaloa", TPL: "charts.html.tpl", HTML: "charts.html", MAIN: "Main", JS: "charts" },
-         2: { PKG: "optionpurchase", TPL: "optionpurchase.html.tpl", HTML: "optionpurchases.html", MAIN: "OptionPurchaseMain", JS: "optionpurchase" },
+APPS = { 1: { PKG: "maunaloa", TPL: "charts.html.tpl", HTML: "charts.html", SCSS: "", MAIN: "Main", JS: "charts" },
+         2: { PKG: "optionpurchase", TPL: "optionpurchase.html.tpl", HTML: "optionpurchases.html", SCSS: "", MAIN: "OptionPurchaseMain", JS: "optionpurchase" },
+         3: { PKG: "options", TPL: "options.html.tpl", HTML: "options.html", SCSS: "", MAIN: "OptionsMain", JS: "options" },
 }
+
+APPS2 = { 2: {  PKG: "options", 
+                OUT: "ps-options.js", 
+                TPL: "options.html.tpl", 
+                HTML: "charts.html", 
+                MAIN: "Main" },
+}
+
+class Application2:
+    def __init__(self, app_id) -> None:
+        a = APPS[app_id]
+        self.pkg = a[PKG]
+        self.main_module = a[MAIN]
+        self.out_file = a[OUT]
+
+    def build(self):
+        out = "dist/%s" % self.out_file
+        proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", out])
+
+    def copy(self):
+        pass
+
+    def render(self):
+        pass
+
 
 class Application:
     def __init__(self, app_id) -> None:
@@ -102,12 +130,54 @@ class Application:
         #proc.run(["esbuild", JS_SRC, "--minify", "--outfile=%s" % JS_MIN])
         pass
 
+    def md5_cache(self,is_css):
+        if is_css == True:
+            f = open("dist/md5_css", "r") 
+        else:
+            f = open("dist/md5_ps", "r") 
+        lx = f.readline()
+        f.close()
+        return lx.strip()
+
+    def write_md5_cache(self,is_css,value):
+        if is_css == True:
+            f = open("dist/md5_css", "w") 
+        else:
+            f = open("dist/md5_ps", "w") 
+        f.write("%s" % value)
+        f.close()
+
+    def sass(self):
+        css_tmp = "dist/%s.css" % self.pkg
+        proc.run(["sass", "../sass-src/%s/%s.scss" % (self.pkg,self.pkg), css_tmp])
+        tpl = Template(filename="%s/%s/%s" % (TPL_SRC,self.pkg,self.tpl))
+        md5 = md5_sum(css_tmp)[:8]
+        md5_fname = "%s-%s.css" % (self.pkg,md5)
+        print (md5_fname)
+        self.write_md5_cache(True,md5)
+        md5_ps = "%s-%s.js" % (self.pkg,self.md5_cache(False))
+        result = tpl.render(cssname=md5_fname,psname=md5_ps)
+        dist = "%s/%s/%s.html" % (TPL_DIST, self.pkg, self.pkg)
+        with(open(dist, "w")) as f:
+            f.write(result)
+        copyfile(css_tmp, "%s/%s" % (CSS_HOME,md5_fname))
+
     def render(self):
         tpl = Template(filename="%s/%s/%s" % (TPL_SRC,self.pkg,self.tpl))
         result = tpl.render(psname=self.md5_file_name)
         dist = "%s/%s/%s" % (TPL_DIST,self.pkg,self.html)
         with(open(dist, "w")) as f:
             f.write(result)
+
+    def show_param(self):
+        print("****************** %s ******************" % self.pkg)
+        print("\ttpl: %s" % self.tpl)
+        print("\thtml: %s" % self.html)
+        print("\tjs: %s" % self.js)
+        print("\tsrc_file: %s" % self.src_file)
+        print("\tbuild_target: %s" % self.build_target)
+        print("\tsrc: %s" % self.src)
+        print("\tmd5_file_name: %s" % self.md5_file_name)
 
 def sass():
     proc.run(["sass", "../sass-src/harborview.scss", CSS_SRC])
@@ -157,25 +227,27 @@ if __name__ == '__main__':
                       help="Minify js file. Default: False")
     parser.add_option("--app", dest="app", action="store", type="int",
                       metavar="APP", help="App name: 1: Maunaloa, 2: OptionPurchase")
+    parser.add_option("--param", action="store_true", default=False,
+                      help="Show Application parameters. Default: False")
     (opts, args) = parser.parse_args()
 
-    if opts.sass == True:
-        sass()
-    else:
-        if opts.app == 1:
-            cur_app = Application(1) 
-        else:
-            cur_app = Application(2) 
+    cur_app = Application(opts.app) 
 
-        if opts.build == True:
-            cur_app.build()
-            cur_app.render()
-            cur_app.copy()
-            print (cur_app.src)
-            print (cur_app.md5_file_name)
-        elif opts.render == True:
-            cur_app.render()
-            cur_app.copy()
+    if opts.sass == True:
+        cur_app.sass()
+
+    if opts.param == True:
+        cur_app.show_param()
+
+    if opts.build == True:
+        cur_app.build()
+        cur_app.render()
+        cur_app.copy()
+        print (cur_app.src)
+        print (cur_app.md5_file_name)
+    elif opts.render == True:
+        cur_app.render()
+        cur_app.copy()
 
 
 
