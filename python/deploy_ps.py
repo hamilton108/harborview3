@@ -90,6 +90,12 @@ class Builder:
     def out_file(self):
         return "%s/%s" % (self.pkg,self._out_file)
 
+    def copy(self):
+        print(self.out_file)
+        print(self.target)
+        print("Copying ...")
+        copyfile(self.out_file, self.target)
+
 
 class Sass(Builder):
     def __init__(self,app_id) -> None:
@@ -110,9 +116,6 @@ class Sass(Builder):
     def build(self):
         proc.run(["sass", "../sass-src/%s/%s.scss" % (self.pkg,self.pkg), self.out_file])
 
-    def copy(self):
-        print(self.out_file)
-        print(self.target)
 
 class Javascript(Builder):
     def __init__(self,app_id) -> None:
@@ -132,11 +135,6 @@ class Javascript(Builder):
 
     def build(self):
         proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", self.out_file])
-
-    def copy(self):
-        print(self.out_file)
-        print(self.target)
-        copyfile(self.out_file, self.target)
 
 APP_JS = 1 
 APP_SASS = 2
@@ -306,6 +304,9 @@ if __name__ == '__main__':
 
     sass = Sass(2)
     sass.copy()
+
+    js = Javascript(2)
+    js.copy()
 
     """
     if opts.sass == True:
