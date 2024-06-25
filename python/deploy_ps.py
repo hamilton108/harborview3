@@ -28,7 +28,7 @@ PROJ = "/home/rcs/opt/java/harborview3"
 
 TARGET = "%s/src/main/resources/static/js" % PROJ
 
-SRC = "%s/purescript/dist" % PROJ
+# SRC = "%s/purescript/dist" % PROJ
 
 TPL_DIST = "%s/src/main/resources/templates" % PROJ
 
@@ -52,6 +52,10 @@ MAIN    = 4
 JS      = 5
 SCSS    = 6
 OUT     = 7
+JS_STEM = 8
+CSS_TARGET = 9
+JS_TARGET = 10
+CSS_STEM = 11
 
 APPS = { 1: { PKG: "maunaloa", TPL: "charts.html.tpl", HTML: "charts.html", SCSS: "", MAIN: "Main", JS: "charts" },
          2: { PKG: "optionpurchase", TPL: "optionpurchase.html.tpl", HTML: "optionpurchases.html", SCSS: "", MAIN: "OptionPurchaseMain", JS: "optionpurchase" },
@@ -60,28 +64,93 @@ APPS = { 1: { PKG: "maunaloa", TPL: "charts.html.tpl", HTML: "charts.html", SCSS
 
 APPS2 = { 2: {  PKG: "options", 
                 OUT: "ps-options.js", 
-                TPL: "options.html.tpl", 
-                HTML: "charts.html", 
-                MAIN: "Main" },
+                JS_TARGET: "options",
+                TPL: "options/options.html.tpl", 
+                HTML: "options/options.html", 
+                MAIN: "OptionsMain",
+                JS_STEM: "ps-options",
+                CSS_STEM: "options",
+                CSS_TARGET: "options" },
 }
 
-class Application2:
-    def __init__(self, app_id) -> None:
-        a = APPS[app_id]
+class Builder:
+    def __init__(self,app_id) -> None:
+        a = APPS2[app_id]
         self.pkg = a[PKG]
         self.main_module = a[MAIN]
-        self.out_file = a[OUT]
+        self._md5sum = None
+
+    @property
+    def md5sum(self):
+        if self._md5sum == None:
+            self._md5sum = md5_sum(self.out_file)[0:8]
+        return self._md5sum
+
+    @property
+    def out_file(self):
+        return "%s/%s" % (self.pkg,self._out_file)
+
+
+class Sass(Builder):
+    def __init__(self,app_id) -> None:
+        Builder.__init__(self,app_id)
+        a = APPS2[app_id]
+        self._target = a[CSS_TARGET]
+        self.stem = a[CSS_STEM]
+        self._out_file = "dist/%s.css" % self.pkg
+
+    @property
+    def target(self):
+        return "%s/%s/%s" % (CSS_HOME, self._target, self.md5_file_name)
+
+    @property
+    def md5_file_name(self):
+        return "%s-%s.css" % (self.stem,self.md5sum)
 
     def build(self):
-        out = "dist/%s" % self.out_file
-        proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", out])
+        proc.run(["sass", "../sass-src/%s/%s.scss" % (self.pkg,self.pkg), self.out_file])
 
     def copy(self):
-        pass
+        print(self.out_file)
+        print(self.target)
 
-    def render(self):
-        pass
+class Javascript(Builder):
+    def __init__(self,app_id) -> None:
+        Builder.__init__(self,app_id)
+        a = APPS2[app_id]
+        self._out_file = "dist/%s" % a[OUT]
+        self.stem = a[JS_STEM]
+        self._target = a[JS_TARGET]
 
+    @property
+    def target(self):
+        return "%s/%s/%s" % (TARGET, self._target, self.md5_file_name)
+
+    @property
+    def md5_file_name(self):
+        return "%s-%s.js" % (self.stem,self.md5sum)
+
+    def build(self):
+        proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", self.out_file])
+
+    def copy(self):
+        print(self.out_file)
+        print(self.target)
+        copyfile(self.out_file, self.target)
+
+APP_JS = 1 
+APP_SASS = 2
+APP_ALL = 3
+
+class Application2:
+    def __init__(self, app_id, app_variant) -> None:
+        self.js = Javascript(app_id) 
+        self.sass = Sass(app_id)
+        self.variant = app_variant
+
+    def process(self):
+        self.js.build()
+        self.js.copy()
 
 class Application:
     def __init__(self, app_id) -> None:
@@ -231,8 +300,14 @@ if __name__ == '__main__':
                       help="Show Application parameters. Default: False")
     (opts, args) = parser.parse_args()
 
-    cur_app = Application(opts.app) 
+    #cur_app = Application2(opts.app,APP_JS) 
 
+    #cur_app.process()
+
+    sass = Sass(2)
+    sass.copy()
+
+    """
     if opts.sass == True:
         cur_app.sass()
 
@@ -248,6 +323,7 @@ if __name__ == '__main__':
     elif opts.render == True:
         cur_app.render()
         cur_app.copy()
+    """
 
 
 
