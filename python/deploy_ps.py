@@ -96,6 +96,8 @@ class Builder:
         print("Copying ...")
         copyfile(self.out_file, self.target)
 
+    def render(self):
+        pass
 
 class Sass(Builder):
     def __init__(self,app_id) -> None:
@@ -286,6 +288,8 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("--sass", action="store_true", default=False,
                       help="Sass. Default: False")
+    parser.add_option("--js", action="store_true", default=False,
+                      help="Javascript. Default: False")
     parser.add_option("--build", action="store_true", default=False,
                       help="Build module. Default: False")
     parser.add_option("--render", action="store_true", default=False,
@@ -298,17 +302,24 @@ if __name__ == '__main__':
                       help="Show Application parameters. Default: False")
     (opts, args) = parser.parse_args()
 
-    #cur_app = Application2(opts.app,APP_JS) 
+    cur_var = 0
+    if opts.js == True:
+        cur_var = 1
+
+    if opts.sass == True:
+        cur_var += 2
+
+    cur_app = Application2(opts.app,cur_var) 
 
     #cur_app.process()
 
+    """
     sass = Sass(2)
     sass.copy()
 
     js = Javascript(2)
     js.copy()
 
-    """
     if opts.sass == True:
         cur_app.sass()
 
