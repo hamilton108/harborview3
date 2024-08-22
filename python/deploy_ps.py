@@ -2,8 +2,6 @@
 
 #from cmath import exp
 from optparse import OptionParser
-#from os.path import (isfile, getmtime, basename)
-import os.path 
 
 from mako.template import Template
 
@@ -24,19 +22,79 @@ print("The hexadecimal equivalent of hash is : ", end ="")
 print(result.hexdigest())
 """
 
-PROJ = "/home/rcs/opt/java/harborview3"
 
-TARGET = "%s/src/main/resources/static/js" % PROJ
+#CSS_HOME = "%s/Purescript/playground/css" % PROJ
 
-# SRC = "%s/purescript/dist" % PROJ
+#JS_SRC = "%s/photoapp.js" % SRC
 
-TPL_DIST = "%s/src/main/resources/templates" % PROJ
+#JS_MAP = "photoapp.js.map"
 
-TPL_SRC = "%s/python/templates" % PROJ
+#JS_SRC_MAP = "%s/photoapp.js.map" % SRC
 
-CSS_HOME = "%s/src/main/resources/static/css" % PROJ
+#JS_MIN = "%s/photoapp.min.js" % SRC
 
-CSS_SRC = "%s/harborview.css" % CSS_HOME 
+#JS_TARGET = "js/%s/photoapp.js" % TARGET
+
+
+"""
+    def render(self):
+        tpl = Template(filename="%s/%s/%s" % (TPL_SRC,self.pkg,self.tpl))
+        result = tpl.render(psfile=self.md5_file_name)
+        dist = "%s/%s/%s" % (TPL_DIST,self.pkg,self.html)
+        with(open(dist, "w")) as f:
+            f.write(result)
+
+
+def render_css_(mfn, tpl_name):
+    tpl = Template(filename="%s/%s.html.tpl" % (TPL_SRC, tpl_name))
+    result = tpl.render(photoapp=mfn)
+    dist = "%s/%s.html" % (TPL_DIST,tpl_name)
+    with(open(dist, "w")) as f:
+        f.write(result)
+
+"""
+
+
+def PROJ(is_studiop):
+    if is_studiop == False:
+        return "/home/rcs/opt/java/harborview3"
+    else:
+        return "/Users/zeus/Projects/PhotoAppMVC"
+
+def TARGET(is_studiop): 
+    return "%s/src/main/resources/static/js" % PROJ(is_studiop)
+
+def CSS_HOME(is_studiop):
+    return "%s/src/main/resources/static/css" % PROJ(is_studiop)
+
+def TPL_SRC(is_studiop): 
+    return "%s/Python/tpl" % PROJ(is_studiop)
+
+def TPL_DIST(is_studiop): 
+    return "%s/src/main/resources/templates" % PROJ(is_studiop)
+
+PKG     = 1
+TPL     = 2
+HTML    = 3
+MAIN    = 4
+JS      = 5
+SCSS    = 6
+JS_STEM = 8
+CSS_TARGET = 9
+JS_TARGET = 10
+CSS_STEM = 11
+SASS = 12
+
+APPS = { 1: {   PKG: "maunaloa", 
+                TPL: "maunaloa/charts.html.tpl", 
+                HTML: "maunaloa/charts.html", 
+                MAIN: "Main",
+                CSS_STEM: "maunaloa",
+                CSS_TARGET: "maunaloa",
+                JS_STEM: "charts",
+                JS_TARGET: "maunaloa",
+                SASS: "maunaloa" },
+}
 
 def md5_sum(src_file):
     with open(src_file, "r") as fx:
@@ -45,37 +103,9 @@ def md5_sum(src_file):
     result = tmp.hexdigest() # [0:10]
     return result
 
-PKG     = 1
-TPL     = 2
-HTML    = 3
-MAIN    = 4
-JS      = 5
-SCSS    = 6
-OUT     = 7
-JS_STEM = 8
-CSS_TARGET = 9
-JS_TARGET = 10
-CSS_STEM = 11
-
-APPS = { 1: { PKG: "maunaloa", TPL: "charts.html.tpl", HTML: "charts.html", SCSS: "", MAIN: "Main", JS: "charts" },
-         2: { PKG: "optionpurchase", TPL: "optionpurchase.html.tpl", HTML: "optionpurchases.html", SCSS: "", MAIN: "OptionPurchaseMain", JS: "optionpurchase" },
-         3: { PKG: "options", TPL: "options.html.tpl", HTML: "options.html", SCSS: "", MAIN: "OptionsMain", JS: "options" },
-}
-
-APPS2 = { 2: {  PKG: "options", 
-                OUT: "ps-options.js", 
-                JS_TARGET: "options",
-                TPL: "options/options.html.tpl", 
-                HTML: "options/options.html", 
-                MAIN: "OptionsMain",
-                JS_STEM: "ps-options",
-                CSS_STEM: "options",
-                CSS_TARGET: "options" },
-}
-
 class Builder:
     def __init__(self,app_id) -> None:
-        a = APPS2[app_id]
+        a = APPS[app_id]
         self.pkg = a[PKG]
         self.main_module = a[MAIN]
         self._md5sum = None
@@ -84,267 +114,183 @@ class Builder:
     def md5sum(self):
         if self._md5sum == None:
             self._md5sum = md5_sum(self.out_file)[0:8]
+            print("md5 sum: ", self._md5sum)
         return self._md5sum
 
-    @property
-    def out_file(self):
-        return "%s/%s" % (self.pkg,self._out_file)
-
     def copy(self):
+        print("Copying...")
         print(self.out_file)
         print(self.target)
-        print("Copying ...")
         copyfile(self.out_file, self.target)
 
-    def render(self):
-        pass
-
 class Sass(Builder):
-    def __init__(self,app_id) -> None:
+    def __init__(self,app_id,is_studiop) -> None:
         Builder.__init__(self,app_id)
-        a = APPS2[app_id]
+        a = APPS[app_id]
         self._target = a[CSS_TARGET]
         self.stem = a[CSS_STEM]
-        self._out_file = "dist/%s.css" % self.pkg
+        self.out_file = "%s/dist/%s.css" % (self.pkg,self.stem)
+        self.sass = a[SASS]
+        self.is_studiop = is_studiop
 
     @property
     def target(self):
-        return "%s/%s/%s" % (CSS_HOME, self._target, self.md5_file_name)
+        return "%s/%s/%s" % (CSS_HOME(self.is_studiop), self._target, self.md5_file_name)
 
     @property
     def md5_file_name(self):
         return "%s-%s.css" % (self.stem,self.md5sum)
 
     def build(self):
-        proc.run(["sass", "../sass-src/%s/%s.scss" % (self.pkg,self.pkg), self.out_file])
+        proc.run(["sass", "../sass-src/%s/%s.scss" % (self.sass,self.stem), self.out_file])
 
 
 class Javascript(Builder):
-    def __init__(self,app_id) -> None:
+    def __init__(self,app_id,is_studiop) -> None:
         Builder.__init__(self,app_id)
-        a = APPS2[app_id]
-        self._out_file = "dist/%s" % a[OUT]
+        a = APPS[app_id]
+        self.out_file = "%s/dist/%s.js" % (self.pkg,a[JS_STEM])
+        self.map_file = "%s.js.map" % a[JS_STEM]
+        self.map_file_src = "%s/dist/%s" % (self.pkg,self.map_file)
+        self.out_file_spago = "dist/%s.js" % a[JS_STEM]
         self.stem = a[JS_STEM]
         self._target = a[JS_TARGET]
+        self.is_studiop = is_studiop
 
     @property
     def target(self):
-        return "%s/%s/%s" % (TARGET, self._target, self.md5_file_name)
+        return "%s/%s/%s" % (TARGET(self.is_studiop), self._target, self.md5_file_name)
 
     @property
     def md5_file_name(self):
         return "%s-%s.js" % (self.stem,self.md5sum)
 
     def build(self):
-        proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", self.out_file])
+        proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", self.out_file_spago])
+
+    def copy(self):
+        Builder.copy(self)
+        map_target = "%s/%s/%s" % (TARGET(self.is_studiop), self._target, self.map_file)
+        print(self.map_file_src)
+        print(map_target)
+        copyfile(self.map_file_src, map_target)
 
 APP_JS = 1 
 APP_SASS = 2
 APP_ALL = 3
 
-class Application2:
-    def __init__(self, app_id, app_variant) -> None:
-        self.js = Javascript(app_id) 
-        self.sass = Sass(app_id)
-        self.variant = app_variant
-
-    def process(self):
-        self.js.build()
-        self.js.copy()
-
 class Application:
-    def __init__(self, app_id) -> None:
-        app_info = APPS[app_id]
-        self.main_module = app_info[MAIN]
-        self.pkg = app_info[PKG]
-        self.tpl = app_info[TPL]
-        self.html = app_info[HTML]
-        self.js = app_info[JS]
-        self._md5sum = None
+    def __init__(self, app_id, app_variant, is_studiop) -> None:
+        self.js = Javascript(app_id, is_studiop) 
+        self.sass = Sass(app_id,is_studiop)
+        self.variant = app_variant
+        a = APPS[app_id]
+        self.tpl = a[TPL]
+        self.html = a[HTML]
+        self.is_studiop = is_studiop
 
-    @property
-    def src_file(self):
-        return "ps-%s.js" % self.js
-
-    @property 
-    def build_target(self):
-        return "dist/%s" % self.src_file
-
-    @property
-    def src(self):
-        return "%s/%s" % (SRC,self.src_file)
-
-    @property
-    def md5sum(self):
-        if self._md5sum == None:
-            self._md5sum = md5_sum(self.src)[0:8]
-        return self._md5sum 
-
-    @property 
-    def map_file_name(self):
-        return "%s.map" % self.src_file
-
-    @property
-    def md5_file_name(self):
-        return "ps-%s-%s.js" %  (self.js,self.md5sum)
-       
     def build(self):
-        proc.run(["spago", "bundle", "--package", self.pkg, "--source-maps", "--module", self.main_module, "--outfile", self.build_target])
+        if self.variant == 1:
+            self.js.build()
+        elif self.variant == 2:
+            self.sass.build()
+        elif self.variant == 3:
+            self.js.build()
+            self.sass.build()
 
     def copy(self):
-        copyfile(self.src,"%s/%s/%s" % (TARGET,self.pkg,self.md5_file_name))
-        copyfile("%s/%s" % (SRC,self.map_file_name), "%s/%s/%s" % (TARGET,self.pkg,self.map_file_name))
-
-    def minify(self):
-        #proc.run(["esbuild", JS_SRC, "--minify", "--outfile=%s" % JS_MIN])
-        pass
-
-    def md5_cache(self,is_css):
-        if is_css == True:
-            f = open("dist/md5_css", "r") 
-        else:
-            f = open("dist/md5_ps", "r") 
-        lx = f.readline()
-        f.close()
-        return lx.strip()
-
-    def write_md5_cache(self,is_css,value):
-        if is_css == True:
-            f = open("dist/md5_css", "w") 
-        else:
-            f = open("dist/md5_ps", "w") 
-        f.write("%s" % value)
-        f.close()
-
-    def sass(self):
-        css_tmp = "dist/%s.css" % self.pkg
-        proc.run(["sass", "../sass-src/%s/%s.scss" % (self.pkg,self.pkg), css_tmp])
-        tpl = Template(filename="%s/%s/%s" % (TPL_SRC,self.pkg,self.tpl))
-        md5 = md5_sum(css_tmp)[:8]
-        md5_fname = "%s-%s.css" % (self.pkg,md5)
-        print (md5_fname)
-        self.write_md5_cache(True,md5)
-        md5_ps = "%s-%s.js" % (self.pkg,self.md5_cache(False))
-        result = tpl.render(cssname=md5_fname,psname=md5_ps)
-        dist = "%s/%s/%s.html" % (TPL_DIST, self.pkg, self.pkg)
-        with(open(dist, "w")) as f:
-            f.write(result)
-        copyfile(css_tmp, "%s/%s" % (CSS_HOME,md5_fname))
+        if self.variant == 1:
+            self.js.copy()
+        elif self.variant == 2:
+            self.sass.copy()
+        elif self.variant == 3:
+            self.js.copy()
+            self.sass.copy()
 
     def render(self):
-        tpl = Template(filename="%s/%s/%s" % (TPL_SRC,self.pkg,self.tpl))
-        result = tpl.render(psname=self.md5_file_name)
-        dist = "%s/%s/%s" % (TPL_DIST,self.pkg,self.html)
+        md5_js = self.js.md5_file_name
+        md5_css = self.sass.md5_file_name
+        tpl = Template(filename="%s/%s" % (TPL_SRC(self.is_studiop), self.tpl))
+        result = tpl.render(psname=md5_js,cssname=md5_css)
+        dist = "%s/%s" % (TPL_DIST(self.is_studiop),self.html)
         with(open(dist, "w")) as f:
             f.write(result)
 
     def show_param(self):
-        print("****************** %s ******************" % self.pkg)
+        print("****************** %s ******************" % self.sass.pkg)
+        print("\ttpl: %s" % self.tpl)
+        print("\thtml: %s" % self.html)
+
+    def show_param_js(self):
+        self.show_param()
         print("\ttpl: %s" % self.tpl)
         print("\thtml: %s" % self.html)
         print("\tjs: %s" % self.js)
-        print("\tsrc_file: %s" % self.src_file)
+        #print("\tsrc_file: %s" % self.src_file)
         print("\tbuild_target: %s" % self.build_target)
         print("\tsrc: %s" % self.src)
         print("\tmd5_file_name: %s" % self.md5_file_name)
 
-def sass():
-    proc.run(["sass", "../sass-src/harborview.scss", CSS_SRC])
-    tpl = Template(filename="%s/%s" % (TPL_SRC,"head.html.tpl"))
-    md5 = md5_sum(CSS_SRC)[:8]
-    md5_fname = "harborview-%s.css" % md5
-    print (md5_fname)
-    result = tpl.render(psname=md5_fname)
-    dist = "%s/%s" % (TPL_DIST, "head.html")
-    with(open(dist, "w")) as f:
-        f.write(result)
-    copyfile(CSS_SRC, "%s/%s" % (CSS_HOME,md5_fname))
+    def show_param_css(self):
+        self.show_param()
+        print("\ttarget: %s" % self.sass._target)
+        print("\ttarget: %s" % self.sass.target)
 
 
-# def render(mfn):
-#     tpl = Template(filename="%s/charts.html.tpl" % TPL_SRC)
-#     result = tpl.render(pscharts=mfn)
-#     dist = "%s/charts.html" % TPL_DIST
-#     with(open(dist, "w")) as f:
-#         f.write(result)
-
-# def versioning(do_build):
-#     if do_build == True:
-#         build()    
-#     mfn = md5_sum(JS_SRC)
-#     print(mfn)
-#     copyfile(JS_SRC,"%s/%s" % (TARGET,"ps-charts.js"))
-#     render_charts(mfn)
-
-# def md5_file_name(do_build):
-#     if do_build == True:
-#         build()    
-#     mfn = md5_file_name_(JS_SRC)
-#     print(mfn)
-#     copyfile(JS_SRC,"%s/%s" % (TARGET,mfn))
-#     render_charts(mfn)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("--sass", action="store_true", default=False,
-                      help="Sass. Default: False")
+    parser.add_option("--css", action="store_true", default=False,
+                      help="Css. Default: False")
     parser.add_option("--js", action="store_true", default=False,
                       help="Javascript. Default: False")
     parser.add_option("--build", action="store_true", default=False,
                       help="Build module. Default: False")
+    parser.add_option("--copy", action="store_true", default=False,
+                      help="Copy. Default: False")
     parser.add_option("--render", action="store_true", default=False,
                       help="Render html templates. Default: False")
+    parser.add_option("--all", action="store_true", default=False,
+                      help="Build, copy, and render.Default: False")
     parser.add_option("--min", action="store_true", default=False,
                       help="Minify js file. Default: False")
     parser.add_option("--app", dest="app", action="store", type="int",
-                      metavar="APP", help="App name: 1: Maunaloa, 2: OptionPurchase")
+                      metavar="APP", help="App name: 1 -> Maunaloa, 2 -> Optionpurchase")
     parser.add_option("--param", action="store_true", default=False,
                       help="Show Application parameters. Default: False")
+    parser.add_option("--studiop", action="store_true", default=False,
+                      help="Studio P. Default: False")
     (opts, args) = parser.parse_args()
 
     cur_var = 0
+
     if opts.js == True:
         cur_var = 1
 
-    if opts.sass == True:
+    if opts.css == True:
         cur_var += 2
 
-    cur_app = Application2(opts.app,cur_var) 
-
-    #cur_app.process()
-
-    """
-    sass = Sass(2)
-    sass.copy()
-
-    js = Javascript(2)
-    js.copy()
-
-    if opts.sass == True:
-        cur_app.sass()
+    cur_app = Application(opts.app,cur_var,opts.studiop) 
 
     if opts.param == True:
-        cur_app.show_param()
+        if opts.js == True:
+            cur_app.show_param_js()
+        if opts.css == True:
+            cur_app.show_param_css()
 
     if opts.build == True:
+        print ("--build")
         cur_app.build()
-        cur_app.render()
+
+    if opts.copy == True:
+        print ("--copy")
         cur_app.copy()
-        print (cur_app.src)
-        print (cur_app.md5_file_name)
-    elif opts.render == True:
+
+    if opts.render == True:
+        print ("--render")
         cur_app.render()
+
+    if opts.all == True:
+        print ("--all")
+        cur_app.build()
         cur_app.copy()
-    """
-
-
-
-    # if opts.md5 == True:
-    #     print (md5_sum(JS_SRC))
-    #     print (md5_sum(JS_TARGET))
-    # else:
-    #     if opts.md5file == True:
-    #         md5_file_name(opts.build)
-    #     else:
-    #         versioning(opts.build)
-    
+        cur_app.render()
