@@ -68,7 +68,7 @@ def CSS_HOME(is_studiop):
     return "%s/src/main/resources/static/css" % PROJ(is_studiop)
 
 def TPL_SRC(is_studiop): 
-    return "%s/Python/tpl" % PROJ(is_studiop)
+    return "%s/python/tpl" % PROJ(is_studiop)
 
 def TPL_DIST(is_studiop): 
     return "%s/src/main/resources/templates" % PROJ(is_studiop)
@@ -91,7 +91,7 @@ APPS = { 1: {   PKG: "maunaloa",
                 MAIN: "Main",
                 CSS_STEM: "maunaloa",
                 CSS_TARGET: "maunaloa",
-                JS_STEM: "charts",
+                JS_STEM: "ps-charts",
                 JS_TARGET: "maunaloa",
                 SASS: "maunaloa" },
 }
@@ -223,18 +223,23 @@ class Application:
 
     def show_param_js(self):
         self.show_param()
-        print("\ttpl: %s" % self.tpl)
-        print("\thtml: %s" % self.html)
-        print("\tjs: %s" % self.js)
-        #print("\tsrc_file: %s" % self.src_file)
-        print("\tbuild_target: %s" % self.build_target)
-        print("\tsrc: %s" % self.src)
-        print("\tmd5_file_name: %s" % self.md5_file_name)
+        print("****************** JS ******************")
+        print("\tout_file: %s" % self.js.out_file)
+        print("\tmap_file: %s" % self.js.map_file)
+        print("\tmap_file_src: %s" % self.js.map_file_src)
+        print("\tout_file_spago: %s" % self.js.out_file_spago)
+        print("\tjs stem: %s" % self.js.stem)
+        print("\ttarget: %s" % self.js.target)
 
     def show_param_css(self):
         self.show_param()
+        print("****************** CSS ******************")
         print("\ttarget: %s" % self.sass._target)
         print("\ttarget: %s" % self.sass.target)
+        print("\tmain module: %s" % self.sass.main_module)
+        print("\tcss stem: %s" % self.sass.stem)
+        print("\tsass: %s" % self.sass.sass)
+        print("\tout file: %s" % self.sass.out_file)
 
 
 if __name__ == "__main__":

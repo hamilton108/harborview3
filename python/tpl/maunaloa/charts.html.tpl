@@ -42,6 +42,7 @@
     </div>
     <div th:replace="~{head.html :: scripts}"></div>
     <script type="text/javascript" src="/js/maunaloa/${psname}"></script>
+    <link rel="stylesheet" href="/css/maunaloa/${cssname}">
     <script type="module" src="/js/maunaloa/charts.js"></script>
     <script type="module" src="/js/maunaloa/svg/draggable.js"></script>
 </body>
