@@ -1,4 +1,8 @@
-module HarborView.UI.Input where
+module HarborView.UI.Input
+  ( InputParams
+  , InputVal(..)
+  , mkInput
+  ) where
 
 import Data.Array ((:))
 import DOM.HTML.Indexed.InputType (InputType(..))

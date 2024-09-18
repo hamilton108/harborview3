@@ -1,4 +1,7 @@
-module HarborView.UI.Text where
+module HarborView.UI.Text
+  ( HSize(..)
+  , mkH
+  ) where
 
 import Data.Maybe (Maybe(..))
 import Halogen.HTML (ClassName(..), HTML)

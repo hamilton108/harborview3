@@ -37,6 +37,6 @@ package:
     - web-uievents
     - harborview
   test:
-    main: Test.Main
+    main: Test.RapanuiTestMain
     dependencies:
       - spec

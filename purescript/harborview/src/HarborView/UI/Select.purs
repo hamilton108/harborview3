@@ -1,4 +1,9 @@
-module HarborView.UI.Select where
+module HarborView.UI.Select
+  ( SelectItem
+  , SelectItems
+  , SelectParams
+  , mkSelect
+  ) where
 
 import Data.Array ((:))
 import Halogen.HTML (ClassName, HTML)

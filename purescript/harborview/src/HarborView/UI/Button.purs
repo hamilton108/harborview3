@@ -1,4 +1,7 @@
-module HarborView.UI.Button where
+module HarborView.UI.Button
+  ( ButtonParams
+  , mkButton
+  ) where
 
 import Web.UIEvent.MouseEvent (MouseEvent)
 import Halogen.HTML (ClassName, HTML)
@@ -28,14 +31,14 @@ mkButton p =
       ]
       [ HH.text t ]
 
-type TextAreaParams i =
-  { title :: Title
-  , evt :: String -> i
-  , rows :: Int
-  , cols :: Int
-  , text :: String
-  , placeholder :: String
-  , lblClazz :: Array ClassName
-  , spanClazz :: Array ClassName
-  , txClazz :: Array ClassName
-  }
+-- type TextAreaParams i =
+--   { title :: Title
+--   , evt :: String -> i
+--   , rows :: Int
+--   , cols :: Int
+--   , text :: String
+--   , placeholder :: String
+--   , lblClazz :: Array ClassName
+--   , spanClazz :: Array ClassName
+--   , txClazz :: Array ClassName
+--   }

@@ -1,4 +1,8 @@
-module HarborView.UI.Radio where
+module HarborView.UI.Radio
+  ( RadioBtn
+  , RadioGroupParam
+  , mkRadioGroup
+  ) where
 
 import Prelude
 
