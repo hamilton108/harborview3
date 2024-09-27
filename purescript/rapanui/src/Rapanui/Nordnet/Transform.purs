@@ -2,12 +2,13 @@ module Rapanui.Nordnet.Transform
   ( map
   ) where
 
+import Data.Maybe (Maybe(..))
 import Rapanui.Common (Oid(..), Pid(..), Cid(..), Rtyp(..))
 import Rapanui.Critter.AcceptRule (AcceptRule)
 import Rapanui.Nordnet.CoreJson (RapanuiResponse, JsonAccRule)
 import Rapanui.State (State)
 
---import Prelude
+import Prelude
 
 mapAccRule :: JsonAccRule -> AcceptRule
 mapAccRule { oid, pid, cid, rtyp, value, active } =
@@ -21,4 +22,4 @@ mapAccRule { oid, pid, cid, rtyp, value, active } =
 
 map :: RapanuiResponse -> State
 map response =
-  { accRule: mapAccRule response.payload.accRule }
+  { accRule: Just $ mapAccRule response.payload.accRule }
