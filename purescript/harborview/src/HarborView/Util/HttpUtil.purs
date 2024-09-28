@@ -10,6 +10,7 @@ import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 
 import Effect.Aff.Class (class MonadAff)
+import Affjax.Web (URL)
 import Affjax.Web as Affjax
 import Affjax.ResponseFormat as ResponseFormat
 import Affjax.RequestBody (RequestBody)
@@ -21,11 +22,10 @@ import Halogen as H
 
 import HarborView.Common
   ( HarborViewError(..)
-  , Url(..)
   )
 
-get :: forall m r. MonadAff m => Url -> (Json -> Either JsonDecodeError r) -> m (Either HarborViewError r)
-get (Url url) f =
+get :: forall m r. MonadAff m => URL -> (Json -> Either JsonDecodeError r) -> m (Either HarborViewError r)
+get url f =
   H.liftAff $
     Affjax.get ResponseFormat.json url >>= \res ->
       let
@@ -49,11 +49,11 @@ get (Url url) f =
 post
   :: forall m r
    . MonadAff m
-  => Url
+  => URL
   -> RequestBody
   -> (Json -> Either JsonDecodeError r)
   -> m (Either HarborViewError r)
-post (Url url) requestBody f =
+post url requestBody f =
   H.liftAff $
     Affjax.post ResponseFormat.json url (Just requestBody) >>= \res ->
       let
@@ -77,11 +77,11 @@ post (Url url) requestBody f =
 put
   :: forall m r
    . MonadAff m
-  => Url
+  => URL
   -> RequestBody
   -> (Json -> Either JsonDecodeError r)
   -> m (Either HarborViewError r)
-put (Url url) requestBody f =
+put url requestBody f =
   H.liftAff $
     Affjax.put ResponseFormat.json url (Just requestBody) >>= \res ->
       let

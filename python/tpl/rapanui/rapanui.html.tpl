@@ -15,8 +15,8 @@
     <!--
     <script type="text/javascript" src="/js/sortable.min.js"></script>
     -->
-    <script type="text/javascript" src="/js/maunaloa/${psname}"></script>
-    <link rel="stylesheet" href="/css/maunaloa/${cssname}">
+    <script type="text/javascript" src="/js/rapanui/${psname}"></script>
+    <link rel="stylesheet" href="/css/rapanui/${cssname}">
 
 </body>
 
