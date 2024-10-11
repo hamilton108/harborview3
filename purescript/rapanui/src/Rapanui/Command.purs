@@ -5,19 +5,41 @@ module Rapanui.Command
 
 import Prelude
 
+import Control.Monad.State.Class (class MonadState)
 import Data.Either (Either(..))
 import Effect.Aff.Class (class MonadAff)
-import Effect.Console (logShow)
 import Effect.Class (liftEffect)
+import Effect.Console (logShow)
 import Halogen as H
 import HarborView.Common (handleError)
+import Rapanui.Common (OptionTicker(..), Oid(..))
 import Rapanui.Nordnet.Core as Core
+import Rapanui.Nordnet.CoreJson (CritterResponse)
+import Rapanui.Nordnet.Transform as Transform
 import Rapanui.State (State)
 import Web.UIEvent.MouseEvent (MouseEvent)
 
 data MainAction
   = Initialize
   | Demo MouseEvent
+
+mapJsonResult
+  :: forall m
+   . MonadState State m
+  => MonadAff m
+  => CritterResponse
+  -> m Unit
+mapJsonResult result =
+  case result.payload of
+    [] ->
+      pure unit
+    --[ x : xs ] ->
+    items ->
+      H.modify_
+        \stx ->
+          stx
+            { critters = Transform.mapResponse items
+            }
 
 handleAction
   :: forall cs o m
@@ -33,4 +55,5 @@ handleAction = case _ of
         Left err ->
           liftEffect $ handleError err
         Right result1 ->
-          liftEffect $ logShow result1
+          (liftEffect $ logShow result1) *>
+            mapJsonResult result1

@@ -5,11 +5,13 @@ module Rapanui.Nordnet.Transform
 
 import Prelude
 
-import Data.Maybe (Maybe(..))
+--import Data.Maybe (Maybe(..))
+--import Data.Traversable (traverse)
 import Rapanui.Common (Oid(..), Pid(..), Cid(..), Rtyp(..))
 import Rapanui.Critter.Rules (Critter, AcceptRule)
-import Rapanui.Nordnet.CoreJson (CritterResponse, JsonAccRule, JsonCritter)
-import Rapanui.State (State, defaultState)
+import Rapanui.Nordnet.CoreJson (JsonCritter, JsonPayload, JsonAccRule)
+
+--import Rapanui.State (State)
 
 {-
 mapAccRule :: Array JsonAccRule -> AcceptRule
@@ -23,17 +25,32 @@ mapAccRule { oid, pid, cid, rtyp, value, active } =
   }
   -}
 
-mapCritter :: JsonCritter -> Critter
-mapCritter jc =
-  { oid: Oid 1
-  , vol: 10
-  , status: 7
-  , accRules: []
+mapAccRule :: JsonAccRule -> AcceptRule
+mapAccRule ja =
+  { active: true
+  , cid: Cid ja.cid
+  , oid: Oid ja.oid
+  , pid: Pid ja.pid
+  , rtyp: Rtyp ja.rtyp
+  , value: ja.value
   }
 
-mapResponse :: CritterResponse -> State
-mapResponse response =
-  defaultState
+mapCritter :: JsonCritter -> Critter
+mapCritter jc =
+  { oid: Oid jc.oid
+  , vol: jc.vol
+  , status: jc.status
+  , accRules: map mapAccRule jc.accRules
+  }
+
+mapJsonPayload :: Array JsonCritter -> Array Critter
+mapJsonPayload critters =
+  map mapCritter critters
+
+mapResponse :: Array JsonPayload -> Array Critter
+mapResponse payload =
+  []
+--traverse mapCritter payload.critters
 
 {-
   case response.payload of

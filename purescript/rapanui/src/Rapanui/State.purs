@@ -5,13 +5,13 @@ module Rapanui.State
 
 --import Prelude
 
-import Data.Maybe (Maybe(..))
-import Rapanui.Critter.AcceptRule (AcceptRule)
+import Rapanui.Critter.Rules (Critter)
 
 type State =
-  { accRule :: Maybe AcceptRule }
+  { critters :: Array Critter
+  }
 
 defaultState :: State
 defaultState =
-  { accRule: Nothing
+  { critters: []
   }
