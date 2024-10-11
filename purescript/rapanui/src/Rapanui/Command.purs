@@ -12,7 +12,6 @@ import Effect.Class (liftEffect)
 import Effect.Console (logShow)
 import Halogen as H
 import HarborView.Common (handleError)
-import Rapanui.Common (OptionTicker(..), Oid(..))
 import Rapanui.Nordnet.Core as Core
 import Rapanui.Nordnet.CoreJson (CritterResponse)
 import Rapanui.Nordnet.Transform as Transform
@@ -38,8 +37,7 @@ mapJsonResult result =
       H.modify_
         \stx ->
           stx
-            { stockOptions = []
-            -- stockOptions = Transform.mapResponse items
+            { stockOptions = Transform.mapPayloads items
             }
 
 handleAction

@@ -20,7 +20,7 @@ type Critter =
   , accRules :: Array AcceptRule
   }
 
-type StockOption =
+type StockOptionPurchase =
   { ticker :: OptionTicker
   , oid :: Oid
   , price :: Number

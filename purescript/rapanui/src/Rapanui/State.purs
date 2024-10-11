@@ -5,10 +5,10 @@ module Rapanui.State
 
 --import Prelude
 
-import Rapanui.Critter.Rules (StockOption)
+import Rapanui.Critter.Rules (StockOptionPurchase)
 
 type State =
-  { stockOptions :: Array StockOption
+  { stockOptions :: Array StockOptionPurchase
   }
 
 defaultState :: State
