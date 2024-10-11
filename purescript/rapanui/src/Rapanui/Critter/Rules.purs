@@ -1,6 +1,6 @@
 module Rapanui.Critter.Rules where
 
-import Rapanui.Common (Oid, Pid, Cid, Rtyp)
+import Rapanui.Common (Cid, Oid, OptionTicker, Pid, Rtyp)
 
 --import Prelude
 
@@ -18,4 +18,11 @@ type Critter =
   , vol :: Int
   , status :: Int
   , accRules :: Array AcceptRule
+  }
+
+type StockOption =
+  { ticker :: OptionTicker
+  , oid :: Oid
+  , price :: Number
+  , critters :: Array Critter
   }

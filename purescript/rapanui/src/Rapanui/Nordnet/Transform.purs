@@ -1,14 +1,12 @@
 module Rapanui.Nordnet.Transform
   ( mapCritter
-  , mapResponse
+  , mapPayloads
   ) where
 
 import Prelude
 
---import Data.Maybe (Maybe(..))
---import Data.Traversable (traverse)
-import Rapanui.Common (Oid(..), Pid(..), Cid(..), Rtyp(..))
-import Rapanui.Critter.Rules (Critter, AcceptRule)
+import Rapanui.Common (Oid(..), Pid(..), Cid(..), Rtyp(..), OptionTicker(..))
+import Rapanui.Critter.Rules (AcceptRule, Critter, StockOption)
 import Rapanui.Nordnet.CoreJson (JsonCritter, JsonPayload, JsonAccRule)
 
 --import Rapanui.State (State)
@@ -43,13 +41,21 @@ mapCritter jc =
   , accRules: map mapAccRule jc.accRules
   }
 
-mapJsonPayload :: Array JsonCritter -> Array Critter
-mapJsonPayload critters =
+mapCritters :: Array JsonCritter -> Array Critter
+mapCritters critters =
   map mapCritter critters
 
-mapResponse :: Array JsonPayload -> Array Critter
-mapResponse payload =
-  []
+mapPayload :: JsonPayload -> StockOption
+mapPayload payload =
+  { oid: Oid payload.oid
+  , ticker: OptionTicker payload.ticker
+  , price: payload.price
+  , critters: mapCritters payload.critters
+  }
+
+mapPayloads :: Array JsonPayload -> Array StockOption
+mapPayloads payloads =
+  map mapPayload payloads
 --traverse mapCritter payload.critters
 
 {-

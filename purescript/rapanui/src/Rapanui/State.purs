@@ -5,13 +5,13 @@ module Rapanui.State
 
 --import Prelude
 
-import Rapanui.Critter.Rules (Critter)
+import Rapanui.Critter.Rules (StockOption)
 
 type State =
-  { critters :: Array Critter
+  { stockOptions :: Array StockOption
   }
 
 defaultState :: State
 defaultState =
-  { critters: []
+  { stockOptions: []
   }

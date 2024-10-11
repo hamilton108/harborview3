@@ -38,7 +38,8 @@ mapJsonResult result =
       H.modify_
         \stx ->
           stx
-            { critters = Transform.mapResponse items
+            { stockOptions = []
+            -- stockOptions = Transform.mapResponse items
             }
 
 handleAction
