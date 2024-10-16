@@ -32,7 +32,6 @@ mapJsonResult result =
   case result.payload of
     [] ->
       pure unit
-    --[ x : xs ] ->
     items ->
       H.modify_
         \stx ->
@@ -54,5 +53,6 @@ handleAction = case _ of
         Left err ->
           liftEffect $ handleError err
         Right result1 ->
-          (liftEffect $ logShow result1) *>
-            mapJsonResult result1
+          mapJsonResult result1 *>
+            H.get >>= \st ->
+            (liftEffect $ logShow st)

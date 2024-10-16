@@ -2,15 +2,144 @@ module Rapanui.View where
 
 import Prelude
 
+import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML (ClassName(..), HTML)
 import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
+import HarborView.Common as Common
 import HarborView.UI.Button (ButtonParams, mkButton)
 import HarborView.UI.Common (Title(..))
 import Rapanui.Command (MainAction(..), handleAction)
+import Rapanui.Common (Oid(..), OptionTicker(..), Rtyp(..))
+import Rapanui.Critter.Rules (StockOptionPurchase, Critter, AcceptRule)
 import Rapanui.State (State, defaultState)
 import Web.UIEvent.MouseEvent (MouseEvent)
+
+--noSort ∷ ∀ r i. Array (IProp (class ∷ String | r) i)
+--noSort =
+--  [ HP.classes [ ClassName "no-sort" ] ]
+
+--        [ HH.th UI.noSort [ HH.text "Id" ]
+
+critterPart :: forall w. Maybe Critter -> Array (HTML w MainAction)
+critterPart crit =
+  case crit of
+    Nothing ->
+      [ HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      ]
+
+    Just c ->
+      let
+        Oid oid = c.oid
+      in
+        [ HH.td [] [ HH.text (Common.fromInt oid) ]
+        , HH.td [] [ HH.text (Common.fromInt c.status) ]
+        , HH.td [] [ HH.text "href" ]
+        --, HH.td [] [ H.a [ A.href "#", A.class "newaccrule href-td", E.onClick (AccRuleMsgFor (NewAccRule <| Oid c.oid)) ] [ HH.text "New Acc" ] ]
+        ]
+
+accPart :: forall w. Maybe AcceptRule -> Array (HTML w MainAction)
+accPart acc =
+  case acc of
+    Nothing ->
+      [ HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      , HH.td [] [ HH.text "-" ]
+      ]
+
+    Just curAcc ->
+      let
+        cbActive =
+          {-
+          H.input
+            [ A.checked curAcc.active
+            , A.type_ "checkbox"
+            , A.attribute "data-oid" (String.fromInt curAcc.oid)
+            , E.onClick (AccRuleMsgFor (ToggleAccActive curAcc))
+            ]
+            []
+          -}
+          HH.text "input"
+        Oid oid = curAcc.oid
+        Rtyp rtyp = curAcc.rtyp
+      in
+        [ HH.td [] [ HH.text (Common.fromInt oid) ]
+        , HH.td [] [ HH.text (Common.fromInt rtyp) ]
+        , HH.td [] [ HH.text "rtyp desc" ]
+        --, HH.td [] [ HH.text (rtypDesc curAcc.rtyp) ]
+        , HH.td [] [ HH.text (Common.numToString curAcc.value) ]
+        , HH.td [] [ cbActive ]
+        , HH.td [] [ HH.text "href" ]
+        --, HH.td [] [ H.a [ A.href "#", A.class "newdnyrule href-td", E.onClick (DenyRuleMsgFor (NewDenyRule <| Oid curAcc.oid)) ] [ HH.text "New Deny" ] ]
+        ]
+
+tableHeader :: forall w. HTML w MainAction
+tableHeader =
+  HH.thead []
+    [ HH.tr
+        []
+        [ HH.th [] [ HH.text "Oid" ]
+        , HH.th [] [ HH.text "Sell" ]
+        , HH.th [] [ HH.text "Status" ]
+        , HH.th [] [ HH.text "-" ]
+        , HH.th [] [ HH.text "Acc.oid" ]
+        , HH.th [] [ HH.text "Rtyp" ]
+        , HH.th [] [ HH.text "Desc" ]
+        , HH.th [] [ HH.text "Value" ]
+        , HH.th [] [ HH.text "Active" ]
+        ]
+    ]
+
+critterArea :: forall w. StockOptionPurchase -> Array (HTML w MainAction)
+critterArea opx =
+  concat (map critterRows opx.critters)
+
+details :: forall w. StockOptionPurchase -> HTML w MainAction
+details opx =
+  let
+    Oid oid = opx.oid
+    OptionTicker ticker = opx.ticker
+  in
+    HH.details []
+      [ HH.summary [] [ HH.text ("[ " <> Common.fromInt oid <> "  ] " <> ticker) ]
+      , HH.table [ HP.classes [ ClassName "table" ] ]
+          [ tableHeader
+          --, HH.tbody [] (critterArea opx)
+          , HH.tbody_ []
+          ]
+      ]
+
+{-
+  emptyTable
+createTable_ [ item ] =
+  HH.table_
+    [ gpObjHead
+    , HH.tbody_ $ createTableRows item
+    ]
+createTable_ all =
+  let
+    allx = Array.concat $ map createTableRows all
+  in
+    HH.table
+      [ HP.classes [ ClassName "sortable" ] ]
+      [ gpObjHead
+      , HH.tbody_ $ allx
+      ]
+-}
+
+createTable :: ∀ w. State -> HTML w MainAction
+createTable st =
+  HH.div_ $ map details st.stockOptions
+
+--createTable_ st.stockOptions
 
 defaultButtonParams :: forall i. String -> (MouseEvent -> i) -> ButtonParams i
 defaultButtonParams t curEvt =
@@ -35,7 +164,10 @@ component =
 
 render :: ∀ s m. MonadAff m => State -> H.ComponentHTML MainAction s m
 render st =
-  HH.div [] [ mkButton $ defaultButtonParams "Demo" Demo ]
+  HH.div []
+    [ mkButton $ defaultButtonParams "Demo" Demo
+    , createTable st
+    ]
 
 {-
 [

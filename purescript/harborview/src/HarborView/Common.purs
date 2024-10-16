@@ -43,6 +43,13 @@ numToString :: Number -> String
 numToString num =
   Format.toStringWith (Format.fixed 2) num
 
+fromInt :: Int -> String
+fromInt i =
+  if i < 0 then
+    ""
+  else
+    show i
+
 type JsonResult =
   { oid :: Int
   , msg :: String
