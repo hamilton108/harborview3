@@ -2,6 +2,8 @@ module Rapanui.View where
 
 import Prelude
 
+import Data.Array ((:))
+import Data.Array as Array
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
@@ -22,6 +24,22 @@ import Web.UIEvent.MouseEvent (MouseEvent)
 --  [ HP.classes [ ClassName "no-sort" ] ]
 
 --        [ HH.th UI.noSort [ HH.text "Id" ]
+tableHeader :: forall w. HTML w MainAction
+tableHeader =
+  HH.thead []
+    [ HH.tr
+        []
+        [ HH.th [] [ HH.text "Oid" ]
+        , HH.th [] [ HH.text "Sell" ]
+        , HH.th [] [ HH.text "Status" ]
+        , HH.th [] [ HH.text "-" ]
+        , HH.th [] [ HH.text "Acc.oid" ]
+        , HH.th [] [ HH.text "Rtyp" ]
+        , HH.th [] [ HH.text "Desc" ]
+        , HH.th [] [ HH.text "Value" ]
+        , HH.th [] [ HH.text "Active" ]
+        ]
+    ]
 
 critterPart :: forall w. Maybe Critter -> Array (HTML w MainAction)
 critterPart crit =
@@ -38,6 +56,7 @@ critterPart crit =
         Oid oid = c.oid
       in
         [ HH.td [] [ HH.text (Common.fromInt oid) ]
+        , HH.td [] [ HH.text ("10") ]
         , HH.td [] [ HH.text (Common.fromInt c.status) ]
         , HH.td [] [ HH.text "href" ]
         --, HH.td [] [ H.a [ A.href "#", A.class "newaccrule href-td", E.onClick (AccRuleMsgFor (NewAccRule <| Oid c.oid)) ] [ HH.text "New Acc" ] ]
@@ -48,7 +67,6 @@ accPart acc =
   case acc of
     Nothing ->
       [ HH.td [] [ HH.text "-" ]
-      , HH.td [] [ HH.text "-" ]
       , HH.td [] [ HH.text "-" ]
       , HH.td [] [ HH.text "-" ]
       , HH.td [] [ HH.text "-" ]
@@ -77,30 +95,54 @@ accPart acc =
         --, HH.td [] [ HH.text (rtypDesc curAcc.rtyp) ]
         , HH.td [] [ HH.text (Common.numToString curAcc.value) ]
         , HH.td [] [ cbActive ]
-        , HH.td [] [ HH.text "href" ]
         --, HH.td [] [ H.a [ A.href "#", A.class "newdnyrule href-td", E.onClick (DenyRuleMsgFor (NewDenyRule <| Oid curAcc.oid)) ] [ HH.text "New Deny" ] ]
         ]
 
-tableHeader :: forall w. HTML w MainAction
-tableHeader =
-  HH.thead []
-    [ HH.tr
-        []
-        [ HH.th [] [ HH.text "Oid" ]
-        , HH.th [] [ HH.text "Sell" ]
-        , HH.th [] [ HH.text "Status" ]
-        , HH.th [] [ HH.text "-" ]
-        , HH.th [] [ HH.text "Acc.oid" ]
-        , HH.th [] [ HH.text "Rtyp" ]
-        , HH.th [] [ HH.text "Desc" ]
-        , HH.th [] [ HH.text "Value" ]
-        , HH.th [] [ HH.text "Active" ]
-        ]
-    ]
+critAcc1Tr :: forall w. Maybe Critter -> Maybe AcceptRule -> HTML w MainAction
+critAcc1Tr crit acc =
+  let
+    tdRow =
+      Array.concat [ critterPart crit, accPart acc ]
+  in
+    HH.tr [] tdRow
+
+acc1Tr :: forall w. AcceptRule -> HTML w MainAction
+acc1Tr acc =
+  let
+    tdRow =
+      Array.concat [ critterPart Nothing, accPart (Just acc) ]
+  in
+    HH.tr [] tdRow
+
+accsTr :: forall w. Maybe (Array AcceptRule) -> Array (HTML w MainAction)
+accsTr acc =
+  case acc of
+    Nothing -> []
+    Just acc1 -> map acc1Tr acc1
+
+critterRows :: forall w. Critter -> Array (HTML w MainAction)
+critterRows crit =
+  case crit.accRules of
+    [] ->
+      [ critAcc1Tr (Just crit) Nothing ]
+
+    [ acc ] ->
+      [ critAcc1Tr (Just crit) (Just acc) ]
+
+    items ->
+      let
+        firstAcc =
+          Array.head items
+
+        firstRow =
+          critAcc1Tr (Just crit) firstAcc
+
+      in
+        firstRow : accsTr (Array.tail items)
 
 critterArea :: forall w. StockOptionPurchase -> Array (HTML w MainAction)
 critterArea opx =
-  concat (map critterRows opx.critters)
+  Array.concat (map critterRows opx.critters)
 
 details :: forall w. StockOptionPurchase -> HTML w MainAction
 details opx =
@@ -112,8 +154,7 @@ details opx =
       [ HH.summary [] [ HH.text ("[ " <> Common.fromInt oid <> "  ] " <> ticker) ]
       , HH.table [ HP.classes [ ClassName "table" ] ]
           [ tableHeader
-          --, HH.tbody [] (critterArea opx)
-          , HH.tbody_ []
+          , HH.tbody [] (critterArea opx)
           ]
       ]
 
